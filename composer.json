@@ -48,17 +48,17 @@
         "doctrine/annotations": "^1.2.3",
         "symfony/Filesystem": "~2.6.0",
         "zf-commons/zfc-rbac": "~2.4.0",
-        "olcs/OlcsCommon": "dev-develop",
-        "olcs/olcs-transfer": "dev-develop",
-        "olcs/olcs-utils": "dev-develop",
-        "olcs/olcs-auth": "dev-develop",
-        "olcs/olcs-logging": "dev-develop"
+        "olcs/OlcsCommon": "dev-feature/OLCS-19144-ZF3",
+        "olcs/olcs-transfer": "dev-feature/OLCS-19144-ZF3",
+        "olcs/olcs-utils": "dev-feature/OLCS-19144-ZF3",
+        "olcs/olcs-auth": "dev-feature/OLCS-19144-ZF3",
+        "olcs/olcs-logging": "dev-feature/OLCS-19144-ZF3"
     },
     "require-dev": {
         "olcs/olcs-devtools": "dev-master",
         "mockery/mockery": "~0.9.3",
         "mikey179/vfsstream": "^1.4.0",
-        "olcs/olcs-testhelpers": "dev-develop"
+        "olcs/olcs-testhelpers": "dev-feature/OLCS-19144-ZF3"
     },
     "autoload": {
         "classmap": [
