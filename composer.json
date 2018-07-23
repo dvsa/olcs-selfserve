@@ -52,7 +52,7 @@
         "zendframework/zendframework": "~3.0.0",
         "doctrine/annotations": "^1.2.3",
         "symfony/Filesystem": "~2.6.0",
-        "zf-commons/zfc-rbac": "~2.4.0",
+        "zf-commons/zfc-rbac": "~2.6.0",
         "olcs/OlcsCommon": "dev-project/zf3-upgrade",
         "olcs/olcs-transfer": "dev-project/zf3-upgrade",
         "olcs/olcs-utils": "dev-project/zf3-upgrade",
