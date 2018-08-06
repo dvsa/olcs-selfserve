@@ -648,6 +648,9 @@ class PermitsController extends AbstractOlcsController implements ToggleAwareInt
 
         $application = $this->getApplication($id);
 
+        // Calculate Fee Total
+        $applicationFeeTotal = 10 * $application['permitsRequired']; //Hardcoded temporarily
+
         $request = $this->getRequest();
         $data = (array)$request->getPost();
         $session = new Container(self::SESSION_NAMESPACE);
@@ -673,6 +676,12 @@ class PermitsController extends AbstractOlcsController implements ToggleAwareInt
         $view = new ViewModel();
         $view->setVariable('permitsNo', $application['applicationRef']);
         $view->setVariable('id', $id);
+        $view->setVariable('appFeeTotal', $applicationFeeTotal);
+        $view->setVariable('numPermitsRequired', $application['permitsRequired']);
+        $view->setVariable('applicationDate', $application['createdOn']);
+
+
+
 
         return $view;
     }

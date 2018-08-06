@@ -28,7 +28,10 @@
                     </tr>
                     <tr>
                         <td><h4><?php echo $this->translate('permits.page.fee.application.date'); ?></h4></td>
-                        <td><?php echo date("d F Y"); ?></td>
+                        <td><?php
+                            $date=date_create($applicationDate);
+                            echo date_format($date,"d F Y"); ?>
+                        </td>
                     </tr>
                     <tr>
                         <td><h4><?php echo $this->translate('permits.page.fee.permit.type'); ?></h4></td>
@@ -40,7 +43,7 @@
                     </tr>
                     <tr>
                         <td><h4><?php echo $this->translate('permits.page.fee.number.permits'); ?></h4></td>
-                        <td>10</td>
+                        <td><?php echo $numPermitsRequired; ?></td>
                     </tr>
                     <tr>
                         <td><h4><?php echo $this->translate('permits.page.fee.permit.fee.single'); ?></h4></td>
@@ -49,7 +52,7 @@
 
                     <tr>
                         <td><h4><?php echo $this->translate('permits.page.fee.permit.fee.total'); ?></h4></td>
-                        <td>£100.00</td>
+                        <td><?php echo '£' . $appFeeTotal; ?> </td>
                     </tr>
                 </table>
             </div>
