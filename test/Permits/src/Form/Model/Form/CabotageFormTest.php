@@ -25,7 +25,7 @@ class CabotageFormTest extends AbstractFormValidationTestCase
         $this->assertFormElementAllowEmpty($element, false);
         $this->assertFormElementType($element, "\Common\Form\Elements\InputFilters\SingleCheckbox");
 
-        $this->assertFormElementValid($element, 'Yes');
+        $this->assertFormElementValid($element, '1');
         $this->assertFormElementNotValid($element, 'No', [Validator\Identical::NOT_SAME]);
         $this->assertFormElementNotValid($element, 'X', [Validator\Identical::NOT_SAME]); //[Validator\InArray::NOT_IN_ARRAY]
     }
