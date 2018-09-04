@@ -19,8 +19,7 @@ class Euro6EmissionsFormTest extends AbstractFormValidationTestCase
 
     public function testMeetsEuro6()
     {
-        $this->markTestIncomplete();
-        $element = ['Fields', 'MeetsEuro6'];
+        $element = ['Fields', 'emissions'];
 
         $this->assertFormElementRequired($element, true);
         $this->assertFormElementAllowEmpty($element, false);

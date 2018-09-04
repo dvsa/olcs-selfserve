@@ -19,8 +19,7 @@ class CabotageFormTest extends AbstractFormValidationTestCase
 
     public function testWontCabotage()
     {
-        $this->markTestIncomplete();
-        $element = ['Fields', 'WontCabotage'];
+        $element = ['Fields', 'cabotage'];
 
         $this->assertFormElementRequired($element, true);
         $this->assertFormElementAllowEmpty($element, false);
