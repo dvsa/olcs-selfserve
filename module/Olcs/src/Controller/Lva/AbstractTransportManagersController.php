@@ -52,6 +52,9 @@ abstract class AbstractTransportManagersController extends CommonAbstractTmContr
     public function editAction()
     {
         // move status back to incomplete
+
+
+        // note: here the status gets changed back to "incomplete" after the TM selects "change your details"
         $tmaId = (int)$this->params('child_id');
         if ($this->updateTmaStatus($tmaId, TransportManagerApplicationEntityService::STATUS_INCOMPLETE)) {
             return $this->redirect()->toRouteAjax("lva-{$this->lva}/transport_manager_details", [], [], true);
@@ -1118,13 +1121,14 @@ abstract class AbstractTransportManagersController extends CommonAbstractTmContr
             $flashMessenger = $this->getServiceLocator()->get('Helper\FlashMessenger');
             if ($response->isOk()) {
                 $flashMessenger->addSuccessMessage('lva-tm-details-submit-success');
-                //redirect to checkAnswers
-                return $this->redirect()->toRoute('lva-transport_manager/check_answers', ['application' => $tma['id']]);
+
             } else {
                 $flashMessenger->addErrorMessage('unknown-error');
+                return $this->redirect()->refresh();
             }
         }
-        return $this->redirect()->refresh();
+        //redirect to checkAnswers
+        return $this->redirect()->toRoute('lva-transport_manager/check_answers', ['application' => $tma['id']]);
     }
 
     /**
@@ -1183,6 +1187,8 @@ abstract class AbstractTransportManagersController extends CommonAbstractTmContr
         if ($this->getRequest()->isPost()) {
             if ($this->getRequest()->getPost('emailAddress')) {
                 // resend form submitted
+
+                // note: email is sent from here
                 $this->resendTmEmail();
             } elseif (!is_null($tma['digitalSignature']) && !$tma['disableSignatures']) {
                 return $this->redirect()->toRoute(
