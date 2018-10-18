@@ -34,6 +34,7 @@ use Common\RefData;
 use Olcs\Controller\AbstractSelfserveController;
 use Olcs\Controller\Lva\Traits\ExternalControllerTrait;
 use Olcs\Controller\Lva\Traits\DashboardNavigationTrait;
+use Olcs\Logging\Log\Logger;
 use Permits\Controller\Config\FeatureToggle\FeatureToggleConfig;
 use Permits\View\Helper\EcmtSection;
 
@@ -628,6 +629,10 @@ class PermitsController extends AbstractSelfserveController implements ToggleAwa
         $dto = PayOutstandingFees::create($dtoData);
         $response = $this->handleCommand($dto);
 
+        // ToDo: remove temporary CPMS Debug Log
+        Logger::crit('CPMS - PermitsController PayOutstandingFees data:' . print_r($dtoData, true));
+        Logger::crit('CPMS - PermitsController PayOutstandingFees Response:' . print_r($response, true));
+
         $messages = $response->getResult()['messages'];
 
         $translateHelper = $this->getServiceLocator()->get('Helper\Translation');
@@ -657,6 +662,10 @@ class PermitsController extends AbstractSelfserveController implements ToggleAwa
         $paymentId = $response->getResult()['id']['transaction'];
         $response = $this->handleQuery(PaymentByIdQry::create(['id' => $paymentId]));
         $payment = $response->getResult();
+
+        // ToDo: remove temporary CPMS Debug Log
+        Logger::crit('CPMS - PermitsController PaymentById Params:' . print_r(['id' => $paymentId], true));
+        Logger::crit('CPMS - PermitsController PaymentById Response:' . print_r($payment, true));
 
         $view = new ViewModel(
             [

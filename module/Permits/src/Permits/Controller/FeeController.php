@@ -8,6 +8,7 @@ use Common\RefData;
 use Common\Util\FlashMessengerTrait;
 use Olcs\Controller\AbstractSelfserveController;
 use Olcs\Controller\Lva\Traits\ExternalControllerTrait;
+use Olcs\Logging\Log\Logger;
 use Permits\Controller\Config\DataSource\DataSourceConfig;
 use Permits\Controller\Config\ConditionalDisplay\ConditionalDisplayConfig;
 use Permits\Controller\Config\FeatureToggle\FeatureToggleConfig;
@@ -73,13 +74,22 @@ class FeeController extends AbstractSelfserveController implements ToggleAwareIn
 
         ];
 
+        Logger::crit(print_r($dtoData, true));
         $response = $this->handleCommand(CompletePaymentCmd::create($dtoData));
         $this->handlePaymentError($response);
+
+        // ToDo: remove temporary CPMS Debug Log
+        Logger::crit('CPMS - CompleteTransactionFeeController:' . print_r($response, true));
 
         // check payment status and redirect accordingly
         $paymentId = $response->getResult()['id']['transaction'];
         $response = $this->handleQuery(PaymentByIdQry::create(['id' => $paymentId]));
         $payment = $response->getResult();
+
+        // ToDo: remove temporary CPMS Debug Log
+
+        Logger::crit('CPMS - PaymentByIdParams FeeController:' . print_r(['id' => $paymentId], true));
+        Logger::crit('CPMS - PaymentByIdResponse FeeController:' . print_r($payment, true));
 
         if ($this->data['application']['status']['id'] === RefData::PERMIT_APP_STATUS_NOT_YET_SUBMITTED) {
             $successRoute = EcmtSection::ROUTE_ECMT_SUBMITTED;
