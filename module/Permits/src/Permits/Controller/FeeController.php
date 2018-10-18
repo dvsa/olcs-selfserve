@@ -74,12 +74,18 @@ class FeeController extends AbstractSelfserveController implements ToggleAwareIn
 
         ];
 
-        Logger::crit(print_r($dtoData, true));
+        Logger::crit('CPMS - CompleteTransactionFeeController:'. print_r($dtoData, true));
         $response = $this->handleCommand(CompletePaymentCmd::create($dtoData));
         $this->handlePaymentError($response);
 
         // ToDo: remove temporary CPMS Debug Log
-        Logger::crit('CPMS - CompleteTransactionFeeController:' . print_r($response, true));
+        Logger::crit('CPMS - PreLog');
+
+        // ToDo: remove temporary CPMS Debug Log
+        Logger::crit('CPMS - CompleteTransactionFeeController:' . print_r($response->getResult(), true));
+
+         // ToDo: remove temporary CPMS Debug Log
+        Logger::crit('CPMS - PostLog');
 
         // check payment status and redirect accordingly
         $paymentId = $response->getResult()['id']['transaction'];
