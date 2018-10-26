@@ -37,27 +37,32 @@ class EcmtLicenceData extends AbstractHelper
         . '</p>';
 
         $licences = $form->get('Fields')->get('EcmtLicence')->getValueOptions();
-        $licenceCount = 0;
-        foreach ($licences as $licence) {
+        foreach ($licences as $key => $licence) {
             if ($licence['value'] !== '') {
-                $licenceCount++;
-
-                if (!empty($application)) {
-                    if ($licence['value'] === $application['licence']['id']) {
-                        $form->get('Fields')->get('EcmtLicence')->setValue($licence['value']);
+                if ($licence['hasActiveEcmtApplication']) {
+                    if (!empty($application)) {
+                        if ($licence['value'] === $application['licence']['id']) {
+                            $form->get('Fields')->get('EcmtLicence')->setValue($licence['value']);
+                        } else {
+                            $form->get('Fields')->get('EcmtLicence')->unsetValueOption($key);
+                        }
+                    } else {
+                        $form->get('Fields')->get('EcmtLicence')->unsetValueOption($key);
                     }
                 }
             }
         }
 
-        if ($licenceCount === 1) {
+        $licencesFiltered = array_values($form->get('Fields')->get('EcmtLicence')->getValueOptions());
+
+        if (count($licencesFiltered) === 1) {
             $data['title'] = sprintf(
                 $this->view->translate('permits.page.ecmt.licence.question.one.licence'),
-                preg_replace("/<div(.*?)>(.*?)<\/div>/i", "", $licences[0]['label'])
+                preg_replace("/<div(.*?)>(.*?)<\/div>/i", "", $licencesFiltered[0]['label'])
             );
 
             // @todo: Refactor how we identify a restricted licence and pass to the view. We should not be defining html in a Common data service (EcmtLicence) and we do not consider multiple licence options or when a user selects a non-restricted licence which would likely need to be delivered by JavaScript.
-            if (array_key_exists('html_elements', $licences[0])) {
+            if (array_key_exists('html_elements', $licencesFiltered[0])) {
                 $data['copy'] .= '<p>' . $this->view->translate('permits.form.ecmt-licence.restricted-licence.hint') . '</p>';
             }
         }
