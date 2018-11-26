@@ -4,12 +4,13 @@ namespace Olcs\Controller;
 
 use Common\Controller\AbstractOlcsController;
 use Common\Data\Mapper\DefaultMapper;
-use Common\Data\Mapper\MapperInterface;
 use Common\Form\Form;
 use Common\Service\Cqrs\Response as CqrsResponse;
 use Common\Service\Helper\FormHelperService;
 use Dvsa\Olcs\Transfer\Query\QueryInterface;
 use Olcs\Controller\Config\DataSource\DataSourceInterface;
+use Olcs\Controller\Lva\Traits\ExternalControllerTrait;
+use Permits\Controller\Config\Params\ParamsConfig;
 use Permits\View\Helper\EcmtSection;
 use Zend\Http\Response as HttpResponse;
 use Zend\Mvc\MvcEvent;
@@ -23,6 +24,8 @@ use Zend\View\Model\ViewModel;
  */
 abstract class AbstractSelfserveController extends AbstractOlcsController
 {
+    use ExternalControllerTrait;
+
     /**
      * The current controller action
      *
@@ -92,6 +95,8 @@ abstract class AbstractSelfserveController extends AbstractOlcsController
      * @var array
      */
     protected $tables = [];
+
+    protected $template = '';
 
     /**
      * Route parameters
@@ -167,15 +172,17 @@ abstract class AbstractSelfserveController extends AbstractOlcsController
         $view->setVariable('form', $this->form);
         $view->setVariable('forms', $this->forms);
         $view->setVariable('tables', $this->tables);
-        $view->setTemplate($this->templateConfig[$this->action]);
+        $view->setTemplate($this->template);
 
         return $view;
     }
 
     public function mapDataForDisplay()
     {
+        $this->template = isset($this->templateConfig[$this->action]) ? $this->templateConfig[$this->action] : $this->templateConfig['default'];
+
         foreach ($this->templateVarsConfig[$this->action]['data'] as $key => $var) {
-            $this->data[$key] = $var;
+            $this->data[$key] = isset($this->data[$key]) ? $this->data[$key] : $var;
         }
 
         if (!empty($this->templateVarsConfig[$this->action]['browserTitle'])) {
@@ -231,11 +238,29 @@ abstract class AbstractSelfserveController extends AbstractOlcsController
 
                 $config = $this->configsForAction('postConfig');
                 $params = array_merge($saveData, $this->fetchHandlePostParams());
+                $redirectParams = [];
+                $options = [];
 
                 if (isset($config['command'])) {
                     $command = $config['command']::create($params);
                     $response = $this->handleCommand($command);
-                    $this->handleResponse($response);
+                    $responseDump = $this->handleResponse($response);
+
+                    if (isset($config['params'])) {
+                        if ($config['params'] === ParamsConfig::NEW_APPLICATION) {
+                            $redirectParams = ['id' => $responseDump['id']['ecmtPermitApplication']];
+                        }
+                    }
+                } else {
+                    if (isset($config['params'])) {
+                        if ($config['params'] === ParamsConfig::CONFIRM_CHANGE) {
+                            $options = [
+                                'query' => [
+                                    'licence' => $params['licence']
+                                ]
+                            ];
+                        }
+                    }
                 }
 
                 if (isset($config['conditional'])) {
@@ -259,7 +284,7 @@ abstract class AbstractSelfserveController extends AbstractOlcsController
                     }
                 }
 
-                return $this->handleSaveAndReturnStep($this->postParams, $config['step']);
+                return $this->handleSaveAndReturnStep($this->postParams, $config['step'], $redirectParams, $options);
             }
         }
     }
@@ -300,6 +325,11 @@ abstract class AbstractSelfserveController extends AbstractOlcsController
 
         //retrieve DTO data
         foreach ($dataSourceConfig as $dataSource => $config) {
+            // If we need to pass in data (not from the route)
+            if (isset($config['passInUserData'])) {
+                $this->queryParams['id'] = call_user_func_array([$this, $config['passInUserData']], []);
+            }
+
             /**
              * @var DataSourceInterface $source
              * @var QueryInterface $query
@@ -314,7 +344,9 @@ abstract class AbstractSelfserveController extends AbstractOlcsController
                 $mapper = isset($config['mapper']) ? $config['mapper'] : DefaultMapper::class;
                 $data = $mapper::mapForDisplay($data);
             }
+
             $this->data[$source::DATA_KEY] = $data;
+
             if (isset($config['append'])) {
                 foreach ($config['append'] as $appendTo => $mapper) {
                     $combinedData = [
@@ -340,14 +372,19 @@ abstract class AbstractSelfserveController extends AbstractOlcsController
 
         foreach ($formConfig as $name => $config) {
             $formData = [];
+            $form = $this->getForm($config['formClass']);
+            $mapperClass = isset($config['mapper']) ? $config['mapper']['class'] : DefaultMapper::class;
 
-            if (isset($config['dataSource']) && isset($this->data[$config['dataSource']])) {
-                /** @var MapperInterface $mapperClass */
-                $mapperClass = isset($config['mapper']) ? $config['mapper'] : DefaultMapper::class;
-                $formData = $mapperClass::mapFromResult($this->data[$config['dataSource']]);
+            if (isset($config['dataParam'])) {
+                $this->data[$config['dataParam']] = $this->params()->fromQuery($config['dataParam']);
             }
 
-            $form = $this->getForm($config['formClass']);
+            if (isset($config['mapper']['type'])) {
+                $this->data = call_user_func_array([$mapperClass, $config['mapper']['type']], [$this->data, $form, $this->getServiceLocator()->get('Helper\Translation')]);
+            } else {
+                $formData = $mapperClass::mapFromResult($this->data);
+            }
+
             $form->setData($formData);
             $form = $this->alterForm($form);
             $this->forms[$name] = $form;
@@ -402,12 +439,20 @@ abstract class AbstractSelfserveController extends AbstractOlcsController
         foreach ($conditionalDisplayConfig as $source => $criteria) {
             $data = $this->data[$source];
 
-            if ($data[$criteria['key']] === $criteria['value']) {
-                continue;
+            if (isset($criteria['key']) && isset($criteria['value'])) {
+                if ($data[$criteria['key']] === $criteria['value']) {
+                    continue;
+                }
+            } else {
+                if (isset($criteria['view']) && !empty($data[$source])) {
+                    if (!isset($criteria['key'])) {
+                        continue;
+                    }
+                }
             }
-
             $route = isset($criteria['route']) ? $criteria['route'] : null;
-            return $this->conditionalDisplayNotMet($route);
+            $view = isset($criteria['view']) ? $criteria['view'] : null;
+            return $this->conditionalDisplayNotMet($view, $route);
         }
     }
 
@@ -415,10 +460,20 @@ abstract class AbstractSelfserveController extends AbstractOlcsController
      *
      * @return \Zend\Http\Response
      */
-    protected function conditionalDisplayNotMet($route)
+    protected function conditionalDisplayNotMet($view = null, $route = null)
     {
-        $route = $route ? $route : 'permits';
-        return $this->redirect()->toRoute($route, [], [], true);
+        if (!is_null($view)) {
+            $this->templateConfig[$this->action] = $view['template'];
+
+            if (isset($view['data'])) {
+                array_merge($this->templateVarsConfig[$this->action], $view['data']);
+            }
+
+            return $this->genericView();
+        } else {
+            $route = $route ? $route : 'permits';
+            return $this->redirect()->toRoute($route, [], [], true);
+        }
     }
 
     /**
@@ -508,14 +563,14 @@ abstract class AbstractSelfserveController extends AbstractOlcsController
      *
      * @return HttpResponse
      */
-    protected function handleSaveAndReturnStep(array $submittedData, string $nextStep): HttpResponse
+    protected function handleSaveAndReturnStep(array $submittedData, string $nextStep, $params = [], $options = []): HttpResponse
     {
         if (array_key_exists('SubmitButton', $submittedData['Submit'])) {
             //Form was submitted normally so continue on chosen path
-            return $this->nextStep($nextStep);
+            return $this->nextStep($nextStep, $params, $options);
         }
         //A button other than the primary submit button was clicked so return to overview
-        return $this->nextStep(EcmtSection::ROUTE_APPLICATION_OVERVIEW);
+        return $this->nextStep(EcmtSection::ROUTE_APPLICATION_OVERVIEW, $params, $options);
     }
 
     /**
@@ -525,9 +580,9 @@ abstract class AbstractSelfserveController extends AbstractOlcsController
      *
      * @return HttpResponse
      */
-    protected function nextStep(string $route): HttpResponse
+    protected function nextStep(string $route, $params = [], $options = []): HttpResponse
     {
-        return $this->redirect()->toRoute($route, [], [], true);
+        return $this->redirect()->toRoute($route, $params, $options, true);
     }
 
     /**
