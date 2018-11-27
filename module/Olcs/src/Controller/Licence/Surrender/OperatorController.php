@@ -13,7 +13,7 @@ class OperatorController extends AbstractSurrenderController
             'backLink' => $this->getBackLink('lva-licence')
         ];
 
-        $this->getServiceLocator()->get('Script')->loadFiles(['tm-lva-declaration']);
+        $this->getServiceLocator()->get('Script')->loadFiles(['licence-surrender-operator']);
         return $this->renderView($params);
     }
 }

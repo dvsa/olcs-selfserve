@@ -4,13 +4,17 @@ namespace Olcs\Form\Model\Form\Surrender\Fieldset;
 
 use Zend\Form\Annotation as Form;
 
+/**
+ * @Form\Name("licence-in-possession")
+ */
 class LicenceInPossession
 {
     /**
-     * @Form\Options({
-     *     "label":"You must destroy your operator licence"
+     * @Form\Attributes({
+     *     "value":"licence.surrender.licence.possession.note",
+     *     "id" : "any"
      * })
-     * @Form\Type("\Common\Form\Elements\Types\PlainText")
+     * @Form\Type("\Common\Form\Elements\Types\HtmlTranslated")
      */
-    public $notice = null;
+    public $notice = "LicenceInPossession";
 }
