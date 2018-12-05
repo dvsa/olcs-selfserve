@@ -462,6 +462,18 @@ $routes = array(
                     ],
                 )
             ],
+            'surrender' =>[
+                'type' => Segment::class,
+                'options' => array(
+                    'route' => '/surrender/:licenceId[/]',
+                    'defaults' => array(
+                        'action' => 'initiate-request',
+                    ),
+                    'constraints' =>[
+                        'licenceId' => '[0-9]+',
+                    ],
+                )
+            ],
             'process-response' => array(
                 'type' => Segment::class,
                 'options' => array(
@@ -1219,9 +1231,11 @@ return array(
             Olcs\Controller\GdsVerifyController::class => Olcs\Controller\GdsVerifyController::class,
             Olcs\Controller\Licence\Surrender\ReviewContactDetailsController::class => Olcs\Controller\Licence\Surrender\ReviewContactDetailsController::class,
             Olcs\Controller\Licence\Surrender\AddressDetailsController::class =>
-                Olcs\Controller\Licence\Surrender\AddressDetailsController::class,
+            Olcs\Controller\Licence\Surrender\AddressDetailsController::class,
             Olcs\Controller\Licence\Surrender\StartController::class => Olcs\Controller\Licence\Surrender\StartController::class,
             Olcs\Controller\Licence\Surrender\OperatorController::class => Olcs\Controller\Licence\Surrender\OperatorController::class,
+            Olcs\Controller\Licence\Surrender\DeclarationController::class => Olcs\Controller\Licence\Surrender\DeclarationController::class,
+            Olcs\Controller\Licence\Surrender\ConfirmationController::class => Olcs\Controller\Licence\Surrender\ConfirmationController::class
         )
     ),
     'local_forms_path' => __DIR__ . '/../src/Form/Forms/',

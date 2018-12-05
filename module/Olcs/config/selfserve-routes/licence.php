@@ -34,7 +34,7 @@ return [
                                     'may_terminate' => true,
                                     'type' => \Zend\Mvc\Router\Http\Method::class,
                                     'options' => [
-                                        'verb'=>'GET',
+                                        'verb' => 'GET',
                                         'defaults' => [
                                             'controller' => StartController::class,
                                             'action' => 'index',
@@ -45,7 +45,7 @@ return [
                                     'may_terminate' => true,
                                     'type' => \Zend\Mvc\Router\Http\Method::class,
                                     'options' => [
-                                        'verb'=>'POST',
+                                        'verb' => 'POST',
                                         'defaults' => [
                                             'controller' => StartController::class,
                                             'action' => 'start',
@@ -63,6 +63,10 @@ return [
                                     'controller' => ReviewContactDetailsController::class,
                                     'action' => 'index',
                                 ],
+                                'constraints' => [
+                                    'surrender' => '[0-9]+',
+                                    'action' => '[a-z]+'
+                                ],
                             ],
                         ],
                         'address-details' => [
@@ -73,6 +77,23 @@ return [
                                 'defaults' => [
                                     'controller' => Olcs\Controller\Licence\Surrender\AddressDetailsController::class,
                                     'action' => 'index',
+                                ],
+                                'constraints' => [
+                                    'surrender' => '[0-9]+',
+                                ],
+                            ],
+                        ],
+                        'confirmation' => [
+                            'type' => Segment::class,
+                            'may_terminate' => true,
+                            'options' => [
+                                'route' => ':surrender/confirmation[/]',
+                                'defaults' => [
+                                    'controller' => \Olcs\Controller\Licence\Surrender\ConfirmationController::class,
+                                    'action' => 'index',
+                                ],
+                                'constraints' => [
+                                    'surrender' => '[0-9]+',
                                 ],
                             ],
                         ],
@@ -87,9 +108,24 @@ return [
                                 ],
                             ],
                         ],
+                        'declaration' => [
+                            'may_terminate' => true,
+                            'type' => Segment::class,
+                            'options' => [
+                                'route' => ':surrender/declaration[/]',
+                                'defaults' => [
+                                    'controller' => Olcs\Controller\Licence\Surrender\DeclarationController::class,
+                                    'action' => 'index'
+                                ],
+                                'constraints' => [
+                                    'surrender' => '[0-9]+',
+                                ],
+                            ]
+                        ]
                     ]
                 ],
             ],
         ],
     ],
+
 ];
