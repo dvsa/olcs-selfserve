@@ -19,9 +19,10 @@ class LicenceDocument
      *          "posession": {
      *              "label": "In your possession",
      *              "value": "possession",
+     *              "hint" : "You'll have a user ID if you've registered for Self Assessment or filed a tax return online before.",
      *              "childContent" : {
      *                  "content": "\Olcs\Form\Model\Form\Surrender\Fieldset\LicenceInPossession",
-     *                  "attributes": {"id":"surrender-licence-possession","class":"govuk-inset-text"}
+     *                  "attributes": {"id":"surrender-licence-possession","class":"govuk-radios__conditional"}
      *              }
      *          },
      *          "lost": {
@@ -29,7 +30,7 @@ class LicenceDocument
      *              "value": "lost",
      *              "childContent" : {
      *                  "content": "\Olcs\Form\Model\Form\Surrender\Fieldset\LicenceLost",
-     *                  "attributes": {"id":"surrender-licence-lost","class":"govuk-inset-text"}
+     *                  "attributes": {"id":"surrender-licence-lost","class":"govuk-radios__conditional"}
      *              }
      *          },
      *          "stolen": {
@@ -37,13 +38,10 @@ class LicenceDocument
      *              "value": "stolen",
      *              "childContent" : {
      *                  "content": "\Olcs\Form\Model\Form\Surrender\Fieldset\LicenceStolen",
-     *                  "attributes": {"id":"surrender-licence-stolen","class":"govuk-inset-text"}
+     *                  "attributes": {"id":"surrender-licence-stolen","class":"govuk-radios__conditional"}
      *              }
      *          }
-     *      },
-     *     "label_options": {
-     *         "disable_html_escape": "true"
-     *     },
+     *      }
      * })
      * @Form\Type("\Common\Form\Elements\Types\Radio")
      */

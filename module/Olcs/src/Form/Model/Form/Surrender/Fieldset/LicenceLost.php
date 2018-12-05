@@ -20,7 +20,9 @@ class LicenceLost
     /**
      * @Form\Type("\Zend\Form\Element\Textarea")
      * @Form\Attributes({
-     *     "id" : "any2"
+     *     "id" : "any2",
+     *     "class" : "govuk-textarea",
+     *     "rows" : "5"
      * })
      */
     public $details = null;

@@ -12,7 +12,7 @@ class LicenceInPossession
     /**
      * @Form\Attributes({
      *     "value":"licence.surrender.licence.possession.note",
-     *     "id" : "any"
+     *     "id" : "any",
      * })
      * @Form\Type("\Common\Form\Elements\Types\HtmlTranslated")
      */
