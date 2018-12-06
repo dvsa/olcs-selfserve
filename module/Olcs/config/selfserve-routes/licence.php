@@ -90,17 +90,6 @@ return [
                                 ],
                             ],
                         ],
-                        'operator' => [
-                            'may_terminate' => true,
-                            'type' => Segment::class,
-                            'options' => [
-                                'route' => ':surrender/operator[/]',
-                                'defaults' => [
-                                    'controller' => Olcs\Controller\Licence\Surrender\OperatorController::class,
-                                    'action' => 'index',
-                                ],
-                            ],
-                        ],
                         'declaration' => [
                             'may_terminate' => true,
                             'type' => Segment::class,

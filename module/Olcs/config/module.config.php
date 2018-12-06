@@ -1233,7 +1233,6 @@ return array(
             Olcs\Controller\Licence\Surrender\AddressDetailsController::class =>
             Olcs\Controller\Licence\Surrender\AddressDetailsController::class,
             Olcs\Controller\Licence\Surrender\StartController::class => Olcs\Controller\Licence\Surrender\StartController::class,
-            Olcs\Controller\Licence\Surrender\OperatorController::class => Olcs\Controller\Licence\Surrender\OperatorController::class,
             Olcs\Controller\Licence\Surrender\DeclarationController::class => Olcs\Controller\Licence\Surrender\DeclarationController::class,
             Olcs\Controller\Licence\Surrender\ConfirmationController::class => Olcs\Controller\Licence\Surrender\ConfirmationController::class
         )
