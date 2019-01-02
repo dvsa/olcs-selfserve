@@ -15,6 +15,6 @@ class IrhpPermitType extends AbstractDataSource
 
     public function __construct()
     {
-        $this->extraQueryData['id'] = 'permit_ecmt';
+        $this->extraQueryData['id'] = 1;
     }
 }
