@@ -6,6 +6,7 @@ use Common\Form\Form;
 use Common\RefData;
 use Olcs\Controller\Config\DataSource\DataSourceConfig;
 use Olcs\Form\Model\Form\Surrender\InformationChanged;
+use Olcs\Service\Surrender\SurrenderStateService;
 
 class InformationChangedController extends AbstractSurrenderController
 {
@@ -26,8 +27,14 @@ class InformationChangedController extends AbstractSurrenderController
         'default' => DataSourceConfig::SURRENDER
     ];
 
+    /**
+     * @var SurrenderStateService
+     */
+    private $surrenderStateService;
+
     public function indexAction()
     {
+        $this->surrenderStateService = new SurrenderStateService($this->data['surrender']);
         if (!$this->hasApplicationExpired() && !$this->hasDiscCountChanged()) {
             return $this->redirect()->toRoute('licence/surrender/review-contact-details/GET', [], [], true);
         }
@@ -82,7 +89,7 @@ class InformationChangedController extends AbstractSurrenderController
 
     protected function hasApplicationExpired(): bool
     {
-        return true;
+        return $this->surrenderStateService->hasExpired();
     }
 
     protected function hasDiscCountChanged(): bool

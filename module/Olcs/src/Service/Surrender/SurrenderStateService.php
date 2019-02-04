@@ -2,8 +2,6 @@
 
 namespace Olcs\Service\Surrender;
 
-use Common\RefData;
-
 class SurrenderStateService
 {
     private $surrenderData;
@@ -16,6 +14,16 @@ class SurrenderStateService
     public function fetchRoute(): string
     {
         return '';
+    }
+
+    public function hasExpired(): bool
+    {
+        $now = new \DateTimeImmutable();
+
+        $modified = $this->getModifiedOn() ?? $this->getCreatedOn();
+        $modified = new \DateTimeImmutable($modified);
+
+        return $now->diff($modified)->days >= 2;
     }
 
     private function getStatus()
@@ -56,7 +64,5 @@ class SurrenderStateService
     {
         return $this->surrenderData['addressLastModified'];
     }
-
-
 
 }
