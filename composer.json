@@ -49,15 +49,14 @@
     ],
     "require": {
         "php": ">=7.1",
-        "zendframework/zendframework": "~2.4.0",
+        "zendframework/zendframework": "^3.0.0",
         "doctrine/annotations": "^1.2.3",
         "symfony/Filesystem": "~2.6.0",
-        "zf-commons/zfc-rbac": "~2.4.0",
-        "olcs/OlcsCommon": "dev-develop",
-        "olcs/olcs-transfer": "dev-develop",
-        "olcs/olcs-utils": "dev-develop",
-        "olcs/olcs-auth": "dev-develop",
-        "olcs/olcs-logging": "dev-develop"
+        "olcs/OlcsCommon": "dev-zf3",
+        "olcs/olcs-transfer": "dev-zf3",
+        "olcs/olcs-utils": "dev-zf3",
+        "olcs/olcs-auth": "dev-zf3",
+        "olcs/olcs-logging": "dev-zf3"
     },
     "require-dev": {
         "olcs/olcs-devtools": "dev-master",
