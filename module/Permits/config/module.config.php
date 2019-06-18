@@ -6,6 +6,7 @@ use Permits\Controller\CancelApplicationController;
 use Permits\Controller\ConfirmChangeController;
 use Permits\Controller\EmissionsController;
 use Permits\Controller\CabotageController;
+use Permits\Controller\RoadworthinessController;
 use Permits\Controller\FeePartSuccessfulController;
 use Permits\Controller\LicenceController;
 use Permits\Controller\RestrictedCountriesController;
@@ -39,6 +40,7 @@ return [
         TypeController::class => TypeController::class,
         EmissionsController::class => EmissionsController::class,
         CabotageController::class => CabotageController::class,
+        RoadworthinessController::class => RoadworthinessController::class,
         SectorsController::class => SectorsController::class,
         CheckAnswersController::class => CheckAnswersController::class,
         DeclarationController::class => DeclarationController::class,
@@ -413,7 +415,20 @@ return [
                   ],
                   'may_terminate' => false,
               ],
-
+              'ecmt-roadworthiness' => [
+                  'type'    => 'segment',
+                  'options' => [
+                      'route'    => '/:id/ecmt-roadworthiness[/]',
+                      'defaults' => [
+                          'controller'    => RoadworthinessController::class,
+                          'action'        => 'question',
+                      ],
+                      'constraints' => [
+                          'id' => '[0-9]+',
+                      ],
+                  ],
+                  'may_terminate' => false,
+              ],
               'ecmt-countries' => [
                   'type'    => 'segment',
                   'options' => [
