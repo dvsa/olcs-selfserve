@@ -101,6 +101,13 @@ class FormConfig
         ],
     ];
 
+    const FORM_ROADWORTHINESS = [
+        'roadworthiness' => [
+            'formClass' => 'RoadworthinessForm',
+            'dataSource' => PermitApplicationDataSource::DATA_KEY,
+        ],
+    ];
+
     const FORM_SECTORS = [
         'sectors' => [
             'formClass' => 'SectorsForm',

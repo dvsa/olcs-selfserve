@@ -2,17 +2,16 @@
 namespace Permits\Controller;
 
 use Common\Controller\Interfaces\ToggleAwareInterface;
-use Dvsa\Olcs\Transfer\Command\Permits\UpdateEcmtCabotage;
+use Dvsa\Olcs\Transfer\Command\Permits\UpdateEcmtRoadworthiness;
 use Olcs\Controller\AbstractSelfserveController;
 use Permits\Controller\Config\DataSource\DataSourceConfig;
 use Permits\Controller\Config\ConditionalDisplay\ConditionalDisplayConfig;
 use Permits\Controller\Config\FeatureToggle\FeatureToggleConfig;
 use Permits\Controller\Config\Form\FormConfig;
 use Permits\Controller\Config\Params\ParamsConfig;
-
 use Permits\View\Helper\EcmtSection;
 
-class CabotageController extends AbstractSelfserveController implements ToggleAwareInterface
+class RoadworthinessController extends AbstractSelfserveController implements ToggleAwareInterface
 {
     protected $toggleConfig = [
         'default' => FeatureToggleConfig::SELFSERVE_PERMITS_ENABLED,
@@ -27,24 +26,27 @@ class CabotageController extends AbstractSelfserveController implements ToggleAw
     ];
 
     protected $formConfig = [
-        'default' => FormConfig::FORM_CABOTAGE,
+        'default' => FormConfig::FORM_ROADWORTHINESS,
     ];
 
     protected $templateVarsConfig = [
         'question' => [
-            'browserTitle' => 'permits.page.cabotage.browser.title',
-            'question' => 'permits.page.cabotage.question',
-            'additionalGuidance' => 'permits.page.cabotage.guidance',
+            'browserTitle' => 'permits.page.roadworthiness.browser.title',
+            'question' => 'permits.page.roadworthiness.question',
+            'additionalGuidance' => [
+                'disableHtmlEscape' => true,
+                'value' => 'permits.page.roadworthiness.guidance',
+            ],
         ]
     ];
 
     protected $postConfig = [
         'default' => [
             'retrieveData' => true,
-            'checkConditionalDisplay' => false,
-            'command' => UpdateEcmtCabotage::class,
+            'checkConditionalDisplay' => true,
+            'command' => UpdateEcmtRoadworthiness::class,
             'params' => ParamsConfig::ID_FROM_ROUTE,
-            'step' => EcmtSection::ROUTE_ECMT_ROADWORTHINESS,
+            'step' => EcmtSection::ROUTE_ECMT_COUNTRIES,
             'saveAndReturnStep' => EcmtSection::ROUTE_APPLICATION_OVERVIEW,
         ],
     ];
