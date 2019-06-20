@@ -72,16 +72,6 @@ class DataSourceConfig
         ]
     ];
 
-    const PERMIT_APP_ECMT_EMISSIONS = [
-        PermitAppDataSource::class => [],
-        OpenWindows::class => [
-            'passInData' => [
-                'key' => 'type',
-                'value' => RefData::ECMT_PERMIT_TYPE_ID
-            ]
-        ],
-    ];
-
     const PERMIT_APP_SECTORS = [
         PermitAppDataSource::class => [],
         Sectors::class => []
