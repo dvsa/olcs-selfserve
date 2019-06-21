@@ -52,10 +52,10 @@ class EcmtSection extends AbstractHelper
      */
     const ROUTE_ORDER = [
         self::ROUTE_LICENCE => 'licence',
-        self::ROUTE_ECMT_EURO_EMISSIONS => 'emissions',
         self::ROUTE_ECMT_CABOTAGE => 'cabotage',
         self::ROUTE_ECMT_ROADWORTHINESS => 'roadworthiness',
         self::ROUTE_ECMT_COUNTRIES => 'countrys',
+        self::ROUTE_ECMT_EURO_EMISSIONS => 'emissions',
         self::ROUTE_ECMT_NO_OF_PERMITS => 'permitsRequired',
         self::ROUTE_ECMT_TRIPS => 'trips',
         self::ROUTE_ECMT_INTERNATIONAL_JOURNEY => 'internationalJourneys',

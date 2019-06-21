@@ -46,7 +46,7 @@ class RestrictedCountriesController extends AbstractSelfserveController implemen
             'mapperClass' => RestrictedCountries::class,
             'preprocessMethod' => 'preprocessFormData',
             'params' => ParamsConfig::ID_FROM_ROUTE,
-            'step' => EcmtSection::ROUTE_ECMT_NO_OF_PERMITS,
+            'step' => EcmtSection::ROUTE_ECMT_EURO_EMISSIONS,
             'saveAndReturnStep' => EcmtSection::ROUTE_APPLICATION_OVERVIEW,
         ],
     ];
