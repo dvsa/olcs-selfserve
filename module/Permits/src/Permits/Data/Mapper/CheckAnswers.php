@@ -15,17 +15,15 @@ class CheckAnswers
     public static function mapForDisplay(array $data)
     {
         $emissionsCategory = $data['windows']['windows'][0]['emissionsCategory']['id'];
-        $euroEmissionsLabel = 'permits.form.euro6.label';
         $restrictedCountriesLabel = 'permits.page.restricted-countries.question';
 
         if ($emissionsCategory === RefData::EMISSIONS_CATEGORY_EURO5) {
-            $euroEmissionsLabel = 'permits.form.euro5.label';
             $restrictedCountriesLabel = 'permits.form.restricted.countries.euro5.label';
         }
 
         $questions = [
             'permits.check-answers.page.question.licence',
-            $euroEmissionsLabel,
+            'permits.form.euro-emissions.label',
             'permits.form.cabotage.label',
             $restrictedCountriesLabel,
             'permits.page.permits.required.question',

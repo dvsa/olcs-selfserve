@@ -19,7 +19,7 @@ class EmissionsController extends AbstractSelfserveController implements ToggleA
     ];
 
     protected $dataSourceConfig = [
-        'default' => DataSourceConfig::PERMIT_APP_ECMT_EMISSIONS,
+        'default' => DataSourceConfig::PERMIT_APP,
     ];
 
     protected $conditionalDisplayConfig = [
@@ -33,10 +33,10 @@ class EmissionsController extends AbstractSelfserveController implements ToggleA
     protected $templateVarsConfig = [
         'question' => [
             'browserTitle' => 'permits.page.euro-emissions.browser.title',
-            'question' => 'permits.page.euro6.emissions.question',
+            'question' => 'permits.page.euro-emissions.question',
             'additionalGuidance' => [
-                'permits.page.euro6.emissions.guidance.line.1',
-                'permits.page.euro6.emissions.guidance.line.2',
+                'permits.page.euro-emissions.guidance.line.1',
+                'permits.page.euro-emissions.guidance.line.2',
             ],
         ]
     ];
