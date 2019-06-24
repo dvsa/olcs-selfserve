@@ -1,8 +1,8 @@
 <?php
+
 namespace Permits\Controller;
 
 use Common\Controller\Interfaces\ToggleAwareInterface;
-use Common\RefData;
 use Olcs\Controller\AbstractSelfserveController;
 use Permits\Controller\Config\DataSource\DataSourceConfig;
 use Permits\Controller\Config\ConditionalDisplay\ConditionalDisplayConfig;
@@ -10,22 +10,22 @@ use Permits\Controller\Config\FeatureToggle\FeatureToggleConfig;
 use Permits\Controller\Config\Form\FormConfig;
 use Permits\View\Helper\EcmtSection;
 
-class TypeController extends AbstractSelfserveController implements ToggleAwareInterface
+class YearController extends AbstractSelfserveController implements ToggleAwareInterface
 {
     protected $toggleConfig = [
         'default' => FeatureToggleConfig::SELFSERVE_PERMITS_ENABLED,
     ];
 
     protected $dataSourceConfig = [
-        'question' => DataSourceConfig::PERMIT_APP_TYPE,
+        'default' => DataSourceConfig::PERMIT_APP_YEAR,
     ];
 
     protected $conditionalDisplayConfig = [
-        'question' => ConditionalDisplayConfig::PERMIT_APP_CAN_APPLY,
+        'default' => ConditionalDisplayConfig::PERMIT_APP_CAN_SELECT_YEAR,
     ];
 
     protected $formConfig = [
-        'question' => FormConfig::FORM_TYPE,
+        'default' => FormConfig::FORM_YEAR,
     ];
 
     protected $templateConfig = [
@@ -34,15 +34,23 @@ class TypeController extends AbstractSelfserveController implements ToggleAwareI
 
     protected $templateVarsConfig = [
         'question' => [
-            'browserTitle' => 'permits.page.type.title',
-            'question' => 'permits.page.type.question',
-            'backUri' => EcmtSection::ROUTE_PERMITS,
+            'browserTitle' => 'permits.page.year.browser.title',
+            'question' => 'permits.page.year.question',
+            'hint' => 'permits.page.year.hint.one-year-available',
+            'backUri' => EcmtSection::ROUTE_TYPE,
             'cancelUri' => EcmtSection::ROUTE_PERMITS,
-        ],
+        ]
     ];
 
     protected $postConfig = [
-        'question' => [
+        'default' => [
+            'retrieveData' => true,
+            'checkConditionalDisplay' => true,
+            'params' => [
+                'route' => [
+                    'type',
+                ]
+            ],
             'step' => EcmtSection::ROUTE_ADD_LICENCE,
         ],
     ];
@@ -53,11 +61,8 @@ class TypeController extends AbstractSelfserveController implements ToggleAwareI
      */
     public function handlePostCommand(array &$config, array $params)
     {
-        if ($params['type'] == RefData::ECMT_PERMIT_TYPE_ID) {
-            $config['step'] = EcmtSection::ROUTE_YEAR;
-        }
-
         $this->redirectParams = [
+            'year' => $params['year'],
             'type' => $params['type']
         ];
     }
