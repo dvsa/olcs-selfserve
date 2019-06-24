@@ -47,7 +47,7 @@ class EmissionsController extends AbstractSelfserveController implements ToggleA
             'checkConditionalDisplay' => false,
             'command' => UpdateEcmtEmissions::class,
             'params' => ParamsConfig::ID_FROM_ROUTE,
-            'step' => EcmtSection::ROUTE_ECMT_CABOTAGE,
+            'step' => EcmtSection::ROUTE_ECMT_NO_OF_PERMITS,
             'saveAndReturnStep' => EcmtSection::ROUTE_APPLICATION_OVERVIEW,
         ],
     ];
