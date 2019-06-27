@@ -13,59 +13,58 @@ use Zend\Mvc\Controller\Plugin\Url;
  */
 class FeeList
 {
+    /**
+     * @param array $data
+     * @param TranslationHelperService $translator
+     * @param Url $url
+     *
+     * @return array
+     */
     public static function mapForDisplay(array $data, TranslationHelperService $translator, Url $url)
     {
-        $currency = new CurrencyFormatter;
+        $currency = new CurrencyFormatter();
 
         $irhpPermitStock = $data['application']['irhpPermitApplications'][0]['irhpPermitWindow']['irhpPermitStock'];
-        $data['application']['appFee'] = $data['irhpFeeList']['fee']['IRHP_GV_APP_ECMT']['fixedValue'];
-        $data['application']['issueFee'] = $data['irhpFeeList']['fee']['IRHP_GV_ECMT_100_PERMIT_FEE']['fixedValue'];
 
-        $summaryData = [
-            0 => [
+        $totalPermitsRequired = $data['application']['totalPermitsRequired'];
+        $applicationFeePerPermit = $data['irhpFeeList']['fee']['IRHP_GV_APP_ECMT']['fixedValue'];
+        $permitsRequiredLines = EcmtNoOfPermits::mapForDisplay($data['application'], $translator, $url);
+
+        $data['application']['summaryData'] = [
+            [
                 'key' => 'permits.page.fee.application.reference',
                 'value' => $data['application']['applicationRef']
             ],
-            1 => [
+            [
                 'key' => 'permits.page.fee.application.date',
                 'value' => date(\DATE_FORMAT, strtotime($data['application']['dateReceived']))
             ],
-            2 => [
+            [
                 'key' => 'permits.page.fee.permit.type',
                 'value' => $data['application']['permitType']['description']
             ],
-            3 => [
-                'key' => 'permits.page.fee.permit.validity',
-                'value' => $translator->translateReplace(
-                    'permits.page.fee.permit.validity.dates',
-                    [
-                        date(\DATE_FORMAT, strtotime($irhpPermitStock['validFrom'])),
-                        date(\DATE_FORMAT, strtotime($irhpPermitStock['validTo']))
-                    ]
-                )
+            [
+                'key' => 'permits.page.fee.permit.year',
+                'value' => date('Y', strtotime($irhpPermitStock['validTo']))
             ],
-            4 => [
+            [
                 'key' => 'permits.page.fee.number.permits',
-                'value' => $translator->translateReplace(
-                    'permits.page.fee.number.permits.value',
-                    [
-                        $data['application']['permitsRequired'],
-                        $currency($data['application']['appFee'])
-                    ]
-                )
+                'value' => implode('<br/>', $permitsRequiredLines),
+                'disableHtmlEscape' => true
             ],
-            5 => [
+            [
+                'key' => 'permits.page.fee.application.fee.per.permit',
+                'value' => $applicationFeePerPermit,
+                'isCurrency' => true
+            ],
+            [
                 'key' => 'permits.page.fee.permit.fee.total',
                 'value' => $translator->translateReplace(
                     'permits.page.fee.permit.fee.non-refundable',
-                    [
-                        $currency($data['application']['appFee'] * $data['application']['permitsRequired'])
-                    ]
+                    [$currency($applicationFeePerPermit * $totalPermitsRequired)]
                 )
             ]
         ];
-
-        $data['application']['summaryData'] = $summaryData;
 
         return $data['application'];
     }
