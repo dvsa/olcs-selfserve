@@ -2,7 +2,6 @@
 
 namespace Permits\Data\Mapper;
 
-use Common\RefData;
 use Common\Util\Escape;
 use Permits\View\Helper\EcmtSection;
 
@@ -14,18 +13,11 @@ class CheckAnswers
 {
     public static function mapForDisplay(array $data)
     {
-        $emissionsCategory = $data['windows']['windows'][0]['emissionsCategory']['id'];
-        $restrictedCountriesLabel = 'permits.page.restricted-countries.question';
-
-        if ($emissionsCategory === RefData::EMISSIONS_CATEGORY_EURO5) {
-            $restrictedCountriesLabel = 'permits.form.restricted.countries.euro5.label';
-        }
-
         $questions = [
             'permits.check-answers.page.question.licence',
             'permits.form.euro-emissions.label',
             'permits.form.cabotage.label',
-            $restrictedCountriesLabel,
+            'permits.page.restricted-countries.question',
             'permits.page.permits.required.question',
             'permits.page.number-of-trips.question',
             'permits.page.international.journey.question',
@@ -43,17 +35,15 @@ class CheckAnswers
             EcmtSection::ROUTE_ECMT_SECTORS
         ];
 
-        $countries = [];
+        $restrictedCountries = 'No';
 
-        foreach ($data['application']['countrys'] as $country) {
-            $countries[] = $country['countryDesc'];
-        }
+        if ($data['application']['hasRestrictedCountries']) {
+            $countries = [];
 
-        if (empty($countries) && $data['application']['windowEmissionsCategory'] == RefData::EMISSIONS_CATEGORY_EURO6) {
-            $restrictedCountries = 'No';
-        } elseif (empty($countries) && $data['application']['windowEmissionsCategory'] == RefData::EMISSIONS_CATEGORY_EURO5) {
-            $restrictedCountries = 'Yes';
-        } else {
+            foreach ($data['application']['countrys'] as $country) {
+                $countries[] = $country['countryDesc'];
+            }
+
             $restrictedCountries = ['Yes', implode(', ', $countries)];
         }
 
