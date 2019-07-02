@@ -320,35 +320,40 @@ class PermitsController extends AbstractSelfserveController implements ToggleAwa
             $form->setData($existing);
         }
 
+        $fieldSet = $form->get('Fields');
+
         $irhpPermitStock = $application['irhpPermitApplications'][0]['irhpPermitWindow']['irhpPermitStock'];
         if (!$irhpPermitStock['hasEuro5Range']) {
-            $form->get('Fields')->remove('requiredEuro5');
-            $form->get('Fields')->add([
+            $fieldSet->remove('requiredEuro5');
+            $fieldSet->add([
                 'type' => 'hidden',
                 'name' => 'requiredEuro5'
             ]);
         }
 
         if (!$irhpPermitStock['hasEuro6Range']) {
-            $form->get('Fields')->remove('requiredEuro6');
-            $form->get('Fields')->add([
+            $fieldSet->remove('requiredEuro6');
+            $fieldSet->add([
                 'type' => 'hidden',
                 'name' => 'requiredEuro6'
             ]);
         }
+
+        $fieldSet->get('requiredEuro5')->setValue($application['requiredEuro5']);
+        $fieldSet->get('requiredEuro6')->setValue($application['requiredEuro6']);
 
         $translationHelper = $this->getServiceLocator()->get('Helper\Translation');
         $totalVehicles = $translationHelper->translateReplace(
             'permits.page.no-of-permits.max.this.year',
             [$numberOfVehicles]
         );
-        $form->get('Fields')->get('topLabel')->setOption('hint', $totalVehicles);
+        $fieldSet->get('topLabel')->setOption('hint', $totalVehicles);
 
         $yearLabel = $translationHelper->translateReplace(
             'permits.page.no-of-permits.for.year',
             [date('Y', strtotime($irhpPermitStock['validTo']))]
         );
-        $form->get('Fields')->get('topLabel')->setLabel($yearLabel);
+        $fieldSet->get('topLabel')->setLabel($yearLabel);
 
         $ecmtPermitFees = $this->getEcmtPermitFees();
         $ecmtApplicationFee = $ecmtPermitFees['fee'][$this::ECMT_APPLICATION_FEE_PRODUCT_REFENCE]['fixedValue'];
