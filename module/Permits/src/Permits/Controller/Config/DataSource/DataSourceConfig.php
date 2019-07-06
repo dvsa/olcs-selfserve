@@ -16,6 +16,7 @@ use Permits\Data\Mapper\FeeList as FeeListMapper;
 use Permits\Data\Mapper\ApplicationFees as ApplicationFeesMapper;
 use Permits\Data\Mapper\AcceptOrDeclinePermits as AcceptOrDeclineMapper;
 use Permits\Data\Mapper\IrhpApplicationFeeSummary;
+use Permits\Data\Mapper\UnpaidEcmtPermits as UnpaidEcmtPermitsMapper;
 use Permits\Data\Mapper\ValidEcmtPermits as ValidEcmtPermitsMapper;
 use Permits\Data\Mapper\CheckAnswers as CheckAnswersMapper;
 use Permits\Controller\Config\DataSource\EcmtConstrainedCountriesList as EcmtConstrainedCountriesDataSource;
@@ -121,6 +122,7 @@ class DataSourceConfig
     ];
 
     const PERMIT_ECMT_VALID = [
+        Licence::class => [],
         ValidEcmtPermitsDataSource::class => [
             'mapper' => ValidEcmtPermitsMapper::class,
         ],
@@ -132,12 +134,13 @@ class DataSourceConfig
     ];
 
     const PERMIT_ECMT_UNPAID = [
+        PermitAppDataSource::class => [],
         UnpaidEcmtPermitsDataSource::class => [
-            'mapper' => ValidEcmtPermitsMapper::class
+            'mapper' => UnpaidEcmtPermitsMapper::class
         ],
         EcmtConstrainedCountriesDataSource::class => [
             'append' => [
-                ValidEcmtPermitsDataSource::DATA_KEY => EcmtConstrainedCountriesMapper::class
+                UnpaidEcmtPermitsDataSource::DATA_KEY => EcmtConstrainedCountriesMapper::class
             ]
         ],
     ];

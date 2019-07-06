@@ -631,13 +631,13 @@ return [
               'ecmt-valid-permits' => [
                 'type'    => 'segment',
                 'options' => [
-                    'route'    => '/:id/ecmt-valid-permits[/]',
+                    'route'    => '/ecmt-valid-permits/:licence[/]',
                     'defaults' => [
                         'controller'    => ValidPermitsController::class,
                         'action'        => 'valid',
                     ],
                     'constraints' => [
-                        'id' => '[0-9]+',
+                        'licence' => '[0-9]+',
                     ],
                 ],
                 'may_terminate' => false,
