@@ -393,7 +393,7 @@ class IrhpCheckAnswersTest extends TestCase
                         ],
                         [
                             'slug' => 'generic.slug.1',
-                            'question' => 'generic.question.1',
+                            'questionSummary' => 'generic.question.1',
                             'answer' => 'generic.answer.1',
                             'questionType' => 'generic.questionType.1',
                             'route' => IrhpApplicationSection::ROUTE_QUESTION,
@@ -403,7 +403,7 @@ class IrhpCheckAnswersTest extends TestCase
                         ],
                         [
                             'slug' => 'generic.slug.2',
-                            'question' => 'generic.question.2',
+                            'questionSummary' => 'generic.question.2',
                             'answer' => 'generic.answer.2',
                             'questionType' => 'generic.questionType.2',
                             'route' => IrhpApplicationSection::ROUTE_QUESTION,
@@ -539,7 +539,7 @@ class IrhpCheckAnswersTest extends TestCase
                         ],
                         [
                             'slug' => 'generic.slug.1',
-                            'question' => 'generic.question.1',
+                            'questionSummary' => 'generic.question.1',
                             'answer' => 'generic.answer.1',
                             'questionType' => 'generic.questionType.1',
                             'route' => IrhpApplicationSection::ROUTE_QUESTION,
@@ -549,7 +549,7 @@ class IrhpCheckAnswersTest extends TestCase
                         ],
                         [
                             'slug' => 'generic.slug.2',
-                            'question' => 'generic.question.2',
+                            'questionSummary' => 'generic.question.2',
                             'answer' => 'generic.answer.2',
                             'questionType' => 'generic.questionType.2',
                             'route' => IrhpApplicationSection::ROUTE_QUESTION,
@@ -759,7 +759,7 @@ class IrhpCheckAnswersTest extends TestCase
                 ],
                 [
                     'slug' => 'generic.slug.1',
-                    'question' => 'generic.question.1',
+                    'questionSummary' => 'generic.question.1',
                     'answer' => 'generic.answer.1',
                     'questionType' => 'generic.questionType.1',
                     'route' => IrhpApplicationSection::ROUTE_QUESTION,
@@ -776,7 +776,7 @@ class IrhpCheckAnswersTest extends TestCase
                 ],
                 [
                     'slug' => 'generic.slug.2',
-                    'question' => 'generic.question.2',
+                    'questionSummary' => 'generic.question.2',
                     'answer' => 'generic.answer.2',
                     'questionType' => 'generic.questionType.2',
                     'route' => IrhpApplicationSection::ROUTE_QUESTION,

@@ -177,7 +177,7 @@ class IrhpCheckAnswers
                     }
 
                     $extraAnswers[] = $this->answer(
-                        $answerData['question'],
+                        $answerData['questionSummary'],
                         $answerData['answer'],
                         Section::ROUTE_QUESTION,
                         $answerData['questionType'],
