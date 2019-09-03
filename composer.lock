@@ -1257,12 +1257,12 @@
         },
         {
             "name": "olcs/olcs-common",
-            "version": "4.206.40",
+            "version": "4.206.55",
             "dist": {
                 "type": "zip",
-                "url": "http://nexus.shd.ci.nonprod.dvsa.aws/repository/OLCS/olcs/olcs-common/4.206.40/olcs-olcs-common-4.206.40.zip",
-                "reference": "266450e7f903da874770f989178d21d503cba9d3",
-                "shasum": "266450e7f903da874770f989178d21d503cba9d3"
+                "url": "http://nexus.shd.ci.nonprod.dvsa.aws/repository/OLCS/olcs/olcs-common/4.206.55/olcs-olcs-common-4.206.55.zip",
+                "reference": "f4c4e51b97c15ff7f67b77da5e54e029ca62fe51",
+                "shasum": "f4c4e51b97c15ff7f67b77da5e54e029ca62fe51"
             },
             "require": {
                 "doctrine/annotations": "^1.2.3",
@@ -1328,7 +1328,7 @@
                 ]
             },
             "description": "Common library for the OLCS Project",
-            "time": "2019-07-27T08:15:37+00:00"
+            "time": "2019-09-03T09:56:30+00:00"
         },
         {
             "name": "olcs/olcs-logging",
@@ -1401,12 +1401,12 @@
         },
         {
             "name": "olcs/olcs-transfer",
-            "version": "4.206.25",
+            "version": "4.206.33",
             "dist": {
                 "type": "zip",
-                "url": "http://nexus.shd.ci.nonprod.dvsa.aws/repository/OLCS/olcs/olcs-transfer/4.206.25/olcs-olcs-transfer-4.206.25.zip",
-                "reference": "b8edfb259814b01843970f97ea140ecf7f52779e",
-                "shasum": "b8edfb259814b01843970f97ea140ecf7f52779e"
+                "url": "http://nexus.shd.ci.nonprod.dvsa.aws/repository/OLCS/olcs/olcs-transfer/4.206.33/olcs-olcs-transfer-4.206.33.zip",
+                "reference": "2f93b7084067ae6491812bdb83642647f674e9e9",
+                "shasum": "2f93b7084067ae6491812bdb83642647f674e9e9"
             },
             "require": {
                 "elendev/nexus-composer-push": "^0.1",
@@ -1462,7 +1462,7 @@
                 ]
             },
             "description": "OLCS Transfer",
-            "time": "2019-07-26T10:58:12+00:00"
+            "time": "2019-09-02T10:39:31+00:00"
         },
         {
             "name": "olcs/olcs-utils",
@@ -2331,8 +2331,8 @@
             "authors": [
                 {
                     "name": "Frank Kleine",
-                    "homepage": "http://frankkleine.de/",
-                    "role": "Developer"
+                    "role": "Developer",
+                    "homepage": "http://frankkleine.de/"
                 }
             ],
             "description": "Virtual file system to mock the real file system in unit tests.",
@@ -2610,18 +2610,18 @@
             "authors": [
                 {
                     "name": "Arne Blankerts",
-                    "email": "arne@blankerts.de",
-                    "role": "Developer"
+                    "role": "Developer",
+                    "email": "arne@blankerts.de"
                 },
                 {
                     "name": "Sebastian Heuer",
-                    "email": "sebastian@phpeople.de",
-                    "role": "Developer"
+                    "role": "Developer",
+                    "email": "sebastian@phpeople.de"
                 },
                 {
                     "name": "Sebastian Bergmann",
-                    "email": "sebastian@phpunit.de",
-                    "role": "Developer"
+                    "role": "Developer",
+                    "email": "sebastian@phpunit.de"
                 }
             ],
             "description": "Component for reading phar.io manifest information from a PHP Archive (PHAR)",
@@ -4168,8 +4168,8 @@
             "authors": [
                 {
                     "name": "Arne Blankerts",
-                    "email": "arne@blankerts.de",
-                    "role": "lead"
+                    "role": "lead",
+                    "email": "arne@blankerts.de"
                 }
             ],
             "description": "The classes contained within this repository extend the standard DOM to use exceptions at all occasions of errors instead of PHP warnings or notices. They also add various custom methods and shortcuts for convenience and to simplify the usage of DOM.",
@@ -4203,8 +4203,8 @@
             "authors": [
                 {
                     "name": "Arne Blankerts",
-                    "email": "arne@blankerts.de",
-                    "role": "Developer"
+                    "role": "Developer",
+                    "email": "arne@blankerts.de"
                 }
             ],
             "description": "A small library for converting tokenized PHP source code into XML and potentially other formats",
