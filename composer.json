@@ -25,7 +25,7 @@
         "olcs/olcs-auth": "~4.206.0",
         "olcs/olcs-logging": "~4.206.0",
         "elendev/nexus-composer-push": "^0.1",
-        "olcs/olcs-common": "~4.206.0"
+        "olcs/olcs-common": "~4.206.54"
     },
     "require-dev": {
         "olcs/olcs-devtools": "~4.206.0",
