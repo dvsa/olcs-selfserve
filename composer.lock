@@ -1257,12 +1257,12 @@
         },
         {
             "name": "olcs/olcs-common",
-            "version": "4.206.40",
+            "version": "4.206.61",
             "dist": {
                 "type": "zip",
-                "url": "http://nexus.shd.ci.nonprod.dvsa.aws/repository/OLCS/olcs/olcs-common/4.206.40/olcs-olcs-common-4.206.40.zip",
-                "reference": "266450e7f903da874770f989178d21d503cba9d3",
-                "shasum": "266450e7f903da874770f989178d21d503cba9d3"
+                "url": "http://nexus.shd.ci.nonprod.dvsa.aws/repository/OLCS/olcs/olcs-common/4.206.61/olcs-olcs-common-4.206.61.zip",
+                "reference": "77ceb907c5ff6d8311f0b22c49f36744381b94d5",
+                "shasum": "77ceb907c5ff6d8311f0b22c49f36744381b94d5"
             },
             "require": {
                 "doctrine/annotations": "^1.2.3",
@@ -1328,7 +1328,7 @@
                 ]
             },
             "description": "Common library for the OLCS Project",
-            "time": "2019-07-27T08:15:37+00:00"
+            "time": "2019-09-11T15:00:50+00:00"
         },
         {
             "name": "olcs/olcs-logging",
@@ -1401,12 +1401,12 @@
         },
         {
             "name": "olcs/olcs-transfer",
-            "version": "4.206.25",
+            "version": "4.206.35",
             "dist": {
                 "type": "zip",
-                "url": "http://nexus.shd.ci.nonprod.dvsa.aws/repository/OLCS/olcs/olcs-transfer/4.206.25/olcs-olcs-transfer-4.206.25.zip",
-                "reference": "b8edfb259814b01843970f97ea140ecf7f52779e",
-                "shasum": "b8edfb259814b01843970f97ea140ecf7f52779e"
+                "url": "http://nexus.shd.ci.nonprod.dvsa.aws/repository/OLCS/olcs/olcs-transfer/4.206.35/olcs-olcs-transfer-4.206.35.zip",
+                "reference": "6c510e53773e98317f4e2662bf67a43e3672f063",
+                "shasum": "6c510e53773e98317f4e2662bf67a43e3672f063"
             },
             "require": {
                 "elendev/nexus-composer-push": "^0.1",
@@ -1462,7 +1462,7 @@
                 ]
             },
             "description": "OLCS Transfer",
-            "time": "2019-07-26T10:58:12+00:00"
+            "time": "2019-09-10T10:58:48+00:00"
         },
         {
             "name": "olcs/olcs-utils",
@@ -2835,20 +2835,20 @@
             "authors": [
                 {
                     "name": "Manuel Pichler",
-                    "role": "Project Founder",
                     "email": "github@manuel-pichler.de",
-                    "homepage": "https://github.com/manuelpichler"
+                    "homepage": "https://github.com/manuelpichler",
+                    "role": "Project Founder"
                 },
                 {
                     "name": "Other contributors",
-                    "role": "Contributors",
-                    "homepage": "https://github.com/phpmd/phpmd/graphs/contributors"
+                    "homepage": "https://github.com/phpmd/phpmd/graphs/contributors",
+                    "role": "Contributors"
                 },
                 {
                     "name": "Marc Würth",
-                    "role": "Project Maintainer",
                     "email": "ravage@bluewin.ch",
-                    "homepage": "https://github.com/ravage84"
+                    "homepage": "https://github.com/ravage84",
+                    "role": "Project Maintainer"
                 }
             ],
             "description": "PHPMD is a spin-off project of PHP Depend and aims to be a PHP equivalent of the well known Java tool PMD.",
@@ -4168,8 +4168,8 @@
             "authors": [
                 {
                     "name": "Arne Blankerts",
-                    "email": "arne@blankerts.de",
-                    "role": "lead"
+                    "role": "lead",
+                    "email": "arne@blankerts.de"
                 }
             ],
             "description": "The classes contained within this repository extend the standard DOM to use exceptions at all occasions of errors instead of PHP warnings or notices. They also add various custom methods and shortcuts for convenience and to simplify the usage of DOM.",
@@ -4203,8 +4203,8 @@
             "authors": [
                 {
                     "name": "Arne Blankerts",
-                    "email": "arne@blankerts.de",
-                    "role": "Developer"
+                    "role": "Developer",
+                    "email": "arne@blankerts.de"
                 }
             ],
             "description": "A small library for converting tokenized PHP source code into XML and potentially other formats",
