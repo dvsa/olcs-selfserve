@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
     "content-hash": "3d2f4a182991fd9dcb90e6baac10c60a",
@@ -1269,12 +1269,12 @@
         },
         {
             "name": "olcs/olcs-common",
-            "version": "4.206.101",
+            "version": "4.206.102",
             "dist": {
                 "type": "zip",
-                "url": "http://nexus.shd.ci.nonprod.dvsa.aws/repository/OLCS/olcs/olcs-common/4.206.101/olcs-olcs-common-4.206.101.zip",
-                "reference": "cdb62a85d08bbd014cea53536b4b9c8da5be28ce",
-                "shasum": "cdb62a85d08bbd014cea53536b4b9c8da5be28ce"
+                "url": "http://nexus.shd.ci.nonprod.dvsa.aws/repository/OLCS/olcs/olcs-common/4.206.102/olcs-olcs-common-4.206.102.zip",
+                "reference": "d5ef31261009ff5d129788733a10bf1cc6caefca",
+                "shasum": "d5ef31261009ff5d129788733a10bf1cc6caefca"
             },
             "require": {
                 "doctrine/annotations": "^1.2.3",
@@ -1340,7 +1340,7 @@
                 ]
             },
             "description": "Common library for the OLCS Project",
-            "time": "2019-11-21T17:03:23+00:00"
+            "time": "2019-11-26T12:07:46+00:00"
         },
         {
             "name": "olcs/olcs-logging",
@@ -1413,12 +1413,12 @@
         },
         {
             "name": "olcs/olcs-transfer",
-            "version": "4.206.47",
+            "version": "4.206.48",
             "dist": {
                 "type": "zip",
-                "url": "http://nexus.shd.ci.nonprod.dvsa.aws/repository/OLCS/olcs/olcs-transfer/4.206.47/olcs-olcs-transfer-4.206.47.zip",
-                "reference": "6a5897f342ebc4edbcb8d8706141b0cb5a6c5a25",
-                "shasum": "6a5897f342ebc4edbcb8d8706141b0cb5a6c5a25"
+                "url": "http://nexus.shd.ci.nonprod.dvsa.aws/repository/OLCS/olcs/olcs-transfer/4.206.48/olcs-olcs-transfer-4.206.48.zip",
+                "reference": "297bd91905ffb82303e8af270b2eb93fb81fc8f5",
+                "shasum": "297bd91905ffb82303e8af270b2eb93fb81fc8f5"
             },
             "require": {
                 "elendev/nexus-composer-push": "^0.1",
@@ -1474,7 +1474,7 @@
                 ]
             },
             "description": "OLCS Transfer",
-            "time": "2019-11-20T12:05:56+00:00"
+            "time": "2019-11-26T12:09:12+00:00"
         },
         {
             "name": "olcs/olcs-utils",
