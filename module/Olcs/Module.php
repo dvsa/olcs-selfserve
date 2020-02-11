@@ -85,4 +85,9 @@ class Module
         $sessionManager->start();
         Container::setDefaultManager($sessionManager);
     }
+
+    public function cookieManagerHelper()
+    {
+
+    }
 }

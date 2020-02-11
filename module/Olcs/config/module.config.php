@@ -1347,7 +1347,8 @@ return array(
     'view_helpers' => array(
         'invokables' => array(
             'generatePeopleList' => \Olcs\View\Helper\GeneratePeopleList::class,
-            'tmCheckAnswersChangeLink' => \Olcs\View\Helper\TmCheckAnswersChangeLink::class
+            'tmCheckAnswersChangeLink' => \Olcs\View\Helper\TmCheckAnswersChangeLink::class,
+            'cookieManager' => \Olcs\View\Helper\CookieManager::class
         )
     ),
     'view_manager' => array(
