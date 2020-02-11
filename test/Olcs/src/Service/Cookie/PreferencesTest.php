@@ -40,30 +40,30 @@ class PreferencesTest extends MockeryTestCase
             [
                 'Preference analytics is not present',
                 [
-                    'settings' => true,
+                    Preferences::KEY_SETTINGS => true,
                     'key87' => 'foo'
                 ]
             ],
             [
                 'Preference settings is not present',
                 [
-                    'analytics' => true,
+                    Preferences::KEY_ANALYTICS => true,
                     'key99' => 'bar'
                 ]
             ],
             [
                 'Preference analytics is non-bool value',
                 [
-                    'analytics' => 'tree',
-                    'settings' => true,
+                    Preferences::KEY_ANALYTICS => 'tree',
+                    Preferences::KEY_SETTINGS => true,
                     'key87' => 'foo'
                 ]
             ],
             [
                 'Preference settings is non-bool value',
                 [
-                    'analytics' => true,
-                    'settings' => 'cat',
+                    Preferences::KEY_ANALYTICS => true,
+                    Preferences::KEY_SETTINGS => 'cat',
                     'key99' => 'bar'
                 ]
             ],
@@ -88,26 +88,26 @@ class PreferencesTest extends MockeryTestCase
         return [
             [
                 [
-                    'analytics' => true,
-                    'settings' => true,
+                    Preferences::KEY_ANALYTICS => true,
+                    Preferences::KEY_SETTINGS => true,
                 ]
             ],
             [
                 [
-                    'analytics' => true,
-                    'settings' => false,
+                    Preferences::KEY_ANALYTICS => true,
+                    Preferences::KEY_SETTINGS => false,
                 ]
             ],
             [
                 [
-                    'analytics' => false,
-                    'settings' => true,
+                    Preferences::KEY_ANALYTICS => false,
+                    Preferences::KEY_SETTINGS => true,
                 ]
             ],
             [
                 [
-                    'analytics' => false,
-                    'settings' => false,
+                    Preferences::KEY_ANALYTICS => false,
+                    Preferences::KEY_SETTINGS => false,
                 ]
             ],
         ];
