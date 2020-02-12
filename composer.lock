@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "7f448e98491afc1845f747e8d6bc2470",
+    "content-hash": "ad0d6e6a1d5b9abb14760d1b44dda4be",
     "packages": [
         {
             "name": "container-interop/container-interop",
@@ -1248,17 +1248,16 @@
         },
         {
             "name": "olcs/olcs-auth",
-            "version": "4.206.5",
-            "dist": {
-                "type": "zip",
-                "url": "http://nexus.shd.ci.nonprod.dvsa.aws/repository/OLCS/olcs/olcs-auth/4.206.5/olcs-olcs-auth-4.206.5.zip",
-                "reference": "230c2ecaf089d87d7ce04d16a4881cd4079dc931",
-                "shasum": "230c2ecaf089d87d7ce04d16a4881cd4079dc931"
+            "version": "dev-project/cookies",
+            "source": {
+                "type": "git",
+                "url": "git@repo.shd.ci.nonprod.dvsa.aws:olcs/olcs-auth.git",
+                "reference": "a58535b9f3874f2bd22c184f3f2833719b282732"
             },
             "require": {
                 "doctrine/annotations": "^1.2.3",
                 "elendev/nexus-composer-push": "^0.1",
-                "olcs/olcs-common": "~4.206.0",
+                "olcs/olcs-common": "dev-project/cookies",
                 "olcs/olcs-transfer": "~4.206.0",
                 "php": "^5.5 || ^7.0",
                 "zendframework/zend-console": "^2.5",
@@ -1320,16 +1319,15 @@
                 ]
             },
             "description": "OLCS Authentication",
-            "time": "2020-01-27T16:56:50+00:00"
+            "time": "2020-02-07T15:13:55+00:00"
         },
         {
             "name": "olcs/olcs-common",
-            "version": "4.206.142",
-            "dist": {
-                "type": "zip",
-                "url": "http://nexus.shd.ci.nonprod.dvsa.aws/repository/OLCS/olcs/olcs-common/4.206.142/olcs-olcs-common-4.206.142.zip",
-                "reference": "bc931ae1b8eebe4a7a711ea9d169e4d69a41bccb",
-                "shasum": "bc931ae1b8eebe4a7a711ea9d169e4d69a41bccb"
+            "version": "dev-project/cookies",
+            "source": {
+                "type": "git",
+                "url": "git@repo.shd.ci.nonprod.dvsa.aws:olcs/olcs-common.git",
+                "reference": "957dafb3deb79db80ec003c2599fa601284b656b"
             },
             "require": {
                 "doctrine/annotations": "^1.8",
@@ -1418,7 +1416,7 @@
                 ]
             },
             "description": "Common library for the OLCS Project",
-            "time": "2020-02-05T13:16:45+00:00"
+            "time": "2020-02-12T14:19:43+00:00"
         },
         {
             "name": "olcs/olcs-logging",
@@ -6248,7 +6246,10 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "olcs/olcs-auth": 20,
+        "olcs/olcs-common": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
