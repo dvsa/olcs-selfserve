@@ -1,15 +1,11 @@
 <?php
 
-
 namespace Olcs\View\Helper;
-
 
 use Zend\ServiceManager\ServiceLocatorAwareTrait;
 use Zend\View\Helper\HelperInterface;
 use Zend\View\Helper\AbstractHelper;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
-
-
 
 /**
  * Class CookieManagerHelper
