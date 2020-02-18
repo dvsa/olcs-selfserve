@@ -20,21 +20,32 @@ class CookieManagerTest extends MockeryTestCase
 
     public function testInvoke()
     {
-
+        $this->assertInstanceOf(CookieManager::class, $this->sut->__invoke());
     }
 
     public function testSetConfig(){
         /** @var \Zend\ServiceManager\ServiceManager | m\MockInterface $mockSl */
         $mockSl = m::mock(\Zend\ServiceManager\ServiceManager::class);
-        $mockSl->shouldReceive('getServiceLocator->get')->once()->with('Config')->andReturn(['cookie-manager' => 'TEST']);
+        $mockSl->shouldReceive('getServiceLocator->get')->once()->with('Config')->andReturn(['cookie-manager' => ['TEST']]);
         $this->sut->setServiceLocator($mockSl);
-        $this->assertEquals('"TEST"', $this->sut->__invoke()->setConfig());
+        $this->assertEquals('["TEST"]', $this->sut->__invoke()->setConfig());
     }
 
     public function testGetCallbackWhenConfigSet() {
         /** @var \Zend\ServiceManager\ServiceManager | m\MockInterface $mockSl */
         $mockSl = m::mock(\Zend\ServiceManager\ServiceManager::class);
-        $mockSl->shouldReceive('getServiceLocator->get')->once()->with('Config')->andReturn(['cookie-manager' => 'TEST']);
+        $callback = 'success';
+        $mockSl->shouldReceive('getServiceLocator->get')->once()->with('Config')->andReturn(['cookie-manager' => ['TEST','user-preference-saved-callback'=>$callback]]);
         $this->sut->setServiceLocator($mockSl);
+        $this->assertContains("var ". $callback, $this->sut->__invoke()->getCallBack());
+    }
+
+    public function testGetCallbackWhenConfigNotSet() {
+        /** @var \Zend\ServiceManager\ServiceManager | m\MockInterface $mockSl */
+        $mockSl = m::mock(\Zend\ServiceManager\ServiceManager::class);
+        $callback = 'success';
+        $mockSl->shouldReceive('getServiceLocator->get')->once()->with('Config')->andReturn(['cookie-manager' => ['TEST','user-preference-saved-callback'=>false]]);
+        $this->sut->setServiceLocator($mockSl);
+        $this->assertEmpty($this->sut->__invoke()->getCallBack());
     }
 }
