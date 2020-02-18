@@ -276,7 +276,9 @@
     </script>
     <?php endif;?>
     <script>
-        var cookieConfig = <?php echo $this->cookieManager();?>;
+        <?php echo $this->cookieManager()->getCallback();?>
+        var cookieConfig = <?php echo $this->cookieManager()->setConfig();?>;
+
     </script>
   </body>
 </html>

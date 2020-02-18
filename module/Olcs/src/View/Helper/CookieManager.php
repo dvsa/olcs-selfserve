@@ -18,12 +18,31 @@ class CookieManager extends AbstractHelper implements HelperInterface, ServiceLo
 
     public function __invoke()
     {
-        return $this->getConfig('cookie-manager');
+        return $this;
     }
 
-    private function getConfig(string $name)
+    /**
+     * @return string|null
+     */
+    public function getCallBack()
     {
-        $config =  $this->getServiceLocator()->getServiceLocator()->get('Config');
-        return json_encode($config[$name]);
+        $config = $this->getConfig();
+        if ($config['user-preference-saved-callback'] !== false) {
+            return "var success = function(){ var cookieNotice = document.querySelector('.gem-c-notice');
+            var main = document.getElementById('main');
+            cookieNotice.after(main);
+            }";
+        }
+    }
+
+    public function setConfig()
+    {
+        return json_encode($this->getConfig());
+    }
+
+    private function getConfig(): array
+    {
+        $config = $this->getServiceLocator()->getServiceLocator()->get('Config');
+        return $config['cookie-manager'];
     }
 }

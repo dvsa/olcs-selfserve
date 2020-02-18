@@ -20,10 +20,21 @@ class CookieManagerTest extends MockeryTestCase
 
     public function testInvoke()
     {
+
+    }
+
+    public function testSetConfig(){
         /** @var \Zend\ServiceManager\ServiceManager | m\MockInterface $mockSl */
         $mockSl = m::mock(\Zend\ServiceManager\ServiceManager::class);
         $mockSl->shouldReceive('getServiceLocator->get')->once()->with('Config')->andReturn(['cookie-manager' => 'TEST']);
         $this->sut->setServiceLocator($mockSl);
-        $this->assertEquals('"TEST"', $this->sut->__invoke());
+        $this->assertEquals('"TEST"', $this->sut->__invoke()->setConfig());
+    }
+
+    public function testGetCallbackWhenConfigSet() {
+        /** @var \Zend\ServiceManager\ServiceManager | m\MockInterface $mockSl */
+        $mockSl = m::mock(\Zend\ServiceManager\ServiceManager::class);
+        $mockSl->shouldReceive('getServiceLocator->get')->once()->with('Config')->andReturn(['cookie-manager' => 'TEST']);
+        $this->sut->setServiceLocator($mockSl);
     }
 }
