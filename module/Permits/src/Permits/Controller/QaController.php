@@ -8,6 +8,7 @@ use Dvsa\Olcs\Transfer\Command\IrhpApplication\SubmitApplicationStep;
 use Dvsa\Olcs\Transfer\Query\IrhpApplication\ApplicationStep;
 use Olcs\Service\Qa\FormProvider;
 use Olcs\Service\Qa\TemplateVarsGenerator;
+use Olcs\Service\Qa\ViewGeneratorProvider;
 use Permits\View\Helper\EcmtSection;
 use Permits\View\Helper\IrhpApplicationSection;
 use Zend\View\Model\ViewModel;
@@ -25,22 +26,29 @@ class QaController extends AbstractOlcsController
     /** @var TranslationHelperService */
     private $translationHelperService;
 
+    /** @var ViewGeneratorProvider */
+    private $viewGeneratorProvider;
+
     /**
      * Create service instance
      *
      * @param FormProvider $formProvider
      * @param TemplateVarsGenerator $templateVarsGenerator
+     * @param TranslationHelperService $translationHelperService
+     * @param ViewGeneratorProvider $viewGeneratorProvider
      *
      * @return QaController
      */
     public function __construct(
         FormProvider $formProvider,
         TemplateVarsGenerator $templateVarsGenerator,
-        TranslationHelperService $translationHelperService
+        TranslationHelperService $translationHelperService,
+        ViewGeneratorProvider $viewGeneratorProvider
     ) {
         $this->formProvider = $formProvider;
         $this->templateVarsGenerator = $templateVarsGenerator;
         $this->translationHelperService = $translationHelperService;
+        $this->viewGeneratorProvider = $viewGeneratorProvider;
     }
 
     /**
@@ -50,14 +58,18 @@ class QaController extends AbstractOlcsController
      */
     public function indexAction()
     {
+        $routeName = $this->event->getRouteMatch()->getMatchedRouteName();
+        $viewGenerator = $this->viewGeneratorProvider->getByRouteName($routeName);
+
         $routeParams = $this->params()->fromRoute();
 
-        $query = ApplicationStep::create(
-            [
-                'id' => $routeParams['id'],
-                'slug' => $routeParams['slug'],
-            ]
-        );
+        $applicationStepParams = [
+            'id' => $routeParams['id'],
+            'irhpPermitApplication' => $routeParams['irhpPermitApplicationId'],
+            'slug' => $routeParams['slug'],
+        ];
+
+        $query = ApplicationStep::create($applicationStepParams);
 
         $response = $this->handleQuery($query);
         if (!$response->isOk()) {
@@ -65,6 +77,7 @@ class QaController extends AbstractOlcsController
         }
 
         $result = $response->getResult();
+
         $form = $this->formProvider->get($result['applicationStep']);
         $showErrorInBrowserTitle = false;
 
@@ -76,14 +89,12 @@ class QaController extends AbstractOlcsController
                 $formData = $form->getData();
                 $commandData = ['qa' => $formData['qa']];
 
-                $command = SubmitApplicationStep::create(
-                    [
-                        'id' => $routeParams['id'],
-                        'slug' => $routeParams['slug'],
-                        'postData' => $commandData
-                    ]
+                $submitApplicationStepParams = array_merge(
+                    $applicationStepParams,
+                    ['postData' => $commandData]
                 );
 
+                $command = SubmitApplicationStep::create($submitApplicationStepParams);
                 $this->handleCommand($command);
 
                 if (isset($postParams['Submit']['SaveAndReturnButton'])) {
@@ -96,11 +107,11 @@ class QaController extends AbstractOlcsController
                 }
 
                 return $this->redirect()->toRoute(
-                    $this->event->getRouteMatch()->getMatchedRouteName(),
-                    [
-                        'id' => $routeParams['id'],
-                        'slug' => $result['nextStepSlug'],
-                    ]
+                    $routeName,
+                    array_merge(
+                        $routeParams,
+                        ['slug' => $result['nextStepSlug']]
+                    )
                 );
             }
 
@@ -118,13 +129,7 @@ class QaController extends AbstractOlcsController
 
         $templateVars = array_merge(
             $this->templateVarsGenerator->generate($result['questionText']),
-            [
-                'backUri' => IrhpApplicationSection::ROUTE_APPLICATION_OVERVIEW,
-                'cancelUrl' => EcmtSection::ROUTE_PERMITS,
-                'application' => [
-                    'applicationRef' => $result['applicationReference']
-                ],
-            ]
+            $viewGenerator->getAdditionalViewVariables($result)
         );
 
         $pageTitle = $this->translationHelperService->translate($result['title']);
@@ -140,7 +145,9 @@ class QaController extends AbstractOlcsController
         $view->setVariable('data', $templateVars);
         $view->setVariable('form', $form);
 
-        $view->setTemplate('permits/single-question');
+        $view->setTemplate(
+            $viewGenerator->getTemplateName()
+        );
 
         return $view;
     }
