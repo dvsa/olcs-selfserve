@@ -10,6 +10,14 @@
             "type": "composer"
         },
         {
+            "url": "git@repo.olcs.dev-dvsacloud.uk:olcs/olcs-common.git",
+            "type": "vcs"
+        },
+        {
+            "url": "git@repo.olcs.dev-dvsacloud.uk:olcs/olcs-auth.git",
+            "type": "vcs"
+        },
+        {
             "url": "http://nexus.shd.ci.nonprod.dvsa.aws/repository/Packagist-Proxy",
             "type": "composer"
         }
@@ -39,10 +47,10 @@
         "zf-commons/zfc-rbac": "~2.5.0",
         "olcs/olcs-transfer": "~4.206.0",
         "olcs/olcs-utils": "~4.206.0",
-        "olcs/olcs-auth": "~4.206.0",
+        "olcs/olcs-auth": "dev-olcs-11055",
         "olcs/olcs-logging": "~4.206.0",
         "elendev/nexus-composer-push": "^0.1",
-        "olcs/olcs-common": "~4.206.0"
+        "olcs/olcs-common": "dev-olcs-11055"
     },
     "require-dev": {
         "olcs/olcs-devtools": "~4.206.0",
