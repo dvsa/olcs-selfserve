@@ -80,15 +80,11 @@ class IrhpPermitAppCheckAnswersController extends AbstractSelfserveController im
 
     public function retrieveData()
     {
-\Olcs\Logging\Log\Logger::debug('PF - retrieveData');
-
         parent::retrieveData();
-\Olcs\Logging\Log\Logger::debug('PF - data: ', $this->data);
 
         $irhpApplicationId = $this->data[IrhpAppDataSource::DATA_KEY]['id'];
 
-\Olcs\Logging\Log\Logger::debug('PF - params from route: ', $this->params()->fromRoute());
-        $irhpPermitApplicationId = $this->params()->fromRoute('irhpPermitApplication');
+        $irhpPermitApplicationId = $this->data['routeParams']['irhpPermitApplication'];
 
         $languagePreference = $this->getServiceLocator()
             ->get('LanguagePreference')
@@ -103,9 +99,10 @@ class IrhpPermitAppCheckAnswersController extends AbstractSelfserveController im
         ];
 \Olcs\Logging\Log\Logger::debug('PF - answersSummaryParams: ', $answersSummaryParams);
 
-        $response = $this->handleQuery(
-            AnswersSummary::create($answersSummaryParams)
-        );
+        $query = AnswersSummary::create($answersSummaryParams);
+\Olcs\Logging\Log\Logger::debug('PF - query: ', $query->getArrayCopy());
+
+        $response = $this->handleQuery($query);
 
         $result = $response->getResult();
 \Olcs\Logging\Log\Logger::debug('PF - result: ', $result);
