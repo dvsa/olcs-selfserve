@@ -84,7 +84,7 @@ class IrhpPermitAppCheckAnswersController extends AbstractSelfserveController im
 
         $irhpApplicationId = $this->data[IrhpAppDataSource::DATA_KEY]['id'];
 
-        $irhpPermitApplicationId = $this->data['routeParams']['irhpPermitApplication'];
+        $irhpPermitApplicationId = $this->params()->fromRoute('irhpPermitApplication');
 
         $languagePreference = $this->getServiceLocator()
             ->get('LanguagePreference')
