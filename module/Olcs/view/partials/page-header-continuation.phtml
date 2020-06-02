@@ -12,15 +12,15 @@
 
     <div class="page-header__wrapper">
         <?php if (isset($this->stepHeader)) : ?>
-            <h3 class="page-header__subtitle"><?php echo $this->stepHeader; ?></h3>
+            <span class="page-header__subtitle"><?php echo $this->stepHeader; ?></span>
         <?php endif; ?>
         <h1 class="js-title no-margin">
             <?php echo $this->escapeHtml($this->pageTitle); ?>
         </h1>
         <?php if ($this->pageSubTitle !== '') : ?>
-            <h3 class="page-header__subtitle">
+            <span class="page-header__subtitle">
                 <?php echo $this->escapeHtml($this->pageSubTitle); ?>
-            </h3>
+            </span>
         <?php endif; ?>
     </div>
 </div><!-- page-header-->

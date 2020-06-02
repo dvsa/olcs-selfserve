@@ -15,14 +15,14 @@
     <div class="page-header__wrapper two-thirds">
 
       <?php if (!empty($this->pageSubTitleUrl)) : ?>
-          <h3 class="page-header__subtitle">
+          <span class="page-header__subtitle">
               <a href="<?php echo $this->pageSubTitleUrl['url'] ?>"><?php
                   echo $this->escapeHtml($this->translate($this->pageSubTitleUrl['label'])); ?></a>
-          </h3>
+          </span>
       <?php endif; ?>
 
       <?php if (isset($this->pageSubTitle) && $this->pageSubTitle != '') : ?>
-          <h3 class="page-header__subtitle"><?php echo $this->escapeHtml($this->pageSubTitle); ?></h3>
+          <span class="page-header__subtitle"><?php echo $this->escapeHtml($this->pageSubTitle); ?></span>
       <?php endif; ?>
 
       <h1><?php
