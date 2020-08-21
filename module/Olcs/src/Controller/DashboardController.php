@@ -8,6 +8,7 @@
 
 namespace Olcs\Controller;
 
+use Dvsa\Olcs\Transfer\Query\DvlaSearch\Vehicle;
 use Olcs\View\Model\Dashboard;
 use Common\Controller\Lva\AbstractController;
 use Common\RefData;
@@ -32,6 +33,37 @@ class DashboardController extends AbstractController
      */
     public function indexAction()
     {
+        $result = $this->handleQuery(
+            Vehicle::create([
+                'vrn' => 'BP15UGR'
+            ])
+        );
+
+        if (!$result->isOk()) {
+            var_dump(
+                "You broke it :(",
+                $result
+            );
+            die();
+        }
+
+        $result = $result->getResult();
+        if ($result['count'] === 0) {
+            var_dump(
+                "It worked... But we got no vehicle :/",
+                $result
+            );
+            die();
+        }
+
+        // Looking good from here...
+        var_dump(
+            "OMG! It works! And we even have a vehicle!",
+            $result
+        );
+
+        die();
+
         if ($this->isGranted(RefData::PERMISSION_SELFSERVE_TM_DASHBOARD) &&
             !$this->isGranted(RefData::PERMISSION_SELFSERVE_LVA)) {
             $view = $this->transportManagerDashboardView();
