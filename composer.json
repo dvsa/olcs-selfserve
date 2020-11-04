@@ -12,6 +12,14 @@
         {
             "url": "http://nexus.olcs.dev-dvsacloud.uk/repository/Packagist-Proxy",
             "type": "composer"
+        },
+        {
+            "type": "vcs",
+            "url": "git@repo.olcs.dev-dvsacloud.uk:olcs/olcs-common.git"
+        },
+        {
+            "type": "vcs",
+            "url": "git@repo.olcs.dev-dvsacloud.uk:olcs/olcs-auth.git"
         }
     ],
     "require": {
@@ -37,10 +45,10 @@
         "zf-commons/zfc-rbac": "~2.5.0",
         "olcs/olcs-transfer": "~4.206.0",
         "olcs/olcs-utils": "~4.206.0",
-        "olcs/olcs-auth": "~4.206.0",
+        "olcs/olcs-auth": "dev-TEST-OLCS-23493",
         "olcs/olcs-logging": "~4.206.0",
         "elendev/nexus-composer-push": "^0.1",
-        "olcs/olcs-common": "~4.206.0"
+        "olcs/olcs-common": "dev-feature/OLCS-23493-uk-licence-for-the-community"
     },
     "require-dev": {
         "olcs/olcs-devtools": "~4.206.0",
