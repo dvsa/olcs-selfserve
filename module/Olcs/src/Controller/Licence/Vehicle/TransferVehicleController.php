@@ -151,7 +151,15 @@ class TransferVehicleController extends AbstractVehicleController
         }
         $selectFormElement = $form->get('formActions')->get(VehicleTransferFormActions::LICENCE_FIELD);
         $selectFormElement->setValueOptions($otherActiveLicenceOptions);
-        if (count($otherActiveLicenceOptions) > 1) {
+        if (count($otherActiveLicenceOptions) === 1) {
+            $otherActiveLicenceOption = array_values($otherActiveLicenceOptions)[0];
+            $selectFormElementClass = $selectFormElement->getAttribute('class');
+            $selectFormElement->setAttribute('class', sprintf('%s govuk-!-display-none', $selectFormElementClass));
+            $selectFormElement->setLabel($this->translator->translateReplace(
+                "licence.vehicle.transfer.select.licence.label.single",
+                [$otherActiveLicenceOption]
+            ));
+        } else {
             $selectFormElement->setEmptyOption("licence.vehicle.transfer.select.licence.empty-option");
         }
     }
