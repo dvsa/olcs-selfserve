@@ -5,6 +5,7 @@ namespace Olcs\Controller\Licence\Vehicle;
 
 use Common\Form\Form;
 use Dvsa\Olcs\Transfer\Query\Licence\OtherActiveLicences;
+use Olcs\DTO\Licence\OtherActiveLicenceListDTO;
 use Olcs\Form\Model\Form\Vehicle\Fieldset\VehicleTransferFormActions;
 use Olcs\Form\Model\Form\Vehicle\ListVehicleSearch;
 use Olcs\Form\Model\Form\Vehicle\VehicleTransferForm;
@@ -146,19 +147,25 @@ class TransferVehicleController extends AbstractVehicleController
     protected function setFormLicenceOptions(Form $form, int $licenceId)
     {
         $otherActiveLicenceOptions = $this->getOtherActiveLicenceOptions($licenceId);
-        if (count($otherActiveLicenceOptions) < 1) {
+        $otherActiveLicences = $otherActiveLicenceOptions->getOtherLicences();
+        if (count($otherActiveLicences) < 1) {
             throw new NoOtherLicencesFoundException();
         }
         $selectFormElement = $form->get('formActions')->get(VehicleTransferFormActions::LICENCE_FIELD);
-        $selectFormElement->setValueOptions($otherActiveLicenceOptions);
-        if (count($otherActiveLicenceOptions) === 1) {
-            $otherActiveLicenceOption = array_values($otherActiveLicenceOptions)[0];
+        $valueOptions = [];
+        foreach ($otherActiveLicences as $otherActiveLicence) {
+            $valueOptions[$otherActiveLicence->getId()] = $otherActiveLicence->getLicenceNumber();
+        }
+        $selectFormElement->setValueOptions($valueOptions);
+        if (count($otherActiveLicences) === 1) {
+            $otherActiveLicence = array_values($otherActiveLicences)[0];
             $selectFormElementClass = $selectFormElement->getAttribute('class');
             $selectFormElement->setAttribute('class', sprintf('%s govuk-!-display-none', $selectFormElementClass));
             $selectFormElement->setLabel($this->translator->translateReplace(
                 "licence.vehicle.transfer.select.licence.label.single",
-                [$otherActiveLicenceOption]
+                [$otherActiveLicence->getLicenceNumber()]
             ));
+            $selectFormElement->setValue($otherActiveLicence->getId());
         } else {
             $selectFormElement->setEmptyOption("licence.vehicle.transfer.select.licence.empty-option");
         }
@@ -168,18 +175,13 @@ class TransferVehicleController extends AbstractVehicleController
      * Gets options for all other active licences given a licence id.
      *
      * @param int $licenceId
-     * @return array<int,string>
+     * @return OtherActiveLicenceListDTO
      */
-    protected function getOtherActiveLicenceOptions(int $licenceId)
+    protected function getOtherActiveLicenceOptions(int $licenceId): OtherActiveLicenceListDTO
     {
-        $response = $this->handleQuery(OtherActiveLicences::create(['id' => $licenceId]));
-        $otherActiveLicenceOptions = [];
-        $result = $response->getResult();
-        $otherActiveLicences = $result['otherActiveLicences'] ?? [];
-        foreach ($otherActiveLicences as $otherActiveLicence) {
-            $otherActiveLicenceOptions[$otherActiveLicence['id']] = $otherActiveLicence['licNo'];
-        }
-        return $otherActiveLicenceOptions;
+        $query = OtherActiveLicences::create(['id' => $licenceId]);
+        $response = $this->handleQuery($query);
+        return new OtherActiveLicenceListDTO($response->getResult());
     }
 
     protected function alterSearchForm()
