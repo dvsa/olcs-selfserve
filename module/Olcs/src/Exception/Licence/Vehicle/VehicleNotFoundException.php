@@ -6,6 +6,8 @@ use Exception;
 
 class VehicleNotFoundException extends Exception
 {
+    // @todo constructor should take DTOs
+
     /**
      * Creates a new exception where one or more vehicles were not found from a given set of ids.
      *

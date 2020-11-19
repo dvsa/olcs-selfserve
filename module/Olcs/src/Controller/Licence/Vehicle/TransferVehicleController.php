@@ -5,12 +5,12 @@ namespace Olcs\Controller\Licence\Vehicle;
 
 use Common\Form\Form;
 use Dvsa\Olcs\Transfer\Query\Licence\OtherActiveLicences;
-use Olcs\DTO\Licence\OtherActiveLicenceListDTO;
+use Olcs\DTO\Licence\OtherActiveLicenceList\OtherActiveLicenceListDTO;
 use Olcs\Form\Model\Form\Vehicle\Fieldset\VehicleTransferFormActions;
 use Olcs\Form\Model\Form\Vehicle\ListVehicleSearch;
 use Olcs\Form\Model\Form\Vehicle\VehicleTransferForm;
 use Zend\View\Model\ViewModel;
-use Olcs\Exception\Licence\Vehicle\NoOtherLicencesFoundException;
+use Olcs\Exception\Licence\NoOtherLicencesFoundException;
 
 class TransferVehicleController extends AbstractVehicleController
 {

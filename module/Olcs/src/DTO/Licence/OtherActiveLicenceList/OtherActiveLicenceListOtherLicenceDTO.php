@@ -1,11 +1,11 @@
 <?php
 
 
-namespace Olcs\DTO\Licence;
+namespace Olcs\DTO\Licence\OtherActiveLicenceList;
 
 use Olcs\DTO\DataTransferObject;
 
-class OtherActiveLicenceListLicenceDTO extends DataTransferObject
+class OtherActiveLicenceListOtherLicenceDTO extends DataTransferObject
 {
     protected const ATTRIBUTE_ID = 'id';
     protected const ATTRIBUTE_LICENCE_NUMBER = 'licNo';
