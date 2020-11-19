@@ -15,9 +15,10 @@ class LicenceDTO extends DataTransferObject
      *
      * @return int
      */
-    public function getId(): int
+    public function getId(): ?int
     {
-        return (int) $this->data[static::ATTRIBUTE_ID];
+        $id = $this->data[static::ATTRIBUTE_ID] ?? null;
+        return null === $id ? null : (int) $id;
     }
 
     /**
@@ -25,9 +26,10 @@ class LicenceDTO extends DataTransferObject
      *
      * @return string
      */
-    public function getLicenceNumber(): string
+    public function getLicenceNumber(): ?string
     {
-        return (string) $this->data[static::ATTRIBUTE_LICENCE_NUMBER];
+        $id = $this->data[static::ATTRIBUTE_LICENCE_NUMBER] ?? null;
+        return null === $id ? null : (string) $id;
     }
 
     /**
