@@ -23,11 +23,11 @@ class LicenceDTO extends DataTransferObject
     /**
      * Gets the licence number for a licence.
      *
-     * @return string|null
+     * @return string
      */
-    public function getLicenceNumber(): ?string
+    public function getLicenceNumber(): string
     {
-        return $this->data[static::ATTRIBUTE_LICENCE_NUMBER];
+        return (string) $this->data[static::ATTRIBUTE_LICENCE_NUMBER];
     }
 
     /**
