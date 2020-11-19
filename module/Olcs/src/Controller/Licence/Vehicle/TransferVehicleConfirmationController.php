@@ -165,7 +165,8 @@ class TransferVehicleConfirmationController extends AbstractVehicleController
     protected function flashIfLicenceHasNoVehicles(int $licenceId)
     {
         $licence = $this->getLicenceById($licenceId);
-        if ($licence->getActiveVehicleCount() < 1) {
+        $activeVehicleCount = $licence->getActiveVehicleCount();
+        if (null !== $activeVehicleCount && $activeVehicleCount < 1) {
             $message = $this->translator->translate('licence.vehicle.transfer.confirm.success.last-vehicle-transferred');
             $this->hlpFlashMsgr->addSuccessMessage($message);
         }
