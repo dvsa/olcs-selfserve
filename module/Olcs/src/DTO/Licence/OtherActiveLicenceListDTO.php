@@ -1,11 +1,8 @@
 <?php
 
-namespace Olcs\DTO\Licence\OtherActiveLicenceList;
+namespace Olcs\DTO\Licence;
 
 use Olcs\DTO\DataTransferObject;
-use Olcs\DTO\Licence\LicenceDTO;
-use Olcs\DTO\Licence\OtherActiveLicenceList\OtherActiveLicenceListLicenceDTO;
-use Olcs\DTO\Licence\OtherActiveLicenceList\OtherActiveLicenceListOtherLicenceDTO;
 
 class OtherActiveLicenceListDTO extends DataTransferObject
 {
