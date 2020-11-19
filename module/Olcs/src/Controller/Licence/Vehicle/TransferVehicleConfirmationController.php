@@ -10,7 +10,7 @@ use Dvsa\Olcs\Transfer\Query\Licence\Licence;
 use Dvsa\Olcs\Transfer\Query\LicenceVehicle\LicenceVehiclesById;
 use Olcs\DTO\Licence\LicenceDTO;
 use Olcs\DTO\Licence\Vehicle\LicenceVehicleDTO;
-use Olcs\Exception\Licence\LicenceNotFoundException;
+use Olcs\Exception\Licence\LicenceNotFoundWithIdException;
 use Olcs\Exception\Licence\LicenceVehicleLimitReachedException;
 use Olcs\Exception\Licence\Vehicle\LicenceAlreadyAssignedVehicleException;
 use Olcs\Form\Model\Form\Vehicle\Fieldset\YesNo;
@@ -21,8 +21,8 @@ use Zend\View\Model\ViewModel;
 use Zend\Http\Response;
 use Exception;
 use Olcs\Exception\Licence\Vehicle\DestinationLicenceNotSetException;
-use Olcs\Exception\Licence\Vehicle\DestinationLicenceNotFoundException;
-use Olcs\Exception\Licence\Vehicle\VehicleNotFoundException;
+use Olcs\Exception\Licence\Vehicle\DestinationLicenceNotFoundWithIdException;
+use Olcs\Exception\Licence\Vehicle\VehiclesNotFoundWithIdsException;
 
 class TransferVehicleConfirmationController extends AbstractVehicleController
 {
@@ -48,13 +48,13 @@ class TransferVehicleConfirmationController extends AbstractVehicleController
             return parent::onDispatch($e);
         } catch (VehicleSelectionEmptyException $exception) {
             $this->hlpFlashMsgr->addErrorMessage('licence.vehicle.transfer.confirm.error.no-vehicles');
-        } catch (VehicleNotFoundException $exception) {
+        } catch (VehiclesNotFoundWithIdsException $exception) {
             $this->hlpFlashMsgr->addErrorMessage('licence.vehicle.transfer.confirm.error.invalid-vehicles');
         } catch (DestinationLicenceNotSetException $exception) {
             $this->hlpFlashMsgr->addErrorMessage('licence.vehicle.transfer.confirm.error.no-destination-licence');
-        } catch (DestinationLicenceNotFoundException $exception) {
+        } catch (DestinationLicenceNotFoundWithIdException $exception) {
             $this->hlpFlashMsgr->addErrorMessage('licence.vehicle.transfer.confirm.error.invalid-destination');
-        } catch (LicenceNotFoundException $exception) {
+        } catch (LicenceNotFoundWithIdException $exception) {
             $this->hlpFlashMsgr->addErrorMessage('licence.vehicle.transfer.confirm.error.invalid-licence');
         } catch (LicenceVehicleLimitReachedException $exception) {
             $this->hlpFlashMsgr->addErrorMessage($this->translator->translateReplace(
@@ -89,16 +89,15 @@ class TransferVehicleConfirmationController extends AbstractVehicleController
      * Handles a request from a user to view the confirmation page for transferring one or more vehicles to a license.
      *
      * @return ViewModel
-     * @throws DestinationLicenceNotFoundException
+     * @throws DestinationLicenceNotFoundWithIdException
      * @throws DestinationLicenceNotSetException
-     * @throws LicenceNotFoundException
-     * @throws VehicleNotFoundException
+     * @throws LicenceNotFoundWithIdException
+     * @throws VehiclesNotFoundWithIdsException
      * @throws VehicleSelectionEmptyException
      */
     public function indexAction()
     {
-        $destinationLicenceId = $this->resolveDestinationLicenceIdFromSession();
-        $destinationLicence = $this->getLicenceById($destinationLicenceId);
+        $destinationLicence = $this->resolveDestinationLicence();
         $destinationLicenceNumber = $destinationLicence->getLicenceNumber();
         $licenceVehicles = $this->getLicenceVehiclesByVehicleId($this->resolveVehicleIdsFromSession());
         $viewData = [
@@ -106,7 +105,7 @@ class TransferVehicleConfirmationController extends AbstractVehicleController
             'form' => $this->form,
             'backLink' => $this->getLink(static::ROUTE_TRANSFER_INDEX),
             'bottomContent' => $this->getChooseDifferentActionMarkup(),
-            'destinationLicenceId' => $destinationLicenceId,
+            'destinationLicenceId' => $destinationLicence->getId(),
             'vrmList' => array_map(function (LicenceVehicleDTO  $licenceVehicle) {
                 return $licenceVehicle->getVehicle()->getVrm();
             }, $licenceVehicles),
@@ -131,8 +130,7 @@ class TransferVehicleConfirmationController extends AbstractVehicleController
     public function postAction()
     {
         $vehicleIds = $this->resolveVehicleIdsFromSession();
-        $destinationLicenceId = $this->resolveDestinationLicenceIdFromSession();
-        $destinationLicence = $this->getLicenceById($destinationLicenceId);
+        $destinationLicence = $this->resolveDestinationLicence();
         $formData = (array) $this->getRequest()->getPost();
         $this->form->setData($formData);
         if (! $this->form->isValid()) {
@@ -258,16 +256,22 @@ class TransferVehicleConfirmationController extends AbstractVehicleController
     /**
      * Resolves the id of the requested destination licence for any vehicles that are to be transferred.
      *
-     * @return int
+     * @return LicenceDTO
+     * @throws DestinationLicenceNotFoundWithIdException
      * @throws DestinationLicenceNotSetException
      */
-    protected function resolveDestinationLicenceIdFromSession()
+    protected function resolveDestinationLicence(): LicenceDTO
     {
         $destinationLicenceId = $this->session->getDestinationLicenceId();
         if (null === $destinationLicenceId) {
             throw new DestinationLicenceNotSetException();
         }
-        return $destinationLicenceId;
+        try {
+            $destinationLicence = $this->getLicenceById($destinationLicenceId);
+        } catch (LicenceNotFoundWithIdException $exception) {
+            throw new DestinationLicenceNotFoundWithIdException($destinationLicenceId);
+        }
+        return $destinationLicence;
     }
 
     /**
@@ -275,8 +279,7 @@ class TransferVehicleConfirmationController extends AbstractVehicleController
      *
      * @param int $licenceId
      * @return LicenceDTO
-     * @throws DestinationLicenceNotFoundException
-     * @throws LicenceNotFoundException
+     * @throws LicenceNotFoundWithIdException
      */
     protected function getLicenceById(int $licenceId): LicenceDTO
     {
@@ -284,19 +287,15 @@ class TransferVehicleConfirmationController extends AbstractVehicleController
         try {
             $queryResult = $this->handleQuery($query);
         } catch (NotFoundException|AccessDeniedException $exception) {
-            throw LicenceNotFoundException::withId($licenceId);
+            throw new LicenceNotFoundWithIdException($licenceId);
         }
-        $licence = new LicenceDTO($queryResult->getResult());
-        if ($licence === null) {
-            throw new DestinationLicenceNotFoundException();
-        }
-        return $licence;
+        return new LicenceDTO($queryResult->getResult());
     }
 
     /**
      * @param array<int> $vehicleIds
      * @return array<LicenceVehicleDTO>
-     * @throws VehicleNotFoundException
+     * @throws VehiclesNotFoundWithIdsException
      */
     protected function getLicenceVehiclesByVehicleId(array $vehicleIds): array
     {
@@ -307,7 +306,7 @@ class TransferVehicleConfirmationController extends AbstractVehicleController
         try {
             $queryResult = $this->handleQuery($query);
         } catch (NotFoundException|AccessDeniedException $exception) {
-            throw VehicleNotFoundException::withIds($vehicleIds);
+            throw new VehiclesNotFoundWithIdsException($vehicleIds);
         }
         $licenceVehicles = $queryResult->getResult()['results'] ?? [];
         return array_map(function ($licenceVehicle) {
