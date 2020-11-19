@@ -181,7 +181,8 @@ class TransferVehicleController extends AbstractVehicleController
     {
         $query = OtherActiveLicences::create(['id' => $licenceId]);
         $response = $this->handleQuery($query);
-        return new OtherActiveLicenceListDTO($response->getResult());
+        $result = $response->getResult();
+        return new OtherActiveLicenceListDTO(is_array($result) ? $result : []);
     }
 
     protected function alterSearchForm()
