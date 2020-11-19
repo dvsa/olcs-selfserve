@@ -13,7 +13,7 @@ class LicenceDTO extends DataTransferObject
     /**
      * Gets the id of a licence.
      *
-     * @return int
+     * @return int|null
      */
     public function getId(): ?int
     {
@@ -24,7 +24,7 @@ class LicenceDTO extends DataTransferObject
     /**
      * Gets the licence number for a licence.
      *
-     * @return string
+     * @return string|null
      */
     public function getLicenceNumber(): ?string
     {
