@@ -11,6 +11,7 @@ use Olcs\Form\Model\Form\Vehicle\ListVehicleSearch;
 use Olcs\Form\Model\Form\Vehicle\VehicleTransferForm;
 use Zend\View\Model\ViewModel;
 use Olcs\Exception\Licence\NoOtherLicencesFoundException;
+use Zend\Http\Response;
 
 class TransferVehicleController extends AbstractVehicleController
 {
@@ -35,7 +36,7 @@ class TransferVehicleController extends AbstractVehicleController
     /**
      * Handles a request from a user to show the transfer vehicles page.
      *
-     * @return \Zend\Http\Response|ViewModel
+     * @return Response|ViewModel
      */
     public function indexAction()
     {
@@ -69,7 +70,7 @@ class TransferVehicleController extends AbstractVehicleController
     /**
      * Handles a request from a user to transfer one or more vehicles to a given licence.
      *
-     * @return \Zend\Http\Response|ViewModel
+     * @return Response|ViewModel
      */
     public function postAction()
     {
@@ -105,9 +106,6 @@ class TransferVehicleController extends AbstractVehicleController
         return $this->nextStep('licence/vehicle/transfer/confirm/GET');
     }
 
-    /**
-     * @inheritDoc
-     */
     protected function getViewVariables(): array
     {
         return [
