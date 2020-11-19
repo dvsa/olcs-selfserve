@@ -33,10 +33,11 @@ class LicenceDTO extends DataTransferObject
     /**
      * Gets the number of active vehicles that a licence is associated with.
      *
-     * @return int
+     * @return int|null
      */
-    public function getActiveVehicleCount(): int
+    public function getActiveVehicleCount(): ?int
     {
-        return (int) $this->data[static::ATTRIBUTE_ACTIVE_VEHICLE_COUNT];
+        $count = $this->data[static::ATTRIBUTE_ACTIVE_VEHICLE_COUNT] ?? null;
+        return null === $count ? $count : (int) $count;
     }
 }
