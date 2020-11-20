@@ -14,7 +14,7 @@ use Olcs\Exception\Licence\LicenceNotFoundWithIdException;
 use Olcs\Exception\Licence\LicenceVehicleLimitReachedException;
 use Olcs\Exception\Licence\Vehicle\LicenceAlreadyAssignedVehicleException;
 use Olcs\Form\Model\Form\Vehicle\Fieldset\YesNo;
-use Olcs\Form\Model\Form\Vehicle\RemoveVehicleConfirmation as RemoveVehicleConfirmationForm;
+use Olcs\Form\Model\Form\Vehicle\VehicleConfirmationForm;
 use Zend\Mvc\MvcEvent;
 use Olcs\Exception\Licence\Vehicle\VehicleSelectionEmptyException;
 use Zend\View\Model\ViewModel;
@@ -34,7 +34,7 @@ class TransferVehicleConfirmationController extends AbstractVehicleController
     protected $formConfig = [
         'default' => [
             'confirmationForm' => [
-                'formClass' => RemoveVehicleConfirmationForm::class,
+                'formClass' => VehicleConfirmationForm::class,
             ]
         ]
     ];
@@ -137,11 +137,11 @@ class TransferVehicleConfirmationController extends AbstractVehicleController
             return $this->indexAction();
         }
 
-        $requestedAction = $formData[RemoveVehicleConfirmationForm::FIELD_OPTIONS_FIELDSET_NAME][RemoveVehicleConfirmationForm::FIELD_OPTIONS_NAME] ?? null;
+        $requestedAction = $formData[VehicleConfirmationForm::FIELD_OPTIONS_FIELDSET_NAME][VehicleConfirmationForm::FIELD_OPTIONS_NAME] ?? null;
         if (empty($requestedAction)) {
             $confirmationField = $this->form
-                ->get(RemoveVehicleConfirmationForm::FIELD_OPTIONS_FIELDSET_NAME)
-                ->get(RemoveVehicleConfirmationForm::FIELD_OPTIONS_NAME);
+                ->get(VehicleConfirmationForm::FIELD_OPTIONS_FIELDSET_NAME)
+                ->get(VehicleConfirmationForm::FIELD_OPTIONS_NAME);
             $confirmationField->setMessages(['licence.vehicle.transfer.confirm.validation.select-an-option']);
             return $this->indexAction();
         }
