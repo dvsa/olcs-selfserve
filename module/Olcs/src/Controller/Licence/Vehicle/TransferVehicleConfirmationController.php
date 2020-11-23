@@ -28,12 +28,12 @@ use Olcs\Exception\Licence\Vehicle\VehicleSelectionEmptyException;
 use Zend\Mvc\Router\Http\RouteMatch;
 use Zend\View\Model\ViewModel;
 use Zend\Http\Response;
-use Exception;
 use Olcs\Exception\Licence\Vehicle\DestinationLicenceNotSetException;
 use Olcs\Exception\Licence\Vehicle\DestinationLicenceNotFoundWithIdException;
 use Olcs\Exception\Licence\Vehicle\VehiclesNotFoundWithIdsException;
 use Zend\Http\Request;
 use Common\Form\Form;
+use Common\Exception\BailOutException;
 
 /**
  * @see TransferVehicleConfirmationControllerFactory
@@ -213,8 +213,13 @@ class TransferVehicleConfirmationController extends Controller
      * @param RouteMatch $routeMatch
      * @param Request $request
      * @return Response
+     * @throws BadRequestException
+     * @throws BailOutException
      * @throws DestinationLicenceNotFoundWithIdException
      * @throws DestinationLicenceNotSetException
+     * @throws LicenceAlreadyAssignedVehicleException
+     * @throws LicenceNotFoundWithIdException
+     * @throws LicenceVehicleLimitReachedException
      * @throws VehicleSelectionEmptyException
      */
     public function postAction(RouteMatch $routeMatch, Request $request)
@@ -281,7 +286,7 @@ class TransferVehicleConfirmationController extends Controller
      * Flashes a message to the user when a licence with a given id has no vehicles.
      *
      * @param int $licenceId
-     * @throws Exception
+     * @throws LicenceNotFoundWithIdException
      */
     protected function flashIfLicenceHasNoVehicles(int $licenceId)
     {
@@ -322,7 +327,10 @@ class TransferVehicleConfirmationController extends Controller
      * @param int $currentLicenceId
      * @param array $vehicleIds
      * @param LicenceDTO $destinationLicence
-     * @throws Exception
+     * @throws BadRequestException
+     * @throws LicenceAlreadyAssignedVehicleException
+     * @throws LicenceVehicleLimitReachedException
+     * @throws BailOutException
      */
     protected function transferVehicles(int $currentLicenceId, array $vehicleIds, LicenceDTO $destinationLicence)
     {
