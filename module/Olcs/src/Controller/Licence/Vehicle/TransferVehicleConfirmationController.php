@@ -10,6 +10,7 @@ use Common\Service\Helper\FormHelperService;
 use Common\Service\Helper\TranslationHelperService;
 use Dvsa\Olcs\Transfer\Command\Licence\TransferVehicles;
 use Olcs\Controller\Controller;
+use Olcs\Controller\InteractsWithViewsTrait;
 use Olcs\DTO\Licence\LicenceDTO;
 use Olcs\DTO\Licence\Vehicle\LicenceVehicleDTO;
 use Olcs\Exception\Licence\LicenceNotFoundWithIdException;
@@ -39,6 +40,8 @@ use Common\Form\Form;
  */
 class TransferVehicleConfirmationController extends Controller
 {
+    use InteractsWithViewsTrait;
+
     protected const ROUTE_TRANSFER_INDEX = 'licence/vehicle/transfer/GET';
 
     /**
@@ -201,7 +204,7 @@ class TransferVehicleConfirmationController extends Controller
             $viewData['vrmListInfoText'] = 'licence.vehicle.transfer.confirm.list.hint.singular';
         }
         $viewData['title'] = $this->translator->translateReplace($confirmHeaderKey, [$destinationLicenceNumber]);
-        return $this->renderView('pages/licence-vehicle', $viewData);
+        return $this->newPageView('pages/licence-vehicle', $viewData);
     }
 
     /**
@@ -261,9 +264,10 @@ class TransferVehicleConfirmationController extends Controller
             $form->setData((array) $this->getRequest()->getPost());
         }
 
-        // Populate confirmation field messages from session
         $confirmationFieldMessages = $this->session->pullConfirmationFieldMessages();
         if (! empty($confirmationFieldMessages)) {
+
+            // Populate confirmation field messages from session
             $confirmationField = $form
                 ->get(VehicleConfirmationForm::FIELD_OPTIONS_FIELDSET_NAME)
                 ->get(VehicleConfirmationForm::FIELD_OPTIONS_NAME);
@@ -271,18 +275,6 @@ class TransferVehicleConfirmationController extends Controller
         }
 
         return $form;
-    }
-
-    // @todo this should be moved to a trait InteractsWithViewsTrait
-    protected function renderView(string $templateName, array $params): ViewModel
-    {
-        $content = new ViewModel($params);
-        $content->setTemplate($templateName);
-        $view = new ViewModel();
-        $view->setTemplate('layout/layout')
-            ->setTerminal(true)
-            ->addChild($content, 'content');
-        return $view;
     }
 
     /**
