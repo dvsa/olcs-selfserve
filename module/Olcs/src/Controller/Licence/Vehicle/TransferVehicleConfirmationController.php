@@ -158,7 +158,7 @@ class TransferVehicleConfirmationController extends Controller
             }
             $this->flashMessenger->addErrorMessage($this->translator->translateReplace($message, $data));
         }
-        return $this->redirectToLicenceTransferIndex((int) $e->setRouteMatch()->getParam('licence'));
+        return $this->redirectToLicenceTransferIndex((int) $e->getRouteMatch()->getParam('licence'));
     }
 
     /**
