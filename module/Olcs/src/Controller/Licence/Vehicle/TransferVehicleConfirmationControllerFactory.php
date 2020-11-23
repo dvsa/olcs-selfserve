@@ -54,11 +54,8 @@ class TransferVehicleConfirmationControllerFactory implements FactoryInterface
             new LicenceVehicleManagement(),
             $commandBus,
             $formHelper,
-
-            // @todo implement factories for these 2
             new LicenceRepository($queryHandler),
             new LicenceVehicleRepository($queryHandler),
-
             $urlPlugin,
             $redirectPlugin
         );
