@@ -226,15 +226,12 @@ class TransferVehicleConfirmationController extends Controller
             $this->session->setConfirmationFieldMessages(['licence.vehicle.transfer.confirm.validation.select-an-option']);
             return $this->redirectToLicenceTransferIndex($licenceId);
         }
-
         if ($requestedAction !== YesNo::OPTION_YES) {
             return $this->redirectToLicenceTransferIndex($licenceId);
         }
-
         $this->transferVehicles($licenceId, $vehicleIds, $destinationLicence);
         $this->flashTransferOfVehiclesCompleted($destinationLicence, $vehicleIds);
         $this->flashIfLicenceHasNoVehicles($licenceId);
-
         return $this->redirectPlugin->toUrl(sprintf('/licence/%s/vehicle', $licenceId));
     }
 
