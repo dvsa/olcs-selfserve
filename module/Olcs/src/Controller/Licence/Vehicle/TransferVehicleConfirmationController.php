@@ -2,10 +2,9 @@
 
 namespace Olcs\Controller\Licence\Vehicle;
 
-use Common\Controller\AbstractOlcsController;
+use Common\Exception\BadRequestException;
 use Common\Controller\Plugin\HandleCommand;
 use Common\Controller\Plugin\HandleQuery;
-use Common\Exception\BadRequestException;
 use Common\Service\Cqrs\Exception\AccessDeniedException;
 use Common\Service\Cqrs\Exception\NotFoundException;
 use Common\Service\Helper\FlashMessengerHelperService;
@@ -164,6 +163,8 @@ class TransferVehicleConfirmationController extends Controller
      * @throws DestinationLicenceNotFoundWithIdException
      * @throws DestinationLicenceNotSetException
      * @throws LicenceNotFoundWithIdException
+     * @throws VehiclesNotFoundWithIdsException
+     * @throws LicenceNotFoundWithIdException
      * @throws VehicleSelectionEmptyException
      * @throws VehiclesNotFoundWithIdsException
      */
@@ -217,13 +218,17 @@ class TransferVehicleConfirmationController extends Controller
             return $this->indexAction();
         }
 
+        $requestedAction = $formData[VehicleConfirmationForm::FIELD_OPTIONS_FIELDSET_NAME][VehicleConfirmationForm::FIELD_OPTIONS_NAME] ?? null;
         $requestedAction = $input[VehicleConfirmationForm::FIELD_OPTIONS_FIELDSET_NAME][VehicleConfirmationForm::FIELD_OPTIONS_NAME] ?? null;
         if (empty($requestedAction)) {
+            $confirmationField = $this->form
+                ->get(VehicleConfirmationForm::FIELD_OPTIONS_FIELDSET_NAME)
+                ->get(VehicleConfirmationForm::FIELD_OPTIONS_NAME);
             $confirmationField = $form
                 ->get(VehicleConfirmationForm::FIELD_OPTIONS_FIELDSET_NAME)
                 ->get(VehicleConfirmationForm::FIELD_OPTIONS_NAME);
             $confirmationField->setMessages(['licence.vehicle.transfer.confirm.validation.select-an-option']);
-            return $this->indexAction();
+            return $this->redirectToLicenceTransferIndex();
         }
 
         if ($requestedAction !== YesNo::OPTION_YES) {
