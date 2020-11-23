@@ -3,6 +3,8 @@
 
 namespace Olcs\Controller;
 
+use Common\Controller\Interfaces\ToggleAwareInterface;
+use Common\Controller\Plugin\FeaturesEnabled as FeaturesEnabledPlugin;
 use Zend\Http\Response as HttpResponse;
 use Zend\Mvc\Controller\AbstractController;
 use Zend\Mvc\Exception\DomainException;
@@ -10,12 +12,22 @@ use Zend\Mvc\MvcEvent;
 use Zend\View\Model\ConsoleModel;
 use Zend\View\Model\ViewModel;
 
+/**
+ * @method FeaturesEnabledPlugin featuresEnabled(array $toggleConfig, MvcEvent $e)
+ */
 class Controller extends AbstractController
 {
     /**
      * {@inheritDoc}
      */
     protected $eventIdentifier = __CLASS__;
+
+    /**
+     * @var array
+     *
+     * Config for feature toggles - for usage see https://wiki.i-env.net/display/olcs/Feature+toggles
+     */
+    protected $toggleConfig = [];
 
     /**
      * Action called if matched action does not exist
@@ -45,9 +57,9 @@ class Controller extends AbstractController
      */
     public function onDispatch(MvcEvent $e)
     {
-        // @todo use toggle aware as trait from AbtractOlcsController
-
-        // @todo extract dispatcher
+        if ($this instanceof ToggleAwareInterface && !$this->featuresEnabled($this->toggleConfig, $e)) {
+            return $this->notFoundAction();
+        }
 
         $routeMatch = $e->getRouteMatch();
         if (!$routeMatch) {
