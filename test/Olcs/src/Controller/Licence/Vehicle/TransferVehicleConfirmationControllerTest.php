@@ -7,8 +7,6 @@ use Common\Controller\Plugin\HandleQuery;
 use Common\Service\Helper\FlashMessengerHelperService;
 use Common\Service\Helper\FormHelperService;
 use Common\Service\Helper\TranslationHelperService;
-use Dvsa\Olcs\Transfer\Query\Licence\Licence;
-use Dvsa\Olcs\Transfer\Query\LicenceVehicle\LicenceVehiclesById;
 use Olcs\Controller\Licence\Vehicle\TransferVehicleConfirmationController;
 use Olcs\DTO\Licence\LicenceDTO;
 use Olcs\DTO\Licence\Vehicle\LicenceVehicleDTO;
@@ -16,7 +14,6 @@ use Olcs\Repository\Licence\LicenceRepository;
 use Olcs\Repository\Licence\Vehicle\LicenceVehicleRepository;
 use Olcs\Session\LicenceVehicleManagement;
 use PHPUnit\Framework\TestCase;
-use Zend\Http\Response;
 use Zend\Http\Request;
 use Zend\Mvc\Router\Http\RouteMatch;
 use Zend\View\Model\ViewModel;
@@ -101,28 +98,29 @@ class TransferVehicleConfirmationControllerTest extends TestCase
             LicenceVehicleManagement::class => $session,
             LicenceRepository::class => $licenceRepository,
         ]);
-        $request = new Request();
-        $response = $controller->indexAction($this->newIndexRouteMatch(), $request);
+
+        $response = $controller->indexAction($this->newIndexRouteMatch(), new Request());
+
         $this->assertInstanceOf(ViewModel::class, $response);
     }
 
-    /**
-     * @test
-     */
-    public function indexAction__returnsAResponse_withCode200()
-    {
-        $controller = $this->newController();
-        $request = new Request();
-        $response = $controller->indexAction($this->newIndexRouteMatch(), $request);
-        $this->assertEquals(200, $response->getStatusCode());
-    }
+//    /**
+//     * @test
+//     */
+//    public function indexAction__returnsAResponse_withCode200()
+//    {
+//        $controller = $this->newController();
+//        $request = new Request();
+//        $response = $controller->indexAction($this->newIndexRouteMatch(), $request);
+//        $this->assertEquals(200, $response->getStatusCode());
+//    }
 
-    /**
-     * @test
-     */
-    public function postAction__isDefined()
-    {
-        $controller = $this->newController();
-        $this->assertTrue(is_callable([$controller, 'postAction']));
-    }
+//    /**
+//     * @test
+//     */
+//    public function postAction__isDefined()
+//    {
+//        $controller = $this->newController();
+//        $this->assertTrue(is_callable([$controller, 'postAction']));
+//    }
 }
