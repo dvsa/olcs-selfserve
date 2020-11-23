@@ -207,16 +207,20 @@ class TransferVehicleConfirmationController extends Controller
     /**
      * Handles a form submission from the confirmation page for transferring vehicles to a licence.
      *
-     * @return Response|ViewModel
-     * @throws Exception
+     * @param RouteMatch $routeMatch
+     * @param Request $request
+     * @return Response
+     * @throws DestinationLicenceNotFoundWithIdException
+     * @throws DestinationLicenceNotSetException
+     * @throws VehicleSelectionEmptyException
      */
-    public function postAction()
+    public function postAction(RouteMatch $routeMatch, Request $request)
     {
         $this->session->pullConfirmationFieldMessages();
-        $licenceId = (int) $this->params('licence');
+        $licenceId = (int) $routeMatch->getParam('licence');
         $vehicleIds = $this->resolveVehicleIdsFromSession();
         $destinationLicence = $this->resolveDestinationLicence();
-        $input = (array) $this->getRequest()->getPost();
+        $input = (array) $request->getPost();
         $requestedAction = $input[VehicleConfirmationForm::FIELD_OPTIONS_FIELDSET_NAME][VehicleConfirmationForm::FIELD_OPTIONS_NAME] ?? null;
         if (empty($requestedAction)) {
             $this->session->setConfirmationFieldMessages(['licence.vehicle.transfer.confirm.validation.select-an-option']);
