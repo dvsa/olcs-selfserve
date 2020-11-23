@@ -7,6 +7,8 @@ use Common\Controller\Plugin\HandleQuery;
 use Common\Service\Helper\FlashMessengerHelperService;
 use Common\Service\Helper\FormHelperService;
 use Common\Service\Helper\TranslationHelperService;
+use Olcs\Repository\Licence\LicenceRepository;
+use Olcs\Repository\Licence\Vehicle\LicenceVehicleRepository;
 use Olcs\Session\LicenceVehicleManagement;
 use Zend\Mvc\Controller\ControllerManager;
 use Zend\ServiceManager\FactoryInterface;
@@ -32,8 +34,8 @@ class TransferVehicleConfirmationControllerFactory implements FactoryInterface
         $commandBus = $controllerPluginManager->get('handleCommand');
         assert($commandBus instanceof HandleCommand, 'Expected instance of HandleCommand');
 
-        $queryBus = $controllerPluginManager->get('handleQuery');
-        assert($queryBus instanceof HandleQuery, 'Expected instance of HandleQuery');
+        $queryHandler = $controllerPluginManager->get('handleQuery');
+        assert($queryHandler instanceof HandleQuery, 'Expected instance of HandleQuery');
 
         $formHelper = new FormHelperService();
         $formHelper->setServiceLocator($serviceLocator);
@@ -43,8 +45,11 @@ class TransferVehicleConfirmationControllerFactory implements FactoryInterface
             $translationService,
             new LicenceVehicleManagement(),
             $commandBus,
-            $queryBus,
-            $formHelper
+            $formHelper,
+
+            // @todo implement factories for these
+            new LicenceRepository($queryHandler),
+            new LicenceVehicleRepository($queryHandler),
         );
     }
 }

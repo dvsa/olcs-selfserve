@@ -21,6 +21,8 @@ use Olcs\Exception\Licence\LicenceVehicleLimitReachedException;
 use Olcs\Exception\Licence\Vehicle\LicenceAlreadyAssignedVehicleException;
 use Olcs\Form\Model\Form\Vehicle\Fieldset\YesNo;
 use Olcs\Form\Model\Form\Vehicle\VehicleConfirmationForm;
+use Olcs\Repository\Licence\LicenceRepository;
+use Olcs\Repository\Licence\Vehicle\LicenceVehicleRepository;
 use Olcs\Session\LicenceVehicleManagement;
 use Zend\Mvc\MvcEvent;
 use Olcs\Exception\Licence\Vehicle\VehicleSelectionEmptyException;
@@ -71,28 +73,41 @@ class TransferVehicleConfirmationController extends Controller
     protected $formService;
 
     /**
+     * @var LicenceRepository
+     */
+    protected $licenceRepository;
+
+    /**
+     * @var LicenceVehicleRepository
+     */
+    protected $licenceVehicleRepository;
+
+    /**
      * @param FlashMessengerHelperService $flashMessenger
      * @param TranslationHelperService $translationService
      * @param LicenceVehicleManagement $session
      * @param HandleCommand $commandBus
-     * @param HandleQuery $queryBus
      * @param FormHelperService $formService
+     * @param LicenceRepository $licenceRepository
+     * @param LicenceVehicleRepository $licenceVehicleRepository
      */
     public function __construct(
         FlashMessengerHelperService $flashMessenger,
         TranslationHelperService $translationService,
         LicenceVehicleManagement $session,
         HandleCommand $commandBus,
-        HandleQuery $queryBus,
-        FormHelperService $formService
+        FormHelperService $formService,
+        LicenceRepository $licenceRepository,
+        LicenceVehicleRepository $licenceVehicleRepository
     )
     {
         $this->flashMessenger = $flashMessenger;
         $this->translator = $translationService;
         $this->session = $session;
         $this->commandBus = $commandBus;
-        $this->queryBus = $queryBus;
         $this->formService = $formService;
+        $this->licenceRepository = $licenceRepository;
+        $this->licenceVehicleRepository = $licenceVehicleRepository;
 
         // @todo persist form messages in session so that redirects can be used
 
@@ -170,10 +185,10 @@ class TransferVehicleConfirmationController extends Controller
      */
     public function indexAction(RouteMatch $routeMatch, Request $request)
     {
-        $currentLicence = $this->getLicenceById((int) $routeMatch->getParam('licence'));
+        $currentLicence = $this->licenceRepository->findOneById((int) $routeMatch->getParam('licence'));
         $destinationLicence = $this->resolveDestinationLicence();
         $destinationLicenceNumber = $destinationLicence->getLicenceNumber();
-        $licenceVehicles = $this->getLicenceVehiclesByVehicleId($this->resolveVehicleIdsFromSession());
+        $licenceVehicles = $this->licenceVehicleRepository->findByVehicleId($this->resolveVehicleIdsFromSession());
         $viewData = [
             'licNo' => $currentLicence->getLicenceNumber(),
             'form' => $this->createForm(VehicleConfirmationForm::class, $this->getRequest()),
@@ -215,15 +230,12 @@ class TransferVehicleConfirmationController extends Controller
         $input = (array) $this->getRequest()->getPost();
         $form = $this->createForm(VehicleConfirmationForm::class, $this->getRequest());
         if (! $form->isValid()) {
-            return $this->indexAction();
-        }
 
-        $requestedAction = $formData[VehicleConfirmationForm::FIELD_OPTIONS_FIELDSET_NAME][VehicleConfirmationForm::FIELD_OPTIONS_NAME] ?? null;
+            // @todo this will require redirects to work with flash messages!
+            return $this->redirectToLicenceTransferIndex();
+        }
         $requestedAction = $input[VehicleConfirmationForm::FIELD_OPTIONS_FIELDSET_NAME][VehicleConfirmationForm::FIELD_OPTIONS_NAME] ?? null;
         if (empty($requestedAction)) {
-            $confirmationField = $this->form
-                ->get(VehicleConfirmationForm::FIELD_OPTIONS_FIELDSET_NAME)
-                ->get(VehicleConfirmationForm::FIELD_OPTIONS_NAME);
             $confirmationField = $form
                 ->get(VehicleConfirmationForm::FIELD_OPTIONS_FIELDSET_NAME)
                 ->get(VehicleConfirmationForm::FIELD_OPTIONS_NAME);
@@ -275,7 +287,7 @@ class TransferVehicleConfirmationController extends Controller
      */
     protected function flashIfLicenceHasNoVehicles(int $licenceId)
     {
-        $licence = $this->getLicenceById($licenceId);
+        $licence = $this->licenceRepository->findOneById($licenceId);
         $activeVehicleCount = $licence->getActiveVehicleCount();
         if (null !== $activeVehicleCount && $activeVehicleCount < 1) {
             $message = $this->translator->translate('licence.vehicle.transfer.confirm.success.last-vehicle-transferred');
@@ -358,6 +370,8 @@ class TransferVehicleConfirmationController extends Controller
         if (empty($vehicleIds)) {
             throw new VehicleSelectionEmptyException();
         }
+
+        // @todo move the following to the session class
         $parsedVehicleIds = [];
         foreach ($vehicleIds as $vehicleId) {
             $parsedVehicleIds[] = (int) $vehicleId;
@@ -379,50 +393,10 @@ class TransferVehicleConfirmationController extends Controller
             throw new DestinationLicenceNotSetException();
         }
         try {
-            $destinationLicence = $this->getLicenceById($destinationLicenceId);
+            $destinationLicence = $this->licenceRepository->findOneById($destinationLicenceId);
         } catch (LicenceNotFoundWithIdException $exception) {
             throw new DestinationLicenceNotFoundWithIdException($destinationLicenceId);
         }
         return $destinationLicence;
-    }
-
-    /**
-     * Gets the licence number for a licence from a given licence id.
-     *
-     * @param int $licenceId
-     * @return LicenceDTO
-     * @throws LicenceNotFoundWithIdException
-     */
-    protected function getLicenceById(int $licenceId): LicenceDTO
-    {
-        $query = Licence::create(['id' => $licenceId]);
-        try {
-            $queryResult = $this->queryBus->__invoke($query);
-        } catch (NotFoundException|AccessDeniedException $exception) {
-            throw new LicenceNotFoundWithIdException($licenceId);
-        }
-        return new LicenceDTO($queryResult->getResult());
-    }
-
-    /**
-     * @param array<int> $vehicleIds
-     * @return array<LicenceVehicleDTO>
-     * @throws VehiclesNotFoundWithIdsException
-     */
-    protected function getLicenceVehiclesByVehicleId(array $vehicleIds): array
-    {
-        if (empty($vehicleIds)) {
-            return [];
-        }
-        $query = LicenceVehiclesById::create(['ids' => $vehicleIds]);
-        try {
-            $queryResult = $this->queryBus->__invoke($query);
-        } catch (NotFoundException|AccessDeniedException $exception) {
-            throw new VehiclesNotFoundWithIdsException($vehicleIds);
-        }
-        $licenceVehicles = $queryResult->getResult()['results'] ?? [];
-        return array_map(function ($licenceVehicle) {
-            return new LicenceVehicleDTO($licenceVehicle);
-        }, $licenceVehicles);
     }
 }
