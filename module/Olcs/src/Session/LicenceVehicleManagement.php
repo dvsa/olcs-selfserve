@@ -9,6 +9,7 @@ class LicenceVehicleManagement extends \Zend\Session\Container
 {
     const SESSION_NAME = 'LicenceVehicleManagement';
     protected const TRANSFER_TO_LICENSE_ID = 'transferToLicenceId';
+    protected const KEY_CONFIRMATION_FIELD_MESSAGES = 'confirmationFieldMessages';
 
     /**
      * LicenceVehicleManagement constructor.
@@ -129,6 +130,35 @@ class LicenceVehicleManagement extends \Zend\Session\Container
     {
         $this->offsetSet(static::TRANSFER_TO_LICENSE_ID, $id);
         return $this;
+    }
+
+    /**
+     * Adds a message for the confirmation form field.
+     *
+     * @param string $message
+     * @return $this
+     */
+    public function setConfirmationFieldMessage(string $message)
+    {
+        $messages = $this->offsetGet(static::KEY_CONFIRMATION_FIELD_MESSAGES);
+        if (! is_array($messages)) {
+            $messages = [];
+        }
+        $messages[] = $message;
+        $this->offsetSet(static::KEY_CONFIRMATION_FIELD_MESSAGES, $messages);
+        return $this;
+    }
+
+    /**
+     * Gets any messages for the confirmation form field and removes them from the session.
+     *
+     * @return array<string>
+     */
+    public function pullConfirmationFieldMessages()
+    {
+        $messages = $this->offsetGet(static::KEY_CONFIRMATION_FIELD_MESSAGES);
+        $this->offsetUnset(static::KEY_CONFIRMATION_FIELD_MESSAGES);
+        return $messages;
     }
 
     /**

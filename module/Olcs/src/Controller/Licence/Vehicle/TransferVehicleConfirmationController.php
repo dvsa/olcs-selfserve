@@ -32,6 +32,7 @@ use Olcs\Exception\Licence\Vehicle\DestinationLicenceNotSetException;
 use Olcs\Exception\Licence\Vehicle\DestinationLicenceNotFoundWithIdException;
 use Olcs\Exception\Licence\Vehicle\VehiclesNotFoundWithIdsException;
 use Zend\Http\Request;
+use Common\Form\Form;
 
 /**
  * @see TransferVehicleConfirmationControllerFactory
@@ -217,16 +218,12 @@ class TransferVehicleConfirmationController extends Controller
         $input = (array) $this->getRequest()->getPost();
         $form = $this->createForm(VehicleConfirmationForm::class, $this->getRequest());
         if (! $form->isValid()) {
-
-            // @todo this will require redirects to work with flash messages!
+            // @todo how are these messages structured?
             return $this->redirectToLicenceTransferIndex($licenceId);
         }
         $requestedAction = $input[VehicleConfirmationForm::FIELD_OPTIONS_FIELDSET_NAME][VehicleConfirmationForm::FIELD_OPTIONS_NAME] ?? null;
         if (empty($requestedAction)) {
-            $confirmationField = $form
-                ->get(VehicleConfirmationForm::FIELD_OPTIONS_FIELDSET_NAME)
-                ->get(VehicleConfirmationForm::FIELD_OPTIONS_NAME);
-            $confirmationField->setMessages(['licence.vehicle.transfer.confirm.validation.select-an-option']);
+            $this->session->setConfirmationFieldMessage('licence.vehicle.transfer.confirm.validation.select-an-option');
             return $this->redirectToLicenceTransferIndex($licenceId);
         }
 
@@ -252,7 +249,13 @@ class TransferVehicleConfirmationController extends Controller
         return $this->redirectPlugin->toUrl(sprintf('/licence/%s/vehicle/transfer', $licenceId));
     }
 
-    // @todo this should be moved out to a trait?
+    /**
+     * Creates the form element for a controller.
+     *
+     * @param string $className
+     * @param Request $request
+     * @return Form
+     */
     protected function createForm(string $className, \Zend\Http\Request $request)
     {
         $form = $this->formService->createForm($className, true, false);
@@ -260,6 +263,16 @@ class TransferVehicleConfirmationController extends Controller
         if ($request->isPost()) {
             $form->setData((array) $this->getRequest()->getPost());
         }
+
+        // Populate confirmation field messages from session
+        $confirmationFieldMessages = $this->session->pullConfirmationFieldMessages();
+        if (! empty($confirmationFieldMessages)) {
+            $confirmationField = $form
+                ->get(VehicleConfirmationForm::FIELD_OPTIONS_FIELDSET_NAME)
+                ->get(VehicleConfirmationForm::FIELD_OPTIONS_NAME);
+            $confirmationField->setMessages($confirmationFieldMessages);
+        }
+
         return $form;
     }
 
