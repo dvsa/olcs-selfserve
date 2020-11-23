@@ -212,13 +212,14 @@ class TransferVehicleConfirmationController extends Controller
      */
     public function postAction()
     {
+        $this->session->pullConfirmationFieldMessages();
         $licenceId = (int) $this->params('licence');
         $vehicleIds = $this->resolveVehicleIdsFromSession();
         $destinationLicence = $this->resolveDestinationLicence();
         $input = (array) $this->getRequest()->getPost();
         $requestedAction = $input[VehicleConfirmationForm::FIELD_OPTIONS_FIELDSET_NAME][VehicleConfirmationForm::FIELD_OPTIONS_NAME] ?? null;
         if (empty($requestedAction)) {
-            $this->session->setConfirmationFieldMessage('licence.vehicle.transfer.confirm.validation.select-an-option');
+            $this->session->setConfirmationFieldMessages(['licence.vehicle.transfer.confirm.validation.select-an-option']);
             return $this->redirectToLicenceTransferIndex($licenceId);
         }
 

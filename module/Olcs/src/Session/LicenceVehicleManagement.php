@@ -135,16 +135,11 @@ class LicenceVehicleManagement extends \Zend\Session\Container
     /**
      * Adds a message for the confirmation form field.
      *
-     * @param string $message
+     * @param array<string> $messages
      * @return $this
      */
-    public function setConfirmationFieldMessage(string $message)
+    public function setConfirmationFieldMessages(array $messages)
     {
-        $messages = $this->offsetGet(static::KEY_CONFIRMATION_FIELD_MESSAGES);
-        if (! is_array($messages)) {
-            $messages = [];
-        }
-        $messages[] = $message;
         $this->offsetSet(static::KEY_CONFIRMATION_FIELD_MESSAGES, $messages);
         return $this;
     }
