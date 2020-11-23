@@ -5,14 +5,10 @@ namespace Olcs\Controller\Licence\Vehicle;
 use Common\Exception\BadRequestException;
 use Common\Controller\Plugin\HandleCommand;
 use Common\Controller\Plugin\HandleQuery;
-use Common\Service\Cqrs\Exception\AccessDeniedException;
-use Common\Service\Cqrs\Exception\NotFoundException;
 use Common\Service\Helper\FlashMessengerHelperService;
 use Common\Service\Helper\FormHelperService;
 use Common\Service\Helper\TranslationHelperService;
 use Dvsa\Olcs\Transfer\Command\Licence\TransferVehicles;
-use Dvsa\Olcs\Transfer\Query\Licence\Licence;
-use Dvsa\Olcs\Transfer\Query\LicenceVehicle\LicenceVehiclesById;
 use Olcs\Controller\Controller;
 use Olcs\DTO\Licence\LicenceDTO;
 use Olcs\DTO\Licence\Vehicle\LicenceVehicleDTO;
@@ -24,6 +20,8 @@ use Olcs\Form\Model\Form\Vehicle\VehicleConfirmationForm;
 use Olcs\Repository\Licence\LicenceRepository;
 use Olcs\Repository\Licence\Vehicle\LicenceVehicleRepository;
 use Olcs\Session\LicenceVehicleManagement;
+use Zend\Mvc\Controller\Plugin\Redirect;
+use Zend\Mvc\Controller\Plugin\Url;
 use Zend\Mvc\MvcEvent;
 use Olcs\Exception\Licence\Vehicle\VehicleSelectionEmptyException;
 use Zend\Mvc\Router\Http\RouteMatch;
@@ -83,6 +81,16 @@ class TransferVehicleConfirmationController extends Controller
     protected $licenceVehicleRepository;
 
     /**
+     * @var Url
+     */
+    protected $urlPlugin;
+
+    /**
+     * @var Redirect
+     */
+    protected $redirectPlugin;
+
+    /**
      * @param FlashMessengerHelperService $flashMessenger
      * @param TranslationHelperService $translationService
      * @param LicenceVehicleManagement $session
@@ -90,6 +98,8 @@ class TransferVehicleConfirmationController extends Controller
      * @param FormHelperService $formService
      * @param LicenceRepository $licenceRepository
      * @param LicenceVehicleRepository $licenceVehicleRepository
+     * @param Url $urlPlugin
+     * @param Redirect $redirectPlugin
      */
     public function __construct(
         FlashMessengerHelperService $flashMessenger,
@@ -98,7 +108,9 @@ class TransferVehicleConfirmationController extends Controller
         HandleCommand $commandBus,
         FormHelperService $formService,
         LicenceRepository $licenceRepository,
-        LicenceVehicleRepository $licenceVehicleRepository
+        LicenceVehicleRepository $licenceVehicleRepository,
+        Url $urlPlugin,
+        Redirect $redirectPlugin
     )
     {
         $this->flashMessenger = $flashMessenger;
@@ -108,18 +120,8 @@ class TransferVehicleConfirmationController extends Controller
         $this->formService = $formService;
         $this->licenceRepository = $licenceRepository;
         $this->licenceVehicleRepository = $licenceVehicleRepository;
-
-        // @todo persist form messages in session so that redirects can be used
-
-        // @todo extract controller logic to session handler
-
-        // @todo implement query handler support
-
-        // @todo extract controller logic to query handlers
-
-        // @todo implement command handler support
-
-        // @todo extract controller logic to command handlers
+        $this->urlPlugin = $urlPlugin;
+        $this->redirectPlugin = $redirectPlugin;
     }
 
     /**
@@ -155,18 +157,7 @@ class TransferVehicleConfirmationController extends Controller
             }
             $this->flashMessenger->addErrorMessage($this->translator->translateReplace($message, $data));
         }
-        return $this->redirectToLicenceTransferIndex();
-    }
-
-    /**
-     * Creates a response to redirect to the transfer vehicles index page.
-     *
-     * @return Response
-     */
-    protected function redirectToLicenceTransferIndex()
-    {
-        $licenceId = (int) $this->params('licence');
-        return $this->redirect()->toUrl(sprintf('/licence/%s/vehicle/transfer', $licenceId));
+        return $this->redirectToLicenceTransferIndex((int) $e->setRouteMatch()->getParam('licence'));
     }
 
     /**
@@ -192,13 +183,9 @@ class TransferVehicleConfirmationController extends Controller
         $viewData = [
             'licNo' => $currentLicence->getLicenceNumber(),
             'form' => $this->createForm(VehicleConfirmationForm::class, $this->getRequest()),
-
-            // @todo inject url builder as dependency
-//            'backLink' => $this->url()->fromRoute(static::ROUTE_TRANSFER_INDEX, [], [], true),
+            'backLink' => $this->urlPlugin->fromRoute(static::ROUTE_TRANSFER_INDEX, [], [], true),
             'bottomContent' => $this->translator->translateReplace('licence.vehicle.generic.choose-different-action', [
-
-                // @todo inject url builder as dependency
-//                $this->url()->fromRoute('licence/vehicle/GET', [], [], true),
+                $this->urlPlugin->fromRoute('licence/vehicle/GET', [], [], true),
             ]),
             'destinationLicenceId' => $destinationLicence->getId(),
             'vrmList' => array_map(function (LicenceVehicleDTO  $licenceVehicle) {
@@ -232,7 +219,7 @@ class TransferVehicleConfirmationController extends Controller
         if (! $form->isValid()) {
 
             // @todo this will require redirects to work with flash messages!
-            return $this->redirectToLicenceTransferIndex();
+            return $this->redirectToLicenceTransferIndex($licenceId);
         }
         $requestedAction = $input[VehicleConfirmationForm::FIELD_OPTIONS_FIELDSET_NAME][VehicleConfirmationForm::FIELD_OPTIONS_NAME] ?? null;
         if (empty($requestedAction)) {
@@ -240,18 +227,29 @@ class TransferVehicleConfirmationController extends Controller
                 ->get(VehicleConfirmationForm::FIELD_OPTIONS_FIELDSET_NAME)
                 ->get(VehicleConfirmationForm::FIELD_OPTIONS_NAME);
             $confirmationField->setMessages(['licence.vehicle.transfer.confirm.validation.select-an-option']);
-            return $this->redirectToLicenceTransferIndex();
+            return $this->redirectToLicenceTransferIndex($licenceId);
         }
 
         if ($requestedAction !== YesNo::OPTION_YES) {
-            return $this->redirectToLicenceTransferIndex();
+            return $this->redirectToLicenceTransferIndex($licenceId);
         }
 
         $this->transferVehicles($licenceId, $vehicleIds, $destinationLicence);
         $this->flashTransferOfVehiclesCompleted($destinationLicence, $vehicleIds);
         $this->flashIfLicenceHasNoVehicles($licenceId);
 
-        return $this->redirect()->toUrl(sprintf('/licence/%s/vehicle', $licenceId));
+        return $this->redirectPlugin->toUrl(sprintf('/licence/%s/vehicle', $licenceId));
+    }
+
+    /**
+     * Creates a response to redirect to the transfer vehicles index page.
+     *
+     * @param int $licenceId
+     * @return Response
+     */
+    protected function redirectToLicenceTransferIndex(int $licenceId)
+    {
+        return $this->redirectPlugin->toUrl(sprintf('/licence/%s/vehicle/transfer', $licenceId));
     }
 
     // @todo this should be moved out to a trait?
@@ -368,13 +366,7 @@ class TransferVehicleConfirmationController extends Controller
         if (empty($vehicleIds)) {
             throw new VehicleSelectionEmptyException();
         }
-
-        // @todo move the following to the session class
-        $parsedVehicleIds = [];
-        foreach ($vehicleIds as $vehicleId) {
-            $parsedVehicleIds[] = (int) $vehicleId;
-        }
-        return $parsedVehicleIds;
+        return $vehicleIds;
     }
 
     /**

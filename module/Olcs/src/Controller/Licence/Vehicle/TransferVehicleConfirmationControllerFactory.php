@@ -11,9 +11,11 @@ use Olcs\Repository\Licence\LicenceRepository;
 use Olcs\Repository\Licence\Vehicle\LicenceVehicleRepository;
 use Olcs\Session\LicenceVehicleManagement;
 use Zend\Mvc\Controller\ControllerManager;
+use Zend\Mvc\Controller\Plugin\Url;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Mvc\Controller\PluginManager as ControllerPluginManager;
+use Zend\Mvc\Controller\Plugin\Redirect;
 
 class TransferVehicleConfirmationControllerFactory implements FactoryInterface
 {
@@ -40,16 +42,30 @@ class TransferVehicleConfirmationControllerFactory implements FactoryInterface
         $formHelper = new FormHelperService();
         $formHelper->setServiceLocator($serviceLocator);
 
-        return new TransferVehicleConfirmationController(
+        $urlPlugin = $controllerPluginManager->get(Url::class);
+        assert($urlPlugin instanceof Url, 'Expected instance of Url');
+
+        $redirectPlugin = $controllerPluginManager->get(Redirect::class);
+        assert($redirectPlugin instanceof Redirect, 'Expected instance of Redirect');
+
+        $controller = new TransferVehicleConfirmationController(
             (new FlashMessengerHelperService())->setServiceLocator($serviceLocator),
             $translationService,
             new LicenceVehicleManagement(),
             $commandBus,
             $formHelper,
 
-            // @todo implement factories for these
+            // @todo implement factories for these 2
             new LicenceRepository($queryHandler),
             new LicenceVehicleRepository($queryHandler),
+
+            $urlPlugin,
+            $redirectPlugin
         );
+
+        $urlPlugin->setController($controller);
+        $redirectPlugin->setController($controller);
+
+        return $controller;
     }
 }

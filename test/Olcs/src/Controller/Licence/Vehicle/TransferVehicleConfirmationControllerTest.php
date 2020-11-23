@@ -15,6 +15,8 @@ use Olcs\Repository\Licence\Vehicle\LicenceVehicleRepository;
 use Olcs\Session\LicenceVehicleManagement;
 use PHPUnit\Framework\TestCase;
 use Zend\Http\Request;
+use Zend\Mvc\Controller\Plugin\Redirect;
+use Zend\Mvc\Controller\Plugin\Url;
 use Zend\Mvc\Router\Http\RouteMatch;
 use Zend\View\Model\ViewModel;
 
@@ -42,8 +44,20 @@ class TransferVehicleConfirmationControllerTest extends TestCase
             ?? $this->getMockBuilder(LicenceRepository::class)->disableOriginalConstructor()->getMock();
         $licenceVehicleRepository = $constructorArgs[LicenceVehicleRepository::class]
             ?? $this->getMockBuilder(LicenceVehicleRepository::class)->disableOriginalConstructor()->getMock();
+        $urlPlugin = $constructorArgs[Url::class]
+            ?? $this->getMockBuilder(Url::class)->disableOriginalConstructor()->getMock();
+        $redirectPlugin = $constructorArgs[Redirect::class]
+            ?? $this->getMockBuilder(Redirect::class)->disableOriginalConstructor()->getMock();
         return new TransferVehicleConfirmationController(
-            $flashMessenger, $translator, $session, $commandBus, $formService, $licenceRepository, $licenceVehicleRepository
+            $flashMessenger,
+            $translator,
+            $session,
+            $commandBus,
+            $formService,
+            $licenceRepository,
+            $licenceVehicleRepository,
+            $urlPlugin,
+            $redirectPlugin
         );
     }
 

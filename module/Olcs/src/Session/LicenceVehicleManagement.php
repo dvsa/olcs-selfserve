@@ -3,6 +3,8 @@
 
 namespace Olcs\Session;
 
+use Olcs\Exception\Licence\Vehicle\VehicleSelectionEmptyException;
+
 class LicenceVehicleManagement extends \Zend\Session\Container
 {
     const SESSION_NAME = 'LicenceVehicleManagement';
@@ -55,7 +57,10 @@ class LicenceVehicleManagement extends \Zend\Session\Container
      */
     public function getVrms()
     {
-        return $this->offsetGet('vrms');
+        $vrms = $this->offsetGet('vrms');
+        return array_map(function ($vrm) {
+            return (int) $vrm;
+        }, is_array($vrms) ? $vrms : []);
     }
 
     /**
