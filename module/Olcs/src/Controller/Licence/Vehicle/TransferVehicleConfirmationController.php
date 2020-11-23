@@ -213,7 +213,7 @@ class TransferVehicleConfirmationController extends Controller
             $viewData['vrmListInfoText'] = 'licence.vehicle.transfer.confirm.list.hint.singular';
         }
         $viewData['title'] = $this->translator->translateReplace($confirmHeaderKey, [$destinationLicenceNumber]);
-        return $this->renderView($viewData);
+        return $this->renderView('pages/licence-vehicle', $viewData);
     }
 
     /**
@@ -254,7 +254,7 @@ class TransferVehicleConfirmationController extends Controller
         return $this->redirect()->toUrl(sprintf('/licence/%s/vehicle', $licenceId));
     }
 
-    // @todo this should be moved out to a trait
+    // @todo this should be moved out to a trait?
     protected function createForm(string $className, \Zend\Http\Request $request)
     {
         $form = $this->formService->createForm($className, true, false);
@@ -265,17 +265,15 @@ class TransferVehicleConfirmationController extends Controller
         return $form;
     }
 
-    // @todo this should be moved to a trait
-    protected function renderView(array $params): ViewModel
+    // @todo this should be moved to a trait InteractsWithViewsTrait
+    protected function renderView(string $templateName, array $params): ViewModel
     {
         $content = new ViewModel($params);
-        $content->setTemplate('pages/licence-vehicle');
-
+        $content->setTemplate($templateName);
         $view = new ViewModel();
         $view->setTemplate('layout/layout')
             ->setTerminal(true)
             ->addChild($content, 'content');
-
         return $view;
     }
 
