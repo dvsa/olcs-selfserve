@@ -2,8 +2,6 @@
 
 namespace Olcs\Controller;
 
-use Zend\Stdlib\RequestInterface;
-use Zend\Mvc\Router\Http\RouteMatch;
 use Exception;
 
 class ActionDispatchDecorator extends AbstractSelfserveController
