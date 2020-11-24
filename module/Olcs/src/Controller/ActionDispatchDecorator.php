@@ -4,6 +4,7 @@ namespace Olcs\Controller;
 
 use Zend\Stdlib\RequestInterface;
 use Zend\Mvc\Router\Http\RouteMatch;
+use Exception;
 
 class ActionDispatchDecorator extends AbstractSelfserveController
 {
@@ -18,6 +19,7 @@ class ActionDispatchDecorator extends AbstractSelfserveController
     public function __construct(object $delegate)
     {
         $this->delegate = $delegate;
+        $this->eventIdentifier = get_class($delegate);
     }
 
     /**
@@ -29,12 +31,24 @@ class ActionDispatchDecorator extends AbstractSelfserveController
     }
 
     /**
-     * @inheritDoc
+     * Calls an action.
+     *
+     * @return mixed
+     * @throws Exception
      */
-    protected function callAction(string $actionName, RouteMatch $routeMatch, RequestInterface $request)
+    protected function callAction()
     {
+        $request = $this->getEvent()->getRequest();
+        $routeMatch = $this->getEvent()->getRouteMatch();
+        $action = $routeMatch->getParam('action', 'not-found');
+        $method = parent::getMethodFromAction($action);
+
+        if (! method_exists($this->delegate, $method)) {
+            return $this->notFoundAction();
+        }
+
         try {
-            $actionResponse = call_user_func([$this->delegate, $actionName], $routeMatch, $request);
+            $actionResponse = $this->delegate->$method($routeMatch, $request);
         } catch (\Exception $exception) {
             if (! ($this->delegate instanceof RespondsToExceptionsInterface)) {
                 throw $exception;
@@ -42,5 +56,15 @@ class ActionDispatchDecorator extends AbstractSelfserveController
             $actionResponse = $this->delegate->createResponseToException($exception, $routeMatch, $request);
         }
         return $actionResponse;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function getMethodFromAction($action)
+    {
+        // Delegate all action calls to $this->callAction
+
+        return 'callAction';
     }
 }
