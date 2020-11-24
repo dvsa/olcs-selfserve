@@ -47,7 +47,7 @@ class ActionDispatchDecorator extends AbstractSelfserveController
 
         try {
             $actionResponse = $this->delegate->$method($routeMatch, $request);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             if (! ($this->delegate instanceof RespondsToExceptionsInterface)) {
                 throw $exception;
             }
@@ -62,7 +62,6 @@ class ActionDispatchDecorator extends AbstractSelfserveController
     public static function getMethodFromAction($action)
     {
         // Delegate all action calls to $this->callAction
-
         return 'callAction';
     }
 }
