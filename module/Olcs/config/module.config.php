@@ -1,5 +1,6 @@
 <?php
 
+use Interop\Container\ContainerInterface;
 use Olcs\Controller\Cookie\DetailsController as CookieDetailsController;
 use Olcs\Controller\Cookie\SettingsController as CookieSettingsController;
 use Olcs\Controller\Cookie\SettingsControllerFactory as CookieSettingsControllerFactory;
@@ -19,6 +20,7 @@ use Olcs\FormService\Form\Lva as LvaFormService;
 use Olcs\Service\Cookie as CookieService;
 use Olcs\Service\Qa as QaService;
 use Zend\Mvc\Router\Http\Segment;
+use Zend\ServiceManager\ServiceLocatorInterface;
 
 $sectionConfig = new \Common\Service\Data\SectionConfig();
 $configRoutes = $sectionConfig->getAllRoutes();
@@ -1354,7 +1356,39 @@ return array(
             'QaTemplateVarsGenerator' => QaService\TemplateVarsGeneratorFactory::class,
             'QaQuestionArrayProvider' => QaService\QuestionArrayProviderFactory::class,
             'QaViewGeneratorProvider' => QaService\ViewGeneratorProviderFactory::class,
-        )
+
+
+            // @todo extract this to a factory
+            'controllermanager' => new class() implements \Zend\ServiceManager\FactoryInterface {
+                public function createService(ServiceLocatorInterface $serviceLocator)
+                {
+                    return new class($serviceLocator) extends \Zend\Mvc\Controller\ControllerManager {
+                        public function createFromFactory($canonicalName, $requestedName)
+                        {
+                            $instance = parent::createFromFactory($canonicalName, $requestedName);
+
+                            // @todo extract following logic to re-usable function that can be called for each of the create functions
+                            if ($instance instanceof \Olcs\Controller\DelegatesDispatchingInterface) {
+                                $instance = new \Olcs\Controller\ActionDispatchDecorator($instance);
+                                $delegate = $instance->getDelegate();
+                                if ($delegate instanceof \Olcs\Controller\DelegatesPluginsInterface) {
+                                    foreach ($delegate->getDelegatedPlugins() as $plugin) {
+                                        if ($plugin instanceof \Zend\Mvc\Controller\Plugin\AbstractPlugin) {
+                                            $plugin->setController($instance);
+                                        }
+                                    }
+                                }
+                            }
+
+                            return $instance;
+                        }
+
+                        // @todo createFromInvokable
+                        // @todo createFromAbstractFactory
+                    };
+                }
+            }
+        ),
     ),
     'search' => [
         'invokables' => [

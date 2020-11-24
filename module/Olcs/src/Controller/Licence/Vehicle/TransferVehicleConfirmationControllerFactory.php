@@ -48,7 +48,7 @@ class TransferVehicleConfirmationControllerFactory implements FactoryInterface
         $redirectPlugin = $controllerPluginManager->get(Redirect::class);
         assert($redirectPlugin instanceof Redirect, 'Expected instance of Redirect');
 
-        $controller = new TransferVehicleConfirmationController(
+        return new TransferVehicleConfirmationController(
             (new FlashMessengerHelperService())->setServiceLocator($serviceLocator),
             $translationService,
             new LicenceVehicleManagement(),
@@ -59,10 +59,5 @@ class TransferVehicleConfirmationControllerFactory implements FactoryInterface
             $urlPlugin,
             $redirectPlugin
         );
-
-        $urlPlugin->setController($controller);
-        $redirectPlugin->setController($controller);
-
-        return $controller;
     }
 }
