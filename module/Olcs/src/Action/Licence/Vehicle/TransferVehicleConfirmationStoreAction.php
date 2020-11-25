@@ -4,6 +4,7 @@ namespace Olcs\Action\Licence\Vehicle;
 
 use Common\Exception\BadRequestException;
 use Common\Controller\Plugin\HandleCommand;
+use Common\Exception\ResourceNotFoundException;
 use Common\Service\Helper\FlashMessengerHelperService;
 use Common\Service\Helper\FormHelperService;
 use Common\Service\Helper\TranslationHelperService;
@@ -68,6 +69,7 @@ class TransferVehicleConfirmationStoreAction extends TransferVehicleConfirmation
      * @return Response
      * @throws BadRequestException
      * @throws BailOutException
+     * @throws ResourceNotFoundException
      */
     public function __invoke(RouteMatch $routeMatch, Request $request)
     {
@@ -76,9 +78,7 @@ class TransferVehicleConfirmationStoreAction extends TransferVehicleConfirmation
         $currentLicenceId = (int) $routeMatch->getParam('licence');
         $currentLicence = $this->licenceRepository->findOneById($currentLicenceId);
         if (is_null($currentLicence)) {
-            return $this->newRedirectToTransferIndexWithError(
-                $currentLicenceId, 'licence.vehicle.transfer.confirm.error.invalid-licence'
-            );
+            throw new ResourceNotFoundException();
         }
 
         $destinationLicenceId = $this->session->getDestinationLicenceId();

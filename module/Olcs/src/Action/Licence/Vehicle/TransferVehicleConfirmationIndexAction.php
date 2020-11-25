@@ -30,7 +30,6 @@ class TransferVehicleConfirmationIndexAction extends TransferVehicleConfirmation
         $currentLicenceId = (int) $routeMatch->getParam('licence');
         $currentLicence = $this->licenceRepository->findOneById($currentLicenceId);
         if (is_null($currentLicence)) {
-            $this->flashMessenger->addErrorMessage('licence.vehicle.transfer.confirm.error.invalid-licence');
             throw new ResourceNotFoundException();
         }
 
