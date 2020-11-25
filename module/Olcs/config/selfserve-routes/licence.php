@@ -11,7 +11,7 @@ use Olcs\Controller\Licence\Vehicle\AddVehicleSearchController;
 use Olcs\Controller\Licence\Vehicle\RemoveVehicleConfirmationController;
 use Olcs\Controller\Licence\Vehicle\RemoveVehicleController;
 use Olcs\Controller\Licence\Vehicle\SwitchBoardController;
-use Olcs\Controller\Licence\Vehicle\TransferVehicleConfirmationController;
+use Olcs\Action\Licence\Vehicle\TransferVehicleConfirmationStoreAction;
 use Olcs\Controller\Licence\Vehicle\TransferVehicleController;
 use Olcs\Controller\Licence\Vehicle\ViewVehicleController;
 use Zend\Mvc\Router\Http\Method;
@@ -696,9 +696,6 @@ return [
                                     'type' => Segment::class,
                                     'options' => [
                                         'route' => 'confirm[/]',
-                                        'defaults' => [
-                                            'controller' => TransferVehicleConfirmationController::class,
-                                        ]
                                     ],
                                     'child_routes' => [
                                         'GET' => [
@@ -707,7 +704,7 @@ return [
                                             'options' => [
                                                 'verb' => 'GET',
                                                 'defaults' => [
-                                                    'action' => 'index',
+                                                    'controller' => \Olcs\Action\Licence\Vehicle\TransferVehicleConfirmationIndexAction::class,
                                                 ],
                                             ],
                                         ],
@@ -717,7 +714,7 @@ return [
                                             'options' => [
                                                 'verb' => 'POST',
                                                 'defaults' => [
-                                                    'action' => 'post',
+                                                    'controller' => TransferVehicleConfirmationStoreAction::class,
                                                 ],
                                             ],
                                         ],

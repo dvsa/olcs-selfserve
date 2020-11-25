@@ -38,8 +38,8 @@ class ActionDispatchDecorator extends AbstractSelfserveController
     {
         $request = $this->getEvent()->getRequest();
         $routeMatch = $this->getEvent()->getRouteMatch();
-        $action = $routeMatch->getParam('action', 'not-found');
-        $method = parent::getMethodFromAction($action);
+        $action = $routeMatch->getParam('action');
+        $method = is_null($action) ? '__invoke' : parent::getMethodFromAction($action);
 
         if (! method_exists($this->delegate, $method)) {
             return $this->notFoundAction();

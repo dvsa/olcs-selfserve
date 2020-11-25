@@ -1,6 +1,5 @@
 <?php
 
-use Interop\Container\ContainerInterface;
 use Olcs\Controller\Cookie\DetailsController as CookieDetailsController;
 use Olcs\Controller\Cookie\SettingsController as CookieSettingsController;
 use Olcs\Controller\Cookie\SettingsControllerFactory as CookieSettingsControllerFactory;
@@ -20,7 +19,6 @@ use Olcs\FormService\Form\Lva as LvaFormService;
 use Olcs\Service\Cookie as CookieService;
 use Olcs\Service\Qa as QaService;
 use Zend\Mvc\Router\Http\Segment;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 $sectionConfig = new \Common\Service\Data\SectionConfig();
 $configRoutes = $sectionConfig->getAllRoutes();
@@ -1300,7 +1298,8 @@ return array(
         ),
         'factories' => array(
             CookieSettingsController::class => CookieSettingsControllerFactory::class,
-            \Olcs\Controller\Licence\Vehicle\TransferVehicleConfirmationController::class => \Olcs\Controller\Licence\Vehicle\TransferVehicleConfirmationControllerFactory::class,
+            \Olcs\Action\Licence\Vehicle\TransferVehicleConfirmationIndexAction::class => \Olcs\Action\Licence\Vehicle\TransferVehicleConfirmationIndexActionFactory::class,
+            \Olcs\Action\Licence\Vehicle\TransferVehicleConfirmationStoreAction::class => \Olcs\Action\Licence\Vehicle\TransferVehicleConfirmationStoreActionFactory::class,
         ),
     ),
     'local_forms_path' => __DIR__ . '/../src/Form/Forms/',

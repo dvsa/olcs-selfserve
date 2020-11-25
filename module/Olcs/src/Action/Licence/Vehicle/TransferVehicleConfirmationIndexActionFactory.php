@@ -1,8 +1,7 @@
 <?php
 
-namespace Olcs\Controller\Licence\Vehicle;
+namespace Olcs\Action\Licence\Vehicle;
 
-use Common\Controller\Plugin\HandleCommand;
 use Common\Controller\Plugin\HandleQuery;
 use Common\Service\Helper\FlashMessengerHelperService;
 use Common\Service\Helper\FormHelperService;
@@ -17,7 +16,7 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Mvc\Controller\PluginManager as ControllerPluginManager;
 use Zend\Mvc\Controller\Plugin\Redirect;
 
-class TransferVehicleConfirmationControllerFactory implements FactoryInterface
+class TransferVehicleConfirmationIndexActionFactory implements FactoryInterface
 {
     /**
      * @inheritDoc
@@ -33,9 +32,6 @@ class TransferVehicleConfirmationControllerFactory implements FactoryInterface
         $translationService = new TranslationHelperService();
         $translationService->setServiceLocator($serviceLocator);
 
-        $commandBus = $controllerPluginManager->get('handleCommand');
-        assert($commandBus instanceof HandleCommand, 'Expected instance of HandleCommand');
-
         $queryHandler = $controllerPluginManager->get('handleQuery');
         assert($queryHandler instanceof HandleQuery, 'Expected instance of HandleQuery');
 
@@ -48,11 +44,10 @@ class TransferVehicleConfirmationControllerFactory implements FactoryInterface
         $redirectPlugin = $controllerPluginManager->get(Redirect::class);
         assert($redirectPlugin instanceof Redirect, 'Expected instance of Redirect');
 
-        return new TransferVehicleConfirmationController(
+        return new TransferVehicleConfirmationIndexAction(
             (new FlashMessengerHelperService())->setServiceLocator($serviceLocator),
             $translationService,
             new LicenceVehicleManagement(),
-            $commandBus,
             $formHelper,
             new LicenceRepository($queryHandler),
             new LicenceVehicleRepository($queryHandler),
