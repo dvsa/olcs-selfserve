@@ -42,23 +42,18 @@ class TransferVehicleConfirmationIndexActionTest extends TestCase
         $licenceRepository->expects($this->any())->method('findOneById')->will($this->returnCallback(function ($licenceId) {
             return new LicenceDTO(['id' => $licenceId, 'licNo' => sprintf('LIC%s', $licenceId)]);
         }));
-
         $licenceVehicleRepository = $this->getMockBuilder(LicenceVehicleRepository::class)->disableOriginalConstructor()->getMock();
         $licenceVehicleRepository->expects($this->any())->method('findByVehicleId')->will($this->returnCallback(function ($vehicleIds) {
             return [new LicenceVehicleDTO(['vehicle' => ['id' => $vehicleIds[0], 'vrm' => 'AA01AAA']])];
         }));
-
         $session = $this->getMockBuilder(LicenceVehicleManagement::class)->disableOriginalConstructor()->getMock();
         $session->method('getDestinationLicenceId')->willReturn(1);
         $session->method('getVrms')->willReturn([[1]]);
-
-        $controller = $this->newAction([
+        $action = $this->newAction([
             LicenceVehicleManagement::class => $session,
             LicenceRepository::class => $licenceRepository,
         ]);
-
-        $response = $controller->__invoke($this->newIndexRouteMatch(), new Request());
-
+        $response = $action->__invoke($this->newIndexRouteMatch(1), new Request());
         $this->assertInstanceOf(ViewModel::class, $response);
     }
 
@@ -69,9 +64,34 @@ class TransferVehicleConfirmationIndexActionTest extends TestCase
     {
         $licenceRepository = $this->getMockBuilder(LicenceRepository::class)->disableOriginalConstructor()->getMock();
         $licenceRepository->expects($this->any())->method('findOneById')->willReturn(null);
-        $controller = $this->newAction([LicenceRepository::class => $licenceRepository]);
+        $action = $this->newAction([LicenceRepository::class => $licenceRepository]);
         $this->expectException(ResourceNotFoundException::class);
-        $controller->__invoke($this->newIndexRouteMatch(), new Request());
+        $action->__invoke($this->newIndexRouteMatch(1), new Request());
+    }
+
+    /**
+     * @test
+     */
+    public function indexAction__returnsRedirectToTransferIndex_ifDestinationLicenceIsNotSetInSession()
+    {
+        $expectedResult = 'MOCK_RESPONSE';
+        $currentLicence = new LicenceDTO(['id' => 1]);
+        $licenceRepository = $this->getMockBuilder(LicenceRepository::class)->disableOriginalConstructor()->getMock();
+        $licenceRepository->expects($this->any())->method('findOneById')->willReturn($currentLicence);
+        $session = $this->getMockBuilder(LicenceVehicleManagement::class)->disableOriginalConstructor()->getMock();
+        $session->method('getDestinationLicenceId')->willReturn(null);
+        $redirectPlugin = $this->getMockBuilder(Redirect::class)->disableOriginalConstructor()->getMock();
+        $redirectPlugin->expects($this->once())
+            ->method('toRoute')
+            ->with('licence/vehicle/transfer/GET', ['licence' => $currentLicence->getId()])
+            ->willReturn($expectedResult);
+        $action = $this->newAction([
+            LicenceRepository::class => $licenceRepository,
+            LicenceVehicleManagement::class => $session,
+            Redirect::class => $redirectPlugin,
+        ]);
+        $result = $action->__invoke($this->newIndexRouteMatch($currentLicence->getId()), new Request());
+        $this->assertEquals($expectedResult, $result);
     }
 
     /**
@@ -113,14 +133,14 @@ class TransferVehicleConfirmationIndexActionTest extends TestCase
     /**
      * Creates a new route match instance for the index route.
      *
+     * @param int $licenceId
      * @return RouteMatch
      */
-    protected function newIndexRouteMatch()
+    protected function newIndexRouteMatch(int $licenceId)
     {
         $routeMatch = new RouteMatch([
-            'licence' => '7',
+            'licence' => $licenceId,
             'controller' => TransferVehicleConfirmationIndexAction::class,
-            'action' => 'index',
         ]);
         $routeMatch->setMatchedRouteName('licence/vehicle/transfer/confirm/GET');
         return $routeMatch;
