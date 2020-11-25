@@ -2,6 +2,7 @@
 
 namespace Olcs\Action\Licence\Vehicle;
 
+use Common\Exception\ResourceNotFoundException;
 use Olcs\DTO\Licence\Vehicle\LicenceVehicleDTO;
 use Olcs\Form\Model\Form\Vehicle\VehicleConfirmationForm;
 use Zend\View\Model\ViewModel;
@@ -22,15 +23,15 @@ class TransferVehicleConfirmationIndexAction extends TransferVehicleConfirmation
      * @param RouteMatch $routeMatch
      * @param Request $request
      * @return ViewModel|Response
+     * @throws ResourceNotFoundException
      */
     public function __invoke(RouteMatch $routeMatch, Request $request)
     {
         $currentLicenceId = (int) $routeMatch->getParam('licence');
         $currentLicence = $this->licenceRepository->findOneById($currentLicenceId);
         if (is_null($currentLicence)) {
-            return $this->newRedirectToTransferIndexWithError(
-                $currentLicenceId, 'licence.vehicle.transfer.confirm.error.invalid-licence'
-            );
+            $this->flashMessenger->addErrorMessage('licence.vehicle.transfer.confirm.error.invalid-licence');
+            throw new ResourceNotFoundException();
         }
 
         $destinationLicenceId = $this->session->getDestinationLicenceId();

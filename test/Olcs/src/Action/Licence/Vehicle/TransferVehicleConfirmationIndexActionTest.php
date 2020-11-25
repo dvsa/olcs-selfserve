@@ -2,7 +2,7 @@
 
 namespace OlcsTest\Action\Licence\Vehicle;
 
-use Common\Controller\Plugin\HandleQuery;
+use Common\Exception\ResourceNotFoundException;
 use Common\Service\Helper\FlashMessengerHelperService;
 use Common\Service\Helper\FormHelperService;
 use Common\Service\Helper\TranslationHelperService;
@@ -38,8 +38,6 @@ class TransferVehicleConfirmationIndexActionTest extends TestCase
      */
     public function indexAction__returnsAView()
     {
-        $queryBus = $this->getMockBuilder(HandleQuery::class)->disableOriginalConstructor()->getMock();
-
         $licenceRepository = $this->getMockBuilder(LicenceRepository::class)->disableOriginalConstructor()->getMock();
         $licenceRepository->expects($this->any())->method('findOneById')->will($this->returnCallback(function ($licenceId) {
             return new LicenceDTO(['id' => $licenceId, 'licNo' => sprintf('LIC%s', $licenceId)]);
@@ -55,7 +53,6 @@ class TransferVehicleConfirmationIndexActionTest extends TestCase
         $session->method('getVrms')->willReturn([[1]]);
 
         $controller = $this->newAction([
-            HandleQuery::class => $queryBus,
             LicenceVehicleManagement::class => $session,
             LicenceRepository::class => $licenceRepository,
         ]);
@@ -63,6 +60,18 @@ class TransferVehicleConfirmationIndexActionTest extends TestCase
         $response = $controller->__invoke($this->newIndexRouteMatch(), new Request());
 
         $this->assertInstanceOf(ViewModel::class, $response);
+    }
+
+    /**
+     * @test
+     */
+    public function indexAction__throwsNotFoundHttpException_ifCurrentLicenceNotFound()
+    {
+        $licenceRepository = $this->getMockBuilder(LicenceRepository::class)->disableOriginalConstructor()->getMock();
+        $licenceRepository->expects($this->any())->method('findOneById')->willReturn(null);
+        $controller = $this->newAction([LicenceRepository::class => $licenceRepository]);
+        $this->expectException(ResourceNotFoundException::class);
+        $controller->__invoke($this->newIndexRouteMatch(), new Request());
     }
 
     /**
