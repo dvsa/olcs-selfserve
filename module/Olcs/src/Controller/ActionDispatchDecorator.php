@@ -4,6 +4,7 @@ namespace Olcs\Controller;
 
 use Exception;
 use Olcs\Exception\Http\NotFoundHttpException;
+use Zend\Mvc\MvcEvent;
 
 class ActionDispatchDecorator extends AbstractSelfserveController
 {
@@ -30,6 +31,18 @@ class ActionDispatchDecorator extends AbstractSelfserveController
     }
 
     /**
+     * @inheritDoc
+     */
+    public function onDispatch(MvcEvent $e)
+    {
+        try {
+            return parent::onDispatch($e);
+        } catch (NotFoundHttpException $exception) {
+            return $this->notFoundAction();
+        }
+    }
+
+    /**
      * Calls an action.
      *
      * @return mixed
@@ -41,21 +54,10 @@ class ActionDispatchDecorator extends AbstractSelfserveController
         $routeMatch = $this->getEvent()->getRouteMatch();
         $action = $routeMatch->getParam('action');
         $method = is_null($action) ? '__invoke' : parent::getMethodFromAction($action);
-
-        try {
-            if (! method_exists($this->delegate, $method)) {
-                throw new NotFoundHttpException();
-            }
-            $actionResponse = $this->delegate->$method($routeMatch, $request);
-        } catch (NotFoundHttpException $exception) {
-            return $this->notFoundAction();
-        } catch (Exception $exception) {
-            if (! ($this->delegate instanceof RespondsToExceptionsInterface)) {
-                throw $exception;
-            }
-            $actionResponse = $this->delegate->createResponseToException($exception, $routeMatch, $request);
+        if (! method_exists($this->delegate, $method)) {
+            throw new NotFoundHttpException();
         }
-        return $actionResponse;
+        return $this->delegate->$method($routeMatch, $request);
     }
 
     /**
