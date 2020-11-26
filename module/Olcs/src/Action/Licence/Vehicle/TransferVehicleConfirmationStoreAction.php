@@ -4,12 +4,12 @@ namespace Olcs\Action\Licence\Vehicle;
 
 use Common\Exception\BadRequestException;
 use Common\Controller\Plugin\HandleCommand;
-use Common\Exception\ResourceNotFoundException;
 use Common\Service\Helper\FlashMessengerHelperService;
 use Common\Service\Helper\FormHelperService;
 use Common\Service\Helper\TranslationHelperService;
 use Dvsa\Olcs\Transfer\Command\Licence\TransferVehicles;
 use Olcs\DTO\Licence\LicenceDTO;
+use Olcs\Exception\Http\NotFoundHttpException;
 use Olcs\Exception\Licence\LicenceVehicleLimitReachedException;
 use Olcs\Exception\Licence\Vehicle\LicenceAlreadyAssignedVehicleException;
 use Olcs\Form\Model\Form\Vehicle\Fieldset\YesNo;
@@ -69,7 +69,7 @@ class TransferVehicleConfirmationStoreAction extends TransferVehicleConfirmation
      * @return Response
      * @throws BadRequestException
      * @throws BailOutException
-     * @throws ResourceNotFoundException
+     * @throws NotFoundHttpException
      */
     public function __invoke(RouteMatch $routeMatch, Request $request)
     {
@@ -78,7 +78,7 @@ class TransferVehicleConfirmationStoreAction extends TransferVehicleConfirmation
         $currentLicenceId = (int) $routeMatch->getParam('licence');
         $currentLicence = $this->licenceRepository->findOneById($currentLicenceId);
         if (is_null($currentLicence)) {
-            throw new ResourceNotFoundException();
+            throw new NotFoundHttpException();
         }
 
         $destinationLicenceId = $this->session->getDestinationLicenceId();

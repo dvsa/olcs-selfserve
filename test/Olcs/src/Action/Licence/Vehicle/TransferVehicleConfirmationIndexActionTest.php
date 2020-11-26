@@ -2,13 +2,13 @@
 
 namespace OlcsTest\Action\Licence\Vehicle;
 
-use Common\Exception\ResourceNotFoundException;
 use Common\Service\Helper\FlashMessengerHelperService;
 use Common\Service\Helper\FormHelperService;
 use Common\Service\Helper\TranslationHelperService;
 use Olcs\Action\Licence\Vehicle\TransferVehicleConfirmationIndexAction;
 use Olcs\DTO\Licence\LicenceDTO;
 use Olcs\DTO\Licence\Vehicle\LicenceVehicleDTO;
+use Olcs\Exception\Http\NotFoundHttpException;
 use Olcs\Repository\Licence\LicenceRepository;
 use Olcs\Repository\Licence\Vehicle\LicenceVehicleRepository;
 use Olcs\Session\LicenceVehicleManagement;
@@ -65,7 +65,7 @@ class TransferVehicleConfirmationIndexActionTest extends TestCase
         $licenceRepository = $this->getMockBuilder(LicenceRepository::class)->disableOriginalConstructor()->getMock();
         $licenceRepository->expects($this->any())->method('findOneById')->willReturn(null);
         $action = $this->newAction([LicenceRepository::class => $licenceRepository]);
-        $this->expectException(ResourceNotFoundException::class);
+        $this->expectException(NotFoundHttpException::class);
         $action->__invoke($this->newIndexRouteMatch(1), new Request());
     }
 

@@ -2,8 +2,8 @@
 
 namespace Olcs\Action\Licence\Vehicle;
 
-use Common\Exception\ResourceNotFoundException;
 use Olcs\DTO\Licence\Vehicle\LicenceVehicleDTO;
+use Olcs\Exception\Http\NotFoundHttpException;
 use Olcs\Form\Model\Form\Vehicle\VehicleConfirmationForm;
 use Zend\View\Model\ViewModel;
 use Zend\Http\Response;
@@ -23,14 +23,14 @@ class TransferVehicleConfirmationIndexAction extends TransferVehicleConfirmation
      * @param RouteMatch $routeMatch
      * @param Request $request
      * @return ViewModel|Response
-     * @throws ResourceNotFoundException
+     * @throws NotFoundHttpException
      */
     public function __invoke(RouteMatch $routeMatch, Request $request)
     {
         $currentLicenceId = (int) $routeMatch->getParam('licence');
         $currentLicence = $this->licenceRepository->findOneById($currentLicenceId);
         if (is_null($currentLicence)) {
-            throw new ResourceNotFoundException();
+            throw new NotFoundHttpException();
         }
 
         $destinationLicenceId = $this->session->getDestinationLicenceId();

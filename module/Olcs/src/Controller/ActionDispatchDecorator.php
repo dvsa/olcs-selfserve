@@ -2,8 +2,8 @@
 
 namespace Olcs\Controller;
 
-use Common\Exception\ResourceNotFoundException;
 use Exception;
+use Olcs\Exception\Http\NotFoundHttpException;
 
 class ActionDispatchDecorator extends AbstractSelfserveController
 {
@@ -44,10 +44,10 @@ class ActionDispatchDecorator extends AbstractSelfserveController
 
         try {
             if (! method_exists($this->delegate, $method)) {
-                throw new ResourceNotFoundException();
+                throw new NotFoundHttpException();
             }
             $actionResponse = $this->delegate->$method($routeMatch, $request);
-        } catch (ResourceNotFoundException $exception) {
+        } catch (NotFoundHttpException $exception) {
             return $this->notFoundAction();
         } catch (Exception $exception) {
             if (! ($this->delegate instanceof RespondsToExceptionsInterface)) {
