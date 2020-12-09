@@ -3,7 +3,7 @@
 namespace Olcs\Service\Qa;
 
 use Common\Form\QaForm;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Laminas\ServiceManager\ServiceLocatorInterface;
 
 class FormFactory
 {
@@ -37,12 +37,14 @@ class FormFactory
             'ecmt_st_international_journeys' => 'QaEcmtInternationalJourneysDataHandler',
             'ecmt_st_annual_trips_abroad' => 'QaEcmtAnnualTripsAbroadDataHandler',
             'bilateral_permit_usage' => 'QaBilateralPermitUsageDataHandler',
+            'bilateral_standard_and_cabotage' => 'QaBilateralStandardAndCabotageDataHandler',
         ];
 
         $isValidHandlerMappings = [
             'ecmt_st_international_journeys' => 'QaEcmtInternationalJourneysIsValidHandler',
             'ecmt_st_annual_trips_abroad' => 'QaEcmtAnnualTripsAbroadIsValidHandler',
-            'bilateral_permit_usage' => 'QaBilateralPermitusageIsValidHandler',
+            'bilateral_permit_usage' => 'QaBilateralPermitUsageIsValidHandler',
+            'bilateral_standard_and_cabotage' => 'QaBilateralStandardAndCabotageIsValidHandler',
         ];
 
         foreach ($dataHandlerMappings as $type => $serviceName) {

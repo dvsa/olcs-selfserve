@@ -19,7 +19,7 @@ class AddDuplicateVehicleController extends AbstractVehicleController
     ];
 
     /**
-     * @return \Zend\Http\Response|\Zend\View\Model\ViewModel
+     * @return \Laminas\Http\Response|\Laminas\View\Model\ViewModel
      */
     public function indexAction()
     {
@@ -41,7 +41,7 @@ class AddDuplicateVehicleController extends AbstractVehicleController
     }
 
     /**
-     * @return \Zend\Http\Response
+     * @return \Laminas\Http\Response
      */
     public function postAction()
     {
@@ -63,6 +63,16 @@ class AddDuplicateVehicleController extends AbstractVehicleController
         $selectedOption = $formData[AddDuplicateVehicleConfirmationForm::FIELD_OPTIONS_FIELDSET_NAME]
             [AddDuplicateVehicleConfirmationForm::FIELD_OPTIONS_NAME]
             ?? '';
+
+        if (empty($selectedOption)) {
+            $this->form
+                ->get(AddDuplicateVehicleConfirmationForm::FIELD_OPTIONS_FIELDSET_NAME)
+                ->get(AddDuplicateVehicleConfirmationForm::FIELD_OPTIONS_NAME)
+                ->setMessages([
+                    'licence.vehicle.add.duplicate.validation.select-an-option'
+                ]);
+            return $this->indexAction();
+        }
 
         // Has the user selected no?
         if ($selectedOption != 'yes') {

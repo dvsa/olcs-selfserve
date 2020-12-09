@@ -18,7 +18,7 @@ use Olcs\Form\Element\SearchOrderFieldsetFactory;
 use Olcs\FormService\Form\Lva as LvaFormService;
 use Olcs\Service\Cookie as CookieService;
 use Olcs\Service\Qa as QaService;
-use Zend\Mvc\Router\Http\Segment;
+use Laminas\Mvc\Router\Http\Segment;
 
 $sectionConfig = new \Common\Service\Data\SectionConfig();
 $configRoutes = $sectionConfig->getAllRoutes();
@@ -467,7 +467,7 @@ $routes = array(
         )
     ),
     'verify' => array(
-        'type' => \Zend\Mvc\Router\Http\Literal::class,
+        'type' => \Laminas\Mvc\Router\Http\Literal::class,
         'options' => array(
             'route' => '/verify',
             'defaults' => [
@@ -1295,6 +1295,9 @@ return array(
             \Olcs\Controller\Licence\Vehicle\RemoveVehicleConfirmationController::class => \Olcs\Controller\Licence\Vehicle\RemoveVehicleConfirmationController::class,
             \Olcs\Controller\Licence\Vehicle\TransferVehicleController::class => \Olcs\Controller\Licence\Vehicle\TransferVehicleController::class,
             \Olcs\Controller\Licence\Vehicle\ViewVehicleController::class => \Olcs\Controller\Licence\Vehicle\ViewVehicleController::class,
+            \Olcs\Controller\Licence\Vehicle\TransferVehicleConfirmationController::class => \Olcs\Controller\Licence\Vehicle\TransferVehicleConfirmationController::class,
+            \Olcs\Controller\Licence\Vehicle\Reprint\ReprintLicenceVehicleDiscController::class => \Olcs\Controller\Licence\Vehicle\Reprint\ReprintLicenceVehicleDiscController::class,
+            \Olcs\Controller\Licence\Vehicle\Reprint\ReprintLicenceVehicleDiscConfirmationController::class => \Olcs\Controller\Licence\Vehicle\Reprint\ReprintLicenceVehicleDiscConfirmationController::class,
         ),
         'factories' => array(
             CookieSettingsController::class => CookieSettingsControllerFactory::class,
@@ -1327,7 +1330,7 @@ return array(
             'QaIrhpPermitApplicationViewGenerator' => QaService\ViewGenerator\IrhpPermitApplicationViewGenerator::class,
         ),
         'abstract_factories' => [
-            \Zend\Cache\Service\StorageCacheAbstractServiceFactory::class,
+            \Laminas\Cache\Service\StorageCacheAbstractServiceFactory::class,
         ],
         'factories' => array(
             'CookieListener' => \Olcs\Mvc\CookieListenerFactory::class,
@@ -1342,7 +1345,7 @@ return array(
             'CookieAnalyticsCookieNamesProvider' => CookieService\AnalyticsCookieNamesProviderFactory::class,
             'CookieDeleteCookieNamesProvider' => CookieService\DeleteCookieNamesProviderFactory::class,
             'Olcs\InputFilter\EbsrPackInput' => 'Olcs\InputFilter\EbsrPackFactory',
-            'navigation' => Zend\Navigation\Service\DefaultNavigationFactory::class,
+            'navigation' => Laminas\Navigation\Service\DefaultNavigationFactory::class,
             'Olcs\Navigation\DashboardNavigation' => Olcs\Navigation\DashboardNavigationFactory::class,
             Olcs\Controller\Listener\Navigation::class => Olcs\Controller\Listener\NavigationFactory::class,
             'LicenceTransportManagerAdapter' =>

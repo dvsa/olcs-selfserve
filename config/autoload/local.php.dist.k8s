@@ -30,7 +30,7 @@ return [
             'backend' => [
                 'url' => 'http://olcs-backend.olcs.gov.uk/',
                 'options' => [
-                    'adapter' => \Zend\Http\Client\Adapter\Curl::class,
+                    'adapter' => \Laminas\Http\Client\Adapter\Curl::class,
                     'timeout' => 60,
                 ]
             ],
@@ -38,7 +38,7 @@ return [
             'postcode' => [
                 'url' => 'http://address.localdev/',
                 'options' => [
-                    'adapter' => \Zend\Http\Client\Adapter\Curl::class,
+                    'adapter' => \Laminas\Http\Client\Adapter\Curl::class,
                     'timeout' => 60,
                 ]
             ],
@@ -108,7 +108,9 @@ return [
     ],
 
     'query_cache' => [
-        //sets the ttl for cqrs cache - note that these caches are also used by internal
+        // whether the cqrs cache is enabled
+        'enabled' => true,
+        // sets the ttl for cqrs cache - note that these caches are also used by internal
         'ttl' => [
             \Dvsa\Olcs\Transfer\Query\CacheableMediumTermQueryInterface::class => 600, //10 minutes
             \Dvsa\Olcs\Transfer\Query\CacheableLongTermQueryInterface::class => 43200, //12 hours
@@ -116,7 +118,7 @@ return [
     ],
     
     'caches' => [
-        \Zend\Cache\Storage\Adapter\Redis::class => [
+        \Laminas\Cache\Storage\Adapter\Redis::class => [
             'adapter' => [
                 'name' => 'redis',
                 'options' => [
@@ -138,5 +140,5 @@ return [
             ],
         ],
     ],
-
+    'html-purifier-cache-dir' => '/var/tmp/htmlPurifierCache',
 ];
