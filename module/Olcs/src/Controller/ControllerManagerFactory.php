@@ -3,8 +3,8 @@
 
 namespace Olcs\Controller;
 
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Laminas\ServiceManager\FactoryInterface;
+use Laminas\ServiceManager\ServiceLocatorInterface;
 
 class ControllerManagerFactory implements FactoryInterface
 {
@@ -13,6 +13,6 @@ class ControllerManagerFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        return new ControllerManger($serviceLocator);
+        return new ControllerManager($serviceLocator);
     }
 }

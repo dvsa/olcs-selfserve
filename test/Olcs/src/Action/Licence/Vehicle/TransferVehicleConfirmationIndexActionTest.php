@@ -13,11 +13,11 @@ use Olcs\Repository\Licence\LicenceRepository;
 use Olcs\Repository\Licence\Vehicle\LicenceVehicleRepository;
 use Olcs\Session\LicenceVehicleManagement;
 use PHPUnit\Framework\TestCase;
-use Zend\Http\Request;
-use Zend\Mvc\Controller\Plugin\Redirect;
-use Zend\Mvc\Controller\Plugin\Url;
-use Zend\Mvc\Router\Http\RouteMatch;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Request;
+use Laminas\Mvc\Controller\Plugin\Redirect;
+use Laminas\Mvc\Controller\Plugin\Url;
+use Laminas\Mvc\Router\Http\RouteMatch;
+use Laminas\View\Model\ViewModel;
 
 /**
  * @see TransferVehicleConfirmationIndexAction

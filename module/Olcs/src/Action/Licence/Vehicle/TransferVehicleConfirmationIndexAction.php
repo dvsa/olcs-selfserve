@@ -5,11 +5,11 @@ namespace Olcs\Action\Licence\Vehicle;
 use Olcs\DTO\Licence\Vehicle\LicenceVehicleDTO;
 use Olcs\Exception\Http\NotFoundHttpException;
 use Olcs\Form\Model\Form\Vehicle\VehicleConfirmationForm;
-use Zend\View\Model\ViewModel;
-use Zend\Http\Response;
+use Laminas\View\Model\ViewModel;
+use Laminas\Http\Response;
 use Olcs\Exception\Licence\Vehicle\VehiclesNotFoundWithIdsException;
-use Zend\Http\Request;
-use Zend\Mvc\Router\RouteMatch;
+use Laminas\Http\Request;
+use Laminas\Mvc\Router\RouteMatch;
 
 /**
  * @see TransferVehicleConfirmationIndexActionFactory

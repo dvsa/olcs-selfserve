@@ -17,12 +17,12 @@ use Olcs\Form\Model\Form\Vehicle\VehicleConfirmationForm;
 use Olcs\Repository\Licence\LicenceRepository;
 use Olcs\Repository\Licence\Vehicle\LicenceVehicleRepository;
 use Olcs\Session\LicenceVehicleManagement;
-use Zend\Mvc\Controller\Plugin\Redirect;
-use Zend\Mvc\Controller\Plugin\Url;
-use Zend\Http\Response;
-use Zend\Http\Request;
+use Laminas\Mvc\Controller\Plugin\Redirect;
+use Laminas\Mvc\Controller\Plugin\Url;
+use Laminas\Http\Response;
+use Laminas\Http\Request;
 use Common\Exception\BailOutException;
-use Zend\Mvc\Router\RouteMatch;
+use Laminas\Mvc\Router\RouteMatch;
 
 /**
  * @see TransferVehicleConfirmationStoreActionFactory

@@ -10,12 +10,12 @@ use Common\Service\Helper\TranslationHelperService;
 use Olcs\Repository\Licence\LicenceRepository;
 use Olcs\Repository\Licence\Vehicle\LicenceVehicleRepository;
 use Olcs\Session\LicenceVehicleManagement;
-use Zend\Mvc\Controller\ControllerManager;
-use Zend\Mvc\Controller\Plugin\Url;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\Mvc\Controller\PluginManager as ControllerPluginManager;
-use Zend\Mvc\Controller\Plugin\Redirect;
+use Laminas\Mvc\Controller\ControllerManager;
+use Laminas\Mvc\Controller\Plugin\Url;
+use Laminas\ServiceManager\FactoryInterface;
+use Laminas\ServiceManager\ServiceLocatorInterface;
+use Laminas\Mvc\Controller\PluginManager as ControllerPluginManager;
+use Laminas\Mvc\Controller\Plugin\Redirect;
 
 class TransferVehicleConfirmationStoreActionFactory implements FactoryInterface
 {

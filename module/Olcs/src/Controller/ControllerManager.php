@@ -2,10 +2,10 @@
 
 namespace Olcs\Controller;
 
-use Zend\Mvc\Controller\Plugin\AbstractPlugin;
-use Zend\Mvc\Controller\ControllerManager AS ZendControllerManager;
+use Laminas\Mvc\Controller\Plugin\AbstractPlugin;
+use Laminas\Mvc\Controller\ControllerManager AS LaminasControllerManager;
 
-class ControllerManger extends ZendControllerManager
+class ControllerManager extends LaminasControllerManager
 {
     /**
      * @inheritDoc
