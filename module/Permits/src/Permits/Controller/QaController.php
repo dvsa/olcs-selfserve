@@ -238,6 +238,7 @@ class QaController extends AbstractOlcsController
 
         $data = [
             'description' => $file['name'],
+            'allowSpacesInDescription' => true,
             'category' => self::UPLOADED_FILE_CATEGORY,
             'subCategory' => self::UPLOADED_FILE_SUBCATEGORY,
             'isExternal'  => true,
