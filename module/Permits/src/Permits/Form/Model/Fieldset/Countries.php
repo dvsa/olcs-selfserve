@@ -13,9 +13,9 @@ class Countries
      * @Form\Name("countries")
      * @Form\Required(false)
      * @Form\ContinueIfEmpty(true)
-     * @Form\Attributes({"id":"countries", "class":"govuk-checkboxes__item"})
+     * @Form\Attributes({"id":"countries", "class":"govuk-checkboxes__input"})
      * @Form\Options({
-     *      "label_attributes": {"class": "form-control form-control--checkbox form-control--confirm govuk-!-padding-bottom-2"},
+     *      "label_attributes": {"class": "govuk-label govuk-checkboxes__label"},
      * })
      * @Form\Validator({
      *      "name": "Laminas\Validator\NotEmpty",

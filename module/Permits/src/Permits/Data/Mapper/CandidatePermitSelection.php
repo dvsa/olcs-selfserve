@@ -74,12 +74,11 @@ class CandidatePermitSelection
                             'class' => 'govuk-checkboxes__input',
                             'id' => $checkboxId,
                             'value' => ($candidatePermit['wanted'] === true) ? '1' : '0',
-                            'data-container-class' => 'govuk-checkboxes__item',
                         ],
                         'options' => [
                             'label' => '<span class="govuk-visually-hidden">Select permit ' . $index . '</span>',
                             'label_attributes' => [
-                                'class' => 'form-control form-control--checkbox form-control--advanced'
+                                'class' => 'govuk-label govuk-checkboxes__label'
                             ],
                             'label_options' => [
                                 'disable_html_escape' => true

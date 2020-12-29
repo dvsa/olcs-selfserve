@@ -23,11 +23,14 @@ class CountriesConfirmation
     
     /**
      * @Form\Name("confirmation")
+     * @Form\Attributes({
+     *     "class" : "input--declaration govuk-checkboxes__input"
+     * })
      * @Form\Options({
      *     "checked_value": "1",
      *     "unchecked_value": "0",
      *     "label": "permits.page.bilateral.countries-confirmation.label",
-     *     "label_attributes": {"class": "form-control form-control--checkbox form-control--advanced"},
+     *     "label_attributes": {"class": "govuk-label govuk-checkboxes__label"},
      *     "must_be_value": "1",
      *     "not_checked_message": "permits.page.bilateral.countries-confirmation.error"
      * })
