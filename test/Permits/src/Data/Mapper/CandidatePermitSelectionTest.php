@@ -90,12 +90,11 @@ class CandidatePermitSelectionTest extends TestCase
                 'class' => 'govuk-checkboxes__input',
                 'id' => 'candidate-123',
                 'value' => '1',
-                'data-container-class' => 'govuk-checkboxes__item',
             ],
             'options' => [
                 'label' => '<span class="govuk-visually-hidden">Select permit 1</span>',
                 'label_attributes' => [
-                    'class' => 'form-control form-control--checkbox form-control--advanced'
+                    'class' => 'govuk-label govuk-checkboxes__label'
                 ],
                 'label_options' => [
                     'disable_html_escape' => true
@@ -124,12 +123,11 @@ class CandidatePermitSelectionTest extends TestCase
                 'class' => 'govuk-checkboxes__input',
                 'id' => 'candidate-456',
                 'value' => '0',
-                'data-container-class' => 'govuk-checkboxes__item',
             ],
             'options' => [
                 'label' => '<span class="govuk-visually-hidden">Select permit 2</span>',
                 'label_attributes' => [
-                    'class' => 'form-control form-control--checkbox form-control--advanced'
+                    'class' => 'govuk-label govuk-checkboxes__label'
                 ],
                 'label_options' => [
                     'disable_html_escape' => true
@@ -158,12 +156,11 @@ class CandidatePermitSelectionTest extends TestCase
                 'class' => 'govuk-checkboxes__input',
                 'id' => 'candidate-789',
                 'value' => '1',
-                'data-container-class' => 'govuk-checkboxes__item',
             ],
             'options' => [
                 'label' => '<span class="govuk-visually-hidden">Select permit 3</span>',
                 'label_attributes' => [
-                    'class' => 'form-control form-control--checkbox form-control--advanced'
+                    'class' => 'govuk-label govuk-checkboxes__label'
                 ],
                 'label_options' => [
                     'disable_html_escape' => true
