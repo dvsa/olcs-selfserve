@@ -5,7 +5,7 @@ namespace OlcsTest\Action\Licence\Vehicle;
 use Common\Service\Helper\FlashMessengerHelperService;
 use Common\Service\Helper\FormHelperService;
 use Common\Service\Helper\TranslationHelperService;
-use Olcs\Action\Licence\Vehicle\TransferVehicleConfirmationIndexAction;
+use Olcs\Action\Licence\Vehicle\TransferVehicleConfirmationIndexController;
 use Olcs\DTO\Licence\LicenceDTO;
 use Olcs\DTO\Licence\Vehicle\LicenceVehicleDTO;
 use Olcs\Exception\Http\NotFoundHttpException;
@@ -20,7 +20,7 @@ use Laminas\Mvc\Router\Http\RouteMatch;
 use Laminas\View\Model\ViewModel;
 
 /**
- * @see TransferVehicleConfirmationIndexAction
+ * @see TransferVehicleConfirmationIndexController
  */
 class TransferVehicleConfirmationIndexActionTest extends TestCase
 {
@@ -98,7 +98,7 @@ class TransferVehicleConfirmationIndexActionTest extends TestCase
      * Creates a new controller instance.
      *
      * @param array $constructorArgs
-     * @return TransferVehicleConfirmationIndexAction
+     * @return TransferVehicleConfirmationIndexController
      */
     protected function newAction(array $constructorArgs = [])
     {
@@ -118,7 +118,7 @@ class TransferVehicleConfirmationIndexActionTest extends TestCase
             ?? $this->getMockBuilder(Url::class)->disableOriginalConstructor()->getMock();
         $redirectPlugin = $constructorArgs[Redirect::class]
             ?? $this->getMockBuilder(Redirect::class)->disableOriginalConstructor()->getMock();
-        return new TransferVehicleConfirmationIndexAction(
+        return new TransferVehicleConfirmationIndexController(
             $flashMessenger,
             $translator,
             $session,
@@ -140,7 +140,7 @@ class TransferVehicleConfirmationIndexActionTest extends TestCase
     {
         $routeMatch = new RouteMatch([
             'licence' => $licenceId,
-            'controller' => TransferVehicleConfirmationIndexAction::class,
+            'controller' => TransferVehicleConfirmationIndexController::class,
         ]);
         $routeMatch->setMatchedRouteName('licence/vehicle/transfer/confirm/GET');
         return $routeMatch;

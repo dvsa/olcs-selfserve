@@ -2,11 +2,27 @@
 
 namespace Olcs\Controller;
 
-use Laminas\Mvc\Controller\Plugin\AbstractPlugin;
-use Laminas\Mvc\Controller\ControllerManager AS LaminasControllerManager;
-
-class ControllerManager extends LaminasControllerManager
+class ControllerManager extends \Laminas\Mvc\Controller\ControllerManager
 {
+    /**
+     * @var array
+     */
+    protected $delegateActionDependencyResolverMappings;
+
+    /**
+     * @param $configOrContainerInstance
+     * @param array $v3config
+     */
+    public function __construct($configOrContainerInstance, array $v3config = [])
+    {
+        parent::__construct($configOrContainerInstance, $v3config);
+
+        $delegateActionDependencyResolverMappings = $v3config['delegate_action_dependency_resolvers'] ?? [];
+        if (is_array($delegateActionDependencyResolverMappings)) {
+            $this->delegateActionDependencyResolverMappings = $delegateActionDependencyResolverMappings;
+        }
+    }
+
     /**
      * @inheritDoc
      */
@@ -46,15 +62,7 @@ class ControllerManager extends LaminasControllerManager
     public function initializeDispatchDelegatingControllers($instance)
     {
         if ($instance instanceof DelegatesDispatchingInterface) {
-            $instance = new ActionDispatchDecorator($instance);
-            $delegate = $instance->getDelegate();
-            if ($delegate instanceof DelegatesPluginsInterface) {
-                foreach ($delegate->getDelegatedPlugins() as $plugin) {
-                    if ($plugin instanceof AbstractPlugin) {
-                        $plugin->setController($instance);
-                    }
-                }
-            }
+            $instance = new ActionDispatchDecorator($instance, $this->delegateActionDependencyResolverMappings);
         }
         return $instance;
     }

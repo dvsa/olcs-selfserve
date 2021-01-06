@@ -11,8 +11,7 @@ use Olcs\Controller\Licence\Vehicle\AddVehicleSearchController;
 use Olcs\Controller\Licence\Vehicle\RemoveVehicleConfirmationController;
 use Olcs\Controller\Licence\Vehicle\RemoveVehicleController;
 use Olcs\Controller\Licence\Vehicle\SwitchBoardController;
-use Olcs\Action\Licence\Vehicle\TransferVehicleConfirmationStoreAction;
-use Olcs\Controller\Licence\Vehicle\TransferVehicleController;
+use Olcs\Controller\Licence\Vehicle\Transfer\TransferVehicleController;
 use Olcs\Controller\Licence\Vehicle\ViewVehicleController;
 use Laminas\Mvc\Router\Http\Method;
 use Laminas\Mvc\Router\Http\Segment;
@@ -704,7 +703,8 @@ return [
                                             'options' => [
                                                 'verb' => 'GET',
                                                 'defaults' => [
-                                                    'controller' => \Olcs\Action\Licence\Vehicle\TransferVehicleConfirmationIndexAction::class,
+                                                    'controller' => \Olcs\Controller\Licence\Vehicle\Transfer\TransferVehicleConfirmationController::class,
+                                                    'action' => 'index'
                                                 ],
                                             ],
                                         ],
@@ -714,7 +714,8 @@ return [
                                             'options' => [
                                                 'verb' => 'POST',
                                                 'defaults' => [
-                                                    'controller' => TransferVehicleConfirmationStoreAction::class,
+                                                    'controller' => \Olcs\Controller\Licence\Vehicle\Transfer\TransferVehicleConfirmationController::class,
+                                                    'store'
                                                 ],
                                             ],
                                         ],

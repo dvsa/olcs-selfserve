@@ -1,10 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace Olcs\Controller\Licence\Vehicle;
+namespace Olcs\Controller\Licence\Vehicle\Transfer;
 
 use Common\Form\Form;
 use Dvsa\Olcs\Transfer\Query\Licence\OtherActiveLicences;
+use Olcs\Controller\Licence\Vehicle\AbstractVehicleController;
 use Olcs\DTO\Licence\OtherActiveLicenceListDTO;
 use Olcs\Form\Model\Form\Vehicle\Fieldset\VehicleTransferFormActions;
 use Olcs\Form\Model\Form\Vehicle\ListVehicleSearch;

@@ -14,12 +14,19 @@ class ActionDispatchDecorator extends AbstractSelfserveController
     protected $delegate;
 
     /**
-     * @param object $delegate
+     * @var array
      */
-    public function __construct(object $delegate)
+    protected $delegateActionDependancyResolvers;
+
+    /**
+     * @param object $delegate
+     * @param array $delegateActionDependancyResolvers
+     */
+    public function __construct(object $delegate, array $delegateActionDependancyResolvers)
     {
         $this->delegate = $delegate;
         $this->eventIdentifier = get_class($delegate);
+        $this->delegateActionDependancyResolvers = $delegateActionDependancyResolvers;
     }
 
     /**
@@ -53,11 +60,21 @@ class ActionDispatchDecorator extends AbstractSelfserveController
         $request = $this->getEvent()->getRequest();
         $routeMatch = $this->getEvent()->getRouteMatch();
         $action = $routeMatch->getParam('action');
-        $method = is_null($action) ? '__invoke' : parent::getMethodFromAction($action);
-        if (! method_exists($this->delegate, $method)) {
+        if (! method_exists($this->delegate, $action)) {
             throw new NotFoundHttpException();
         }
-        return $this->delegate->$method($routeMatch, $request);
+        
+        var_dump('HERE');
+        die();
+
+        // @todo resolve argument resolver
+        $actionArgs = []; // @todo resolve method arguments
+        if (is_callable([$this->delegate, 'dispatch'])) {
+            // @todo resolve dispatch method arguments
+            $actionArgs = array_merge([$this->serviceLocator, $actionArgs], []);
+            $action = 'dispatch';
+        }
+        return $this->delegate->$action(...$methodArgs);
     }
 
     /**

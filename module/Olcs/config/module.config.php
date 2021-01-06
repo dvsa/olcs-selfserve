@@ -1293,17 +1293,19 @@ return array(
             \Olcs\Controller\Licence\Vehicle\AddDuplicateVehicleController::class => \Olcs\Controller\Licence\Vehicle\AddDuplicateVehicleController::class,
             \Olcs\Controller\Licence\Vehicle\RemoveVehicleController::class => \Olcs\Controller\Licence\Vehicle\RemoveVehicleController::class,
             \Olcs\Controller\Licence\Vehicle\RemoveVehicleConfirmationController::class => \Olcs\Controller\Licence\Vehicle\RemoveVehicleConfirmationController::class,
-            \Olcs\Controller\Licence\Vehicle\TransferVehicleController::class => \Olcs\Controller\Licence\Vehicle\TransferVehicleController::class,
+            \Olcs\Controller\Licence\Vehicle\Transfer\TransferVehicleController::class => \Olcs\Controller\Licence\Vehicle\Transfer\TransferVehicleController::class,
             \Olcs\Controller\Licence\Vehicle\ViewVehicleController::class => \Olcs\Controller\Licence\Vehicle\ViewVehicleController::class,
-            \Olcs\Controller\Licence\Vehicle\TransferVehicleConfirmationController::class => \Olcs\Controller\Licence\Vehicle\TransferVehicleConfirmationController::class,
+            \Olcs\Controller\Licence\Vehicle\Transfer\TransferVehicleConfirmationController::class => \Olcs\Controller\Licence\Vehicle\Transfer\TransferVehicleConfirmationController::class,
             \Olcs\Controller\Licence\Vehicle\Reprint\ReprintLicenceVehicleDiscController::class => \Olcs\Controller\Licence\Vehicle\Reprint\ReprintLicenceVehicleDiscController::class,
             \Olcs\Controller\Licence\Vehicle\Reprint\ReprintLicenceVehicleDiscConfirmationController::class => \Olcs\Controller\Licence\Vehicle\Reprint\ReprintLicenceVehicleDiscConfirmationController::class,
         ),
         'factories' => array(
             CookieSettingsController::class => CookieSettingsControllerFactory::class,
-            \Olcs\Action\Licence\Vehicle\TransferVehicleConfirmationIndexAction::class => \Olcs\Action\Licence\Vehicle\TransferVehicleConfirmationIndexActionFactory::class,
-            \Olcs\Action\Licence\Vehicle\TransferVehicleConfirmationStoreAction::class => \Olcs\Action\Licence\Vehicle\TransferVehicleConfirmationStoreActionFactory::class,
+            \Olcs\Controller\Licence\Vehicle\Transfer\TransferVehicleConfirmationController::class => \Olcs\Controller\Licence\Vehicle\Transfer\TransferVehicleConfirmationControllerFactory::class,
         ),
+        'delegate_action_dependency_resolvers' => [
+             \Olcs\Controller\Licence\Vehicle\Transfer\TransferVehicleConfirmationController::class => \Olcs\Controller\Licence\Vehicle\Transfer\TransferVehicleConfirmationControllerDependencyResolver::class,
+        ],
     ),
     'local_forms_path' => __DIR__ . '/../src/Form/Forms/',
     'tables' => array(

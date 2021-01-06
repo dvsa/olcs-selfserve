@@ -1,7 +1,8 @@
 <?php
 
-namespace Olcs\Action\Licence\Vehicle;
+namespace Olcs\Controller\Licence\Vehicle\Transfer;
 
+use Common\Controller\Plugin\HandleCommand;
 use Common\Controller\Plugin\HandleQuery;
 use Common\Service\Helper\FlashMessengerHelperService;
 use Common\Service\Helper\FormHelperService;
@@ -10,13 +11,14 @@ use Olcs\Repository\Licence\LicenceRepository;
 use Olcs\Repository\Licence\Vehicle\LicenceVehicleRepository;
 use Olcs\Session\LicenceVehicleManagement;
 use Laminas\Mvc\Controller\ControllerManager;
-use Laminas\Mvc\Controller\Plugin\Url;
 use Laminas\ServiceManager\FactoryInterface;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\Mvc\Controller\PluginManager as ControllerPluginManager;
-use Laminas\Mvc\Controller\Plugin\Redirect;
 
-class TransferVehicleConfirmationIndexActionFactory implements FactoryInterface
+/**
+ * @see TransferVehicleConfirmationController
+ */
+class TransferVehicleConfirmationControllerFactory implements FactoryInterface
 {
     /**
      * @inheritDoc
@@ -32,27 +34,23 @@ class TransferVehicleConfirmationIndexActionFactory implements FactoryInterface
         $translationService = new TranslationHelperService();
         $translationService->setServiceLocator($serviceLocator);
 
+        $commandBus = $controllerPluginManager->get('handleCommand');
+        assert($commandBus instanceof HandleCommand, 'Expected instance of HandleCommand');
+
         $queryHandler = $controllerPluginManager->get('handleQuery');
         assert($queryHandler instanceof HandleQuery, 'Expected instance of HandleQuery');
 
         $formHelper = new FormHelperService();
         $formHelper->setServiceLocator($serviceLocator);
 
-        $urlPlugin = $controllerPluginManager->get(Url::class);
-        assert($urlPlugin instanceof Url, 'Expected instance of Url');
-
-        $redirectPlugin = $controllerPluginManager->get(Redirect::class);
-        assert($redirectPlugin instanceof Redirect, 'Expected instance of Redirect');
-
-        return new TransferVehicleConfirmationIndexAction(
+        return new TransferVehicleConfirmationController(
             (new FlashMessengerHelperService())->setServiceLocator($serviceLocator),
             $translationService,
             new LicenceVehicleManagement(),
+            $commandBus,
             $formHelper,
             new LicenceRepository($queryHandler),
-            new LicenceVehicleRepository($queryHandler),
-            $urlPlugin,
-            $redirectPlugin
+            new LicenceVehicleRepository($queryHandler)
         );
     }
 }
