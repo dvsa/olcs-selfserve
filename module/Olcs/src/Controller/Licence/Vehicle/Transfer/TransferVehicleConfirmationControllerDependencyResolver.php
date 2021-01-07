@@ -14,9 +14,9 @@ class TransferVehicleConfirmationControllerDependencyResolver extends DelegateAc
     /**
      * @inheritDoc
      */
-    public function resolveDispatchArguments(string $action, array $arguments, RouteMatch $routeMatch, Request $request): array
+    public function resolveDispatchArguments(string $action, array $actionArgs, RouteMatch $routeMatch, Request $request): array
     {
-        return [$action, $arguments, $routeMatch, $this->resolveRedirectPlugin()];
+        return [$action, $actionArgs, $routeMatch, $this->resolveRedirectPlugin()];
     }
 
     /**

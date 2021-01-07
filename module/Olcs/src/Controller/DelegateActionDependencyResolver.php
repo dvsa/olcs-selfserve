@@ -37,14 +37,14 @@ abstract class DelegateActionDependencyResolver
      * Resolves the "dispatch" method arguments.
      *
      * @param string $action
-     * @param array $arguments
+     * @param array $actionArgs
      * @param RouteMatch $routeMatch
      * @param Request $request
      * @return array
      */
-    public function resolveDispatchArguments(string $action, array $arguments, RouteMatch $routeMatch, Request $request): array
+    public function resolveDispatchArguments(string $action, array $actionArgs, RouteMatch $routeMatch, Request $request): array
     {
-        return [$action, $arguments, $routeMatch, $request];
+        return [$action, $actionArgs, $routeMatch, $request];
     }
 
     /**

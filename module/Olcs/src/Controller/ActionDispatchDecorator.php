@@ -67,11 +67,10 @@ class ActionDispatchDecorator extends AbstractSelfserveController
         var_dump('HERE');
         die();
 
-        // @todo resolve argument resolver
-        $actionArgs = []; // @todo resolve method arguments
+        $argumentResolver = null; // @todo resolve argument resolver
+        $actionArgs = $argumentResolver->resolveActionArguments($action, $routeMatch, $request);
         if (is_callable([$this->delegate, 'dispatch'])) {
-            // @todo resolve dispatch method arguments
-            $actionArgs = array_merge([$this->serviceLocator, $actionArgs], []);
+            $actionArgs = $argumentResolver->resolveDispatchArguments($action, $actionArgs, $routeMatch, $request);
             $action = 'dispatch';
         }
         return $this->delegate->$action(...$methodArgs);
