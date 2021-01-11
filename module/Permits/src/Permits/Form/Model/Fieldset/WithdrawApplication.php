@@ -11,14 +11,14 @@ class WithdrawApplication
     /**
      * @Form\Required(true)
      * @Form\Attributes({
-     *   "class" : "input--confirm-withdraw",
+     *   "class" : "input--confirm-withdraw govuk-checkboxes__input",
      *   "id" : "ConfirmWithdraw",
      * })
      * @Form\Options({
      *   "checked_value": "1",
      *   "unchecked_value": "0",
      *   "label": "permits.form.withdraw_application.label",
-     *   "label_attributes": {"class": "form-control form-control--checkbox"},
+     *   "label_attributes": {"class": "govuk-label govuk-checkboxes__label"},
      *   "must_be_value": "1",
      *   "not_checked_message": "permits.form.withdraw_application.error_message"
      * })
