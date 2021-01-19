@@ -19,6 +19,7 @@ use Olcs\FormService\Form\Lva as LvaFormService;
 use Olcs\Service\Cookie as CookieService;
 use Olcs\Service\Qa as QaService;
 use Laminas\Mvc\Router\Http\Segment;
+use Common\Form\View\Helper\ApplicationContext;
 
 $sectionConfig = new \Common\Service\Data\SectionConfig();
 $configRoutes = $sectionConfig->getAllRoutes();
@@ -1399,7 +1400,7 @@ return array(
             'generatePeopleList' => \Olcs\View\Helper\GeneratePeopleList::class,
             'tmCheckAnswersChangeLink' => \Olcs\View\Helper\TmCheckAnswersChangeLink::class,
             'cookieManager' => \Olcs\View\Helper\CookieManager::class
-        )
+        ),
     ),
     'view_manager' => array(
         'display_not_found_reason' => true,
@@ -1624,4 +1625,5 @@ return array(
     ],
     'my_account_route' => 'your-account',
     'local_scripts_path' => [__DIR__ . '/../assets/js/inline/'],
+    'application_context' => ApplicationContext::APPLICATION_CONTEXT_SELFSERVE,
 );
