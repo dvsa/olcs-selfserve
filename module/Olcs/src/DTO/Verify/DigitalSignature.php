@@ -3,7 +3,7 @@
 namespace Olcs\DTO\Verify;
 
 
-final class DigitalSignature implements \JsonSerializable
+final class DigitalSignature
 {
     const KEY_APPLICATION_ID = 'applicationId';
     const KEY_LVA = 'lva';
@@ -88,7 +88,7 @@ final class DigitalSignature implements \JsonSerializable
         return $this->verifyId;
     }
 
-    public function jsonSerialize()
+    public function toArray(): array
     {
         return [
             self::KEY_APPLICATION_ID => $this->applicationId,

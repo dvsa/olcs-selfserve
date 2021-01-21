@@ -9,7 +9,9 @@ use Dvsa\Olcs\Transfer\Query\GdsVerify\GetAuthRequest;
 use Exception;
 use Laminas\Cache\Storage\Adapter\Redis;
 use Laminas\Cache\Storage\StorageInterface;
+use Laminas\Http\Response as HttpResponse;
 use Laminas\Mvc\MvcEvent;
+use Laminas\View\Model\ViewModel;
 use Olcs\DTO\Verify\DigitalSignature;
 use Olcs\Logging\Log\Logger;
 use Olcs\View\Model\Dashboard;
@@ -34,36 +36,37 @@ class GdsVerifyController extends AbstractController
     }
 
     /**
-     * Display Form to initaite the GDS Verify identification process
+     * Display Form to initiate the GDS Verify identification process
      *
-     * @return \Laminas\View\Model\ViewModel
+     * @return ViewModel
+     * @throws Exception
      */
     public function initiateRequestAction()
     {
-        $types = $this->getTypeOfRequest($this->params()->fromRoute());
-        $form = $this->getServiceLocator()->get('Helper\Form')->createForm('VerifyRequest');
-        $session = $this->handleType($types);
-
         $response = $this->handleQuery(GetAuthRequest::create([]));
-        if ($response->isOk()) {
-            $result = $response->getResult();
 
-            $verifyRequestId = $this->getRootAttributeFromSaml($result['samlRequest'], 'ID');
-            $session->setVerifyId($verifyRequestId);
-            $this->whitelistUserVerifyRequest($verifyRequestId);
-
-            Logger::debug("Created Verify request with id:" . $verifyRequestId);
-
-            if ($result['enabled'] !== true) {
-                throw new \RuntimeException('Verify is currently disabled');
-            }
-            $form->setAttribute('action', $result['url']);
-            $form->get('SAMLRequest')->setValue($result['samlRequest']);
+        if (!$response->isOk()) {
+            throw new \Exception("");
         }
+        $result = $response->getResult();
+        if ($result['enabled'] !== true) {
+            throw new \RuntimeException('Verify is currently disabled');
+        }
+
+        $verifyRequestId = $this->getRootAttributeFromSaml($result['samlRequest'], 'ID');
+        $this->createAndStoreDigitalSignature(
+            $this->getTypeOfRequest($this->params()->fromRoute()),
+            $verifyRequestId
+        );
+        $this->whitelistUserVerifyRequest($verifyRequestId);
+
+        $form = $this->getServiceLocator()->get('Helper\Form')->createForm('VerifyRequest');
+        $form->setAttribute('action', $result['url']);
+        $form->get('SAMLRequest')->setValue($result['samlRequest']);
 
         $this->getServiceLocator()->get('Script')->loadFile('verify-request');
 
-        return new \Laminas\View\Model\ViewModel(array('form' => $form));
+        return new ViewModel(array('form' => $form));
     }
 
     /**
@@ -71,10 +74,10 @@ class GdsVerifyController extends AbstractController
      *
      * This is required due to SameSite Cookies and not compromising by converting our cookies to third-party.
      *
-     * @return \Laminas\Http\Response
-     * @throws \UnauthorizedException
+     * @return HttpResponse
+     * @throws UnauthorizedException|Exception
      */
-    public function processResponseAction()
+    public function processResponseAction(): HttpResponse
     {
         $samlResponse = $this->getRequest()->getPost('SAMLResponse', null);
         if (is_null($samlResponse)) {
@@ -104,9 +107,10 @@ class GdsVerifyController extends AbstractController
     /**
      * Process the GDS Verify SAML response
      *
-     * @return \Laminas\Http\Response
+     * @return HttpResponse
+     * @throws BadRequestException
      */
-    public function processSignatureAction()
+    public function processSignatureAction(): HttpResponse
     {
         $key = $this->getRequest()->getQuery('ref');
         if (!$this->validateRedisSamlResponseReferenceKey($key)) {
@@ -125,7 +129,7 @@ class GdsVerifyController extends AbstractController
         $this->cache->removeItem($signatureRedisKey);
 
         $signature = new DigitalSignature(
-            json_decode($signature, true);
+            json_decode($signature, true)
         );
 
         if (empty($signature)) {
@@ -134,7 +138,7 @@ class GdsVerifyController extends AbstractController
 
         /// GOT TO HERE
         ///
-        /// 
+        ///
 
         Logger::debug("DigitalSignature retrieved:", $signature->getArrayCopy());
 
@@ -149,8 +153,6 @@ class GdsVerifyController extends AbstractController
         if (empty($verifyRequestId)) {
             throw new BadRequestException("There is no `verifyId` on DigitalSignature.");
         }
-
-
 
         if (empty($inResponseTo)) {
             throw new BadRequestException("There is no `inResponseTo` in the samlResponse.");
@@ -231,32 +233,23 @@ class GdsVerifyController extends AbstractController
     }
 
     /**
-     * verificationType
+     * Create a DigitalSignature and store in redis
      *
      * @param array $types
+     * @param string $verifyId
      */
-    private function handleType(array $types): DigitalSignature
+    private function createAndStoreDigitalSignature(array $types, string $verifyId)
     {
-        $session = new \Olcs\DTO\Verify\DigitalSignature();
-
-        if (empty($types)) {
-            throw new \RuntimeException(
-                'An entity identifier needs to be present, this is used to to calculate where'
-                . ' to return to after completing Verify'
-            );
-        }
-
-        foreach ($types as $key => $value) {
-            $methodName = 'set' . ucfirst($key);
-            if (method_exists($session, $methodName)) {
-                call_user_func([$session, $methodName], $value);
-            }
-        }
-        Logger::debug("DigitalSignature created:", $session->getArrayCopy());
-
-        return $session;
+        $types[DigitalSignature::KEY_VERIFY_ID] = $verifyId;
+        $digitalSignature = new DigitalSignature($types);
+        $this->cache->setItem(static::CACHE_PREFIX . $verifyId, $digitalSignature->toArray());
+        Logger::debug("DigitalSignature created:", $digitalSignature->toArray());
     }
 
+    /**
+     * @param $params
+     * @return array
+     */
     private function getTypeOfRequest($params): array
     {
         // remove controller and action keys from params
@@ -301,9 +294,10 @@ class GdsVerifyController extends AbstractController
     /**
      * Extract an attribute from a SAML XML String Document
      *
-     * @param $samlString
-     * @param $attributeName
+     * @param string $samlString
+     * @param string $attributeName
      * @return string
+     * @throws Exception
      */
     protected function getRootAttributeFromSaml(string $samlString, string $attributeName)
     {
@@ -314,9 +308,9 @@ class GdsVerifyController extends AbstractController
             throw new Exception("Unable to parse SAML XML String");
         }
 
-        $attributes = (array) $samlString->attributes();
+        $attributes = (array)$samlString->attributes();
 
-        if (! array_key_exists($attributeName, $attributes['@attributes'])) {
+        if (!array_key_exists($attributeName, $attributes['@attributes'])) {
             throw new Exception("SAML XML String Document does not contain attribute '{$attributeName}' in the root.");
         }
 
@@ -349,6 +343,6 @@ class GdsVerifyController extends AbstractController
     private function validateRedisSamlResponseReferenceKey($key): bool
     {
         // Essentially, we verify the reference key is a SHA1.
-        return (bool) preg_match('/^[0-9a-f]{40}$/i', $key);
+        return (bool)preg_match('/^[0-9a-f]{40}$/i', $key);
     }
 }
