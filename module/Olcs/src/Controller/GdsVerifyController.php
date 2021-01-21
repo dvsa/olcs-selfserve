@@ -348,7 +348,7 @@ class GdsVerifyController extends AbstractController
     {
         $signatureRedisKey = static::CACHE_PREFIX . $inResponseTo;
         $signature = $this->cache->getItem($signatureRedisKey);
-        if (!$signature) {
+        if (is_null($signature)) {
             throw new Exception("DigitalSignatureRedisKey '{$signatureRedisKey}' not found in redis.");
         }
 
