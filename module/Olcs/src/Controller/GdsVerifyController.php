@@ -6,14 +6,14 @@ use Common\Controller\Lva\AbstractController;
 use Common\Exception\BadRequestException;
 use Dvsa\Olcs\Transfer\Command\GdsVerify\ProcessSignatureResponse;
 use Dvsa\Olcs\Transfer\Query\GdsVerify\GetAuthRequest;
+use Exception;
 use Laminas\Cache\Storage\Adapter\Redis;
 use Laminas\Cache\Storage\StorageInterface;
 use Laminas\Mvc\MvcEvent;
+use Olcs\DTO\Verify\DigitalSignature;
 use Olcs\Logging\Log\Logger;
-use Olcs\Session\DigitalSignature;
 use Olcs\View\Model\Dashboard;
 use ZfcRbac\Exception\UnauthorizedException;
-use Exception;
 
 /**
  * GdsVerifyController Controller
@@ -108,22 +108,6 @@ class GdsVerifyController extends AbstractController
      */
     public function processSignatureAction()
     {
-        $session = new \Olcs\Session\DigitalSignature();
-
-        Logger::debug("DigitalSignature retrieved:", $session->getArrayCopy());
-
-        $applicationId = $session->hasApplicationId() ? $session->getApplicationId() : false;
-        $continuationDetailId = $session->hasContinuationDetailId() ? $session->getContinuationDetailId() : false;
-        $transportManagerApplicationId = $session->hasTransportManagerApplicationId() ? $session->getTransportManagerApplicationId() : false;
-        $licenceId = $session->hasLicenceId() ? $session->getLicenceId() : false;
-        $lva = $session->hasLva() ? $session->getLva() : 'application';
-        $role = $session->hasRole() ? $session->getRole() : null;
-        $verifyRequestId = $session->hasVerifyId() ? $session->getVerifyId() : null;
-
-        if (empty($verifyRequestId)) {
-            throw new BadRequestException("There is no `verifyId` on DigitalSignature.");
-        }
-
         $key = $this->getRequest()->getQuery('ref');
         if (!$this->validateRedisSamlResponseReferenceKey($key)) {
             throw new BadRequestException("Query parameter 'ref' ({$key}) is not a valid SHA1.");
@@ -131,6 +115,42 @@ class GdsVerifyController extends AbstractController
 
         $samlResponse = $this->cache->getItem(static::CACHE_PREFIX . $key);
         $inResponseTo = $this->getRootAttributeFromSaml($samlResponse, 'InResponseTo');
+
+        $signatureRedisKey = static::CACHE_PREFIX . $inResponseTo;
+        $signature = $this->cache->getItem($signatureRedisKey);
+        if (!$signature) {
+            throw new \Exception("DigitalSignatureRedisKey '{$signatureRedisKey}' not found in redis.");
+        }
+
+        $this->cache->removeItem($signatureRedisKey);
+
+        $signature = new DigitalSignature(
+            json_decode($signature, true);
+        );
+
+        if (empty($signature)) {
+            throw new \Exception("");
+        }
+
+        /// GOT TO HERE
+        ///
+        /// 
+
+        Logger::debug("DigitalSignature retrieved:", $signature->getArrayCopy());
+
+        $applicationId = $signature->getApplicationId() ?? false;
+        $continuationDetailId = $signature->getContinuationDetailId() ?? false;
+        $transportManagerApplicationId = $signature->getTransportManagerApplicationId() ?? false;
+        $licenceId = $signature->getLicenceId() ?? false;
+        $lva = $signature->getLva() ?? 'application';
+        $role = $signature->getRole() ?? null;
+        $verifyRequestId = $signature->getVerifyId() ?? null;
+
+        if (empty($verifyRequestId)) {
+            throw new BadRequestException("There is no `verifyId` on DigitalSignature.");
+        }
+
+
 
         if (empty($inResponseTo)) {
             throw new BadRequestException("There is no `inResponseTo` in the samlResponse.");
@@ -165,7 +185,6 @@ class GdsVerifyController extends AbstractController
             $dto->setLicence($licenceId);
         }
 
-        $session->getManager()->getStorage()->clear(\Olcs\Session\DigitalSignature::SESSION_NAME);
         $response = $this->handleCommand($dto);
         if (!$response->isOk()) {
             $this->getServiceLocator()->get('Helper\FlashMessenger')->addErrorMessage('undertakings_not_signed');
@@ -218,7 +237,7 @@ class GdsVerifyController extends AbstractController
      */
     private function handleType(array $types): DigitalSignature
     {
-        $session = new \Olcs\Session\DigitalSignature();
+        $session = new \Olcs\DTO\Verify\DigitalSignature();
 
         if (empty($types)) {
             throw new \RuntimeException(

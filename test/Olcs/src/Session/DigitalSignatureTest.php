@@ -2,10 +2,8 @@
 
 namespace OlcsTest\Session;
 
-use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryTestCase as TestCase;
-
-use Olcs\Session\DigitalSignature;
+use Olcs\DTO\Verify\DigitalSignature;
 
 /**
  * Class DigitalSignatureTest
