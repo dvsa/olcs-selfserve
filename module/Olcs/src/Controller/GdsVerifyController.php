@@ -14,7 +14,7 @@ use Laminas\Mvc\MvcEvent;
 use Laminas\View\Model\ViewModel;
 use Olcs\DTO\Verify\DigitalSignature;
 use Olcs\Logging\Log\Logger;
-use Olcs\View\Model\Dashboard;
+use RuntimeException;
 use ZfcRbac\Exception\UnauthorizedException;
 
 /**
@@ -46,11 +46,11 @@ class GdsVerifyController extends AbstractController
         $response = $this->handleQuery(GetAuthRequest::create([]));
 
         if (!$response->isOk()) {
-            throw new \Exception("");
+            throw new Exception("");
         }
         $result = $response->getResult();
         if ($result['enabled'] !== true) {
-            throw new \RuntimeException('Verify is currently disabled');
+            throw new RuntimeException('Verify is currently disabled');
         }
 
         $verifyRequestId = $this->getRootAttributeFromSaml($result['samlRequest'], 'ID');
@@ -213,7 +213,7 @@ class GdsVerifyController extends AbstractController
             );
         }
 
-        throw new \RuntimeException('There was an error processing the signature response');
+        throw new RuntimeException('There was an error processing the signature response');
     }
 
     /**
@@ -221,15 +221,23 @@ class GdsVerifyController extends AbstractController
      *
      * @param array $types
      * @param string $verifyId
+     * @throw \RuntimeException
      */
     private function createAndStoreDigitalSignature(array $types, string $verifyId)
     {
+        if (empty($types)) {
+            throw new RuntimeException(
+                'An entity identifier needs to be present, this is used to to calculate where'
+                . ' to return to after completing Verify'
+            );
+        }
+
         $types[DigitalSignature::KEY_VERIFY_ID] = $verifyId;
         $digitalSignature = new DigitalSignature($types);
         $this->cache->setItem(static::CACHE_PREFIX . $verifyId, $digitalSignature->toArray());
         Logger::debug("DigitalSignature created:", $digitalSignature->toArray());
     }
-    
+
     /**
      * @param $params
      * @return array
@@ -237,8 +245,7 @@ class GdsVerifyController extends AbstractController
     private function getTypeOfRequest($params): array
     {
         // remove controller and action keys from params
-        $types = array_diff_assoc($params, ['controller' => self::class, 'action' => 'initiate-request']);
-        return $types;
+        return array_diff_assoc($params, ['controller' => self::class, 'action' => 'initiate-request']);
     }
 
     /**
@@ -342,7 +349,7 @@ class GdsVerifyController extends AbstractController
         $signatureRedisKey = static::CACHE_PREFIX . $inResponseTo;
         $signature = $this->cache->getItem($signatureRedisKey);
         if (!$signature) {
-            throw new \Exception("DigitalSignatureRedisKey '{$signatureRedisKey}' not found in redis.");
+            throw new Exception("DigitalSignatureRedisKey '{$signatureRedisKey}' not found in redis.");
         }
 
         $this->cache->removeItem($signatureRedisKey);
