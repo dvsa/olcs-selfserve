@@ -2,7 +2,6 @@
 
 namespace Olcs\DTO\Verify;
 
-
 final class DigitalSignature
 {
     const KEY_APPLICATION_ID = 'applicationId';

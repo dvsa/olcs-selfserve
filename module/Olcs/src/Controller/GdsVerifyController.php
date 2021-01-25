@@ -46,8 +46,9 @@ class GdsVerifyController extends AbstractController
         $response = $this->handleQuery(GetAuthRequest::create([]));
 
         if (!$response->isOk()) {
-            throw new Exception("");
+            throw new Exception("Bad response received from 'GetAuthRequest'", $response->getStatusCode());
         }
+
         $result = $response->getResult();
         if ($result['enabled'] !== true) {
             throw new RuntimeException('Verify is currently disabled');
@@ -85,12 +86,12 @@ class GdsVerifyController extends AbstractController
         }
 
         $id = $this->getRootAttributeFromSaml($samlResponse, 'InResponseTo');
-        $verifyJourneyKey = $this->generateVerifyJourneyKey($id);
+        $verifyJourneyKey = $this->buildVerifyJourneyKey($id);
         if (!empty($this->cache->removeItems([$verifyJourneyKey]))) {
             throw new UnauthorizedException('Invalid verify journey id');
         }
 
-        $key = $this->generateSamlKey($samlResponse);
+        $key = $this->generateSamlKeyFromResponse($samlResponse);
         $this->cache->setItem($key, $samlResponse);
 
         return $this->redirect()->toRoute(
@@ -113,20 +114,15 @@ class GdsVerifyController extends AbstractController
      */
     public function processSignatureAction(): HttpResponse
     {
-        $key = $this->getRequest()->getQuery('ref');
-        if (!$this->validateRedisSamlResponseReferenceKey($key)) {
-            throw new BadRequestException("Query parameter 'ref' ({$key}) is not a valid SHA1.");
+        $ref = $this->getRequest()->getQuery('ref');
+        if (!$this->validateRedisSamlResponseReferenceKey($ref)) {
+            throw new BadRequestException("Query parameter 'ref' ({$ref}) is not a valid SHA1");
         }
 
-        $samlResponse = $this->cache->getItem(static::CACHE_PREFIX . $key);
+        $samlResponse = $this->cache->getItem($this->buildSamlKeyFromRef($ref));
         $inResponseTo = $this->getRootAttributeFromSaml($samlResponse, 'InResponseTo');
 
         $signature = $this->retrieveDigitalSignature($inResponseTo);
-
-        /// GOT TO HERE
-        ///
-        ///
-
         Logger::debug("DigitalSignature retrieved:", $signature->toArray());
 
         $applicationId = $signature->getApplicationId() ?? false;
@@ -138,11 +134,11 @@ class GdsVerifyController extends AbstractController
         $verifyRequestId = $signature->getVerifyId() ?? null;
 
         if (empty($verifyRequestId)) {
-            throw new BadRequestException("There is no `verifyId` on DigitalSignature.");
+            throw new BadRequestException("There is no `verifyId` on DigitalSignature");
         }
 
         if (empty($inResponseTo)) {
-            throw new BadRequestException("There is no `inResponseTo` in the samlResponse.");
+            throw new BadRequestException("There is no `inResponseTo` in the samlResponse");
         }
 
         if ($verifyRequestId !== $inResponseTo) {
@@ -150,8 +146,8 @@ class GdsVerifyController extends AbstractController
         }
 
         $this->cache->removeItems([
-            $this->generateActiveUserKey($this->currentUser()->getIdentity()->getUsername()),
-            $key
+            $this->buildActiveUserKey($this->currentUser()->getIdentity()->getUsername()),
+            $this->buildSamlKeyFromRef($ref)
         ]);
 
         $dto = ProcessSignatureResponse::create(['samlResponse' => $samlResponse]);
@@ -234,7 +230,7 @@ class GdsVerifyController extends AbstractController
 
         $types[DigitalSignature::KEY_VERIFY_ID] = $verifyId;
         $digitalSignature = new DigitalSignature($types);
-        $this->cache->setItem(static::CACHE_PREFIX . $verifyId, $digitalSignature->toArray());
+        $this->cache->setItem($this->buildDigitalSignatureKey($verifyId), $digitalSignature->toArray());
         Logger::debug("DigitalSignature created:", $digitalSignature->toArray());
     }
 
@@ -254,32 +250,53 @@ class GdsVerifyController extends AbstractController
      * @param string $samlResponse
      * @return string
      */
-    private function generateSamlKey(string $samlResponse): string
+    private function generateSamlKeyFromResponse(string $samlResponse): string
     {
         $key = sha1($samlResponse);
-        return static::CACHE_PREFIX . $key;
+        return static::CACHE_PREFIX . "samlResponse:" . $key;
     }
 
     /**
-     * Generate cache key to whitelist this verify journey
+     * Build cache key for storing/retrieving SAML response based on a ref
+     *
+     * @param string $ref
+     * @return string
+     */
+    private function buildSamlKeyFromRef(string $ref): string
+    {
+        return static::CACHE_PREFIX . "samlResponse:" . $ref;
+    }
+
+    /**
+     * Build cache key to whitelist this verify journey
      *
      * @param string $id
      * @return string
      */
-    private function generateVerifyJourneyKey(string $id): string
+    private function buildVerifyJourneyKey(string $id): string
     {
         return static::CACHE_PREFIX . "activeJourneys:" . $id;
     }
 
     /**
-     * Generate cache key to whitelist user for verify
+     * Build cache key for whitelisting user for verify
      *
      * @param string $username
      * @return string
      */
-    private function generateActiveUserKey(string $username): string
+    private function buildActiveUserKey(string $username): string
     {
         return static::CACHE_PREFIX . "activeUsers:" . $username;
+    }
+
+    /**
+     * Build cache key for storing/retrieving a digital signature
+     * @param string $verifyId
+     * @return string
+     */
+    private function buildDigitalSignatureKey(string $verifyId): string
+    {
+        return static::CACHE_PREFIX . "digitalSignature:" . $verifyId;
     }
 
     /**
@@ -315,11 +332,11 @@ class GdsVerifyController extends AbstractController
      */
     protected function whitelistUserVerifyRequest(string $verifyId): void
     {
-        $activeUserKey = $this->generateActiveUserKey($this->currentUser()->getIdentity()->getUsername());
+        $activeUserKey = $this->buildActiveUserKey($this->currentUser()->getIdentity()->getUsername());
         $previousVerifyId = $this->cache->getItem($activeUserKey);
         if (!is_null($previousVerifyId)) {
             $this->cache->removeItems([
-                    $this->generateVerifyJourneyKey($previousVerifyId),
+                    $this->buildVerifyJourneyKey($previousVerifyId),
                     $activeUserKey
                 ]
             );
@@ -327,7 +344,7 @@ class GdsVerifyController extends AbstractController
 
         $this->cache->addItems([
             $activeUserKey => $verifyId,
-            $this->generateVerifyJourneyKey($verifyId) => true
+            $this->buildVerifyJourneyKey($verifyId) => true
         ]);
     }
 
@@ -346,9 +363,9 @@ class GdsVerifyController extends AbstractController
      */
     protected function retrieveDigitalSignature(string $inResponseTo): DigitalSignature
     {
-        $signatureRedisKey = static::CACHE_PREFIX . $inResponseTo;
+        $signatureRedisKey = $this->buildDigitalSignatureKey($inResponseTo);
         $signature = $this->cache->getItem($signatureRedisKey);
-        if (is_null($signature)) {
+        if (empty($signature)) {
             throw new Exception("DigitalSignatureRedisKey '{$signatureRedisKey}' not found in redis.");
         }
 
