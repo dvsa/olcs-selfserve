@@ -24,20 +24,23 @@ use Laminas\Mvc\Router\RouteMatch;
 use Olcs\Form\Model\Form\Vehicle\ListVehicleSearch;
 use Laminas\View\Model\ViewModel;
 use Laminas\Http\PhpEnvironment\Response as HttpResponse;
+use Olcs\Table\TableEnum;
 
 /**
  * @see ListVehicleControllerFactory
  */
 class ListVehicleController
 {
-    public const FORMAT_HTML = 'html';
-    public const FORMAT_CSV = 'csv';
-    public const QUERY_KEY_SORT_CURRENT_VEHICLES_TABLE = 'sort-c';
-    public const QUERY_KEY_ORDER_CURRENT_VEHICLES_TABLE = 'order-c';
-    public const QUERY_KEY_SORT_REMOVED_VEHICLES_TABLE = 'sort-r';
-    public const QUERY_KEY_ORDER_REMOVED_VEHICLES_TABLE = 'order-r';
-    protected const DEFAULT_REMOVED_VEHICLES_TABLE_LIMIT = 10;
-    protected const DEFAULT_CURRENT_VEHICLES_TABLE_LIMIT = 10;
+    const FORMAT_HTML = 'html';
+    const FORMAT_CSV = 'csv';
+    const QUERY_KEY_SORT_CURRENT_VEHICLES_TABLE = 'sort-c';
+    const QUERY_KEY_ORDER_CURRENT_VEHICLES_TABLE = 'order-c';
+    const QUERY_KEY_SORT_REMOVED_VEHICLES_TABLE = 'sort-r';
+    const QUERY_KEY_ORDER_REMOVED_VEHICLES_TABLE = 'order-r';
+    const QUERY_KEY_INCLUDE_REMOVED = 'includeRemoved';
+    const DEFAULT_REMOVED_VEHICLES_TABLE_LIMIT = 10;
+    const DEFAULT_CURRENT_VEHICLES_TABLE_LIMIT = 10;
+
 
     /**
      * @var HandleQuery
@@ -116,7 +119,17 @@ class ListVehicleController
                 'order' => $urlQueryData[static::QUERY_KEY_ORDER_CURRENT_VEHICLES_TABLE] ?? AbstractVehicleController::DEFAULT_TABLE_SORT_ORDER,
                 'vrm' => $urlQueryData['vehicleSearch'][AbstractInputSearch::ELEMENT_INPUT_NAME] ?? null,
             ]));
-            $response = $this->renderHtmlResponse($request, [
+
+            $removedVehicleList = $this->listLicenceVehicles(Vehicles::create([
+                'id' => $licenceId,
+                'page' => 1,
+                'limit' => static::DEFAULT_REMOVED_VEHICLES_TABLE_LIMIT,
+                'includeRemoved' => true,
+                'sort' => AbstractVehicleController::DEFAULT_TABLE_SORT_COLUMN,
+                'order' => AbstractVehicleController::DEFAULT_TABLE_SORT_ORDER,
+            ]));
+
+            $data = [
                 'title' => $this->isSearchResultsPage($request) ? 'licence.vehicle.list.search.header' : 'licence.vehicle.list.header',
                 'licence' => $licence,
                 'backLink' => $this->urlHelper->fromRoute('licence/vehicle/GET', ['licence' => $licenceId]),
@@ -124,7 +137,10 @@ class ListVehicleController
                 'toggleRemovedAction' => $this->buildToggleRemovedVehiclesUrl($licenceId, $urlQueryData),
                 'bottomContent' => $this->buildChooseDifferentActionUrl($licenceId),
                 'currentLicenceVehicleList' => $licenceVehicleList,
-            ]);
+                'removedLicenceVehicleList' => $removedVehicleList,
+            ];
+
+            $response = $this->renderHtmlResponse($request, $data);
         } else {
             $removedLicenceVehicleList = $this->listLicenceVehicles(GoodsVehiclesExport::create(['id' => $licenceId, 'includeRemoved' => true]));
             $response = $this->renderCsvResponse($request, [
@@ -210,17 +226,21 @@ class ListVehicleController
             $view->setVariable('clearUrl', $this->buildSearchClearUrl($request)); // $this->getLink('licence/vehicle/list/GET'));
         }
 
-        // @todo (coming soon in VOL-136) Build removed vehicle table
-//        $removedLicenceVehicleList = $data['removedLicenceVehicleList'];
-//        if (! is_null($removedLicenceVehicleList)) {
-//            $data['removedVehiclesTable'] = $this->buildHtmlRemovedLicenceVehiclesTable($request, $removedLicenceVehicleList);
-//            $tableTotal = $data['removedVehiclesTable']->getTotal();
-//            $data['removedVehicleTableTitle'] = $this->translator->translateReplace(
-//                sprintf('licence.vehicle.list.section.removed.header.title.%s', $tableTotal === 1 ? 'singular' : 'plural'),
-//                [$tableTotal]
-//            );
-//            unset($data['removedLicenceVehicleList']);
-//        }
+        $data['toggleRemovedVehiclesActionTitle'] = 'licence.vehicle.list.section.removed.action.show-removed-vehicles.title';
+        $data['toggleRemovedVehiclesActionLabel'] = 'licence.vehicle.list.section.removed.action.show-removed-vehicles.label';
+        $data['removedVehiclesTable'] = $this->buildHtmlRemovedLicenceVehiclesTable($request, $data['removedLicenceVehicleList']);
+        $tableTotal = $data['removedVehiclesTable']->getTotal();
+        $data['showRemovedVehicles'] = $tableTotal > 0;
+        if ($data['showRemovedVehicles'] && array_key_exists(static::QUERY_KEY_INCLUDE_REMOVED, $urlQueryParams)) {
+            $data['removedVehicleTableTitle'] = $this->translator->translateReplace(
+                sprintf('licence.vehicle.list.section.removed.header.title.%s', $tableTotal === 1 ? 'singular' : 'plural'),
+                [$tableTotal]
+            );
+            unset($data['removedLicenceVehicleList']);
+            $data['showRemovedVehicles'] = $data['showRemovedVehiclesExpanded'] = true;
+            $data['toggleRemovedVehiclesActionTitle'] = 'licence.vehicle.list.section.removed.action.hide-removed-vehicles.title';
+            $data['toggleRemovedVehiclesActionLabel'] = 'licence.vehicle.list.section.removed.action.hide-removed-vehicles.label';
+        }
 
         return $view->setVariables($data);
     }
@@ -274,7 +294,7 @@ class ListVehicleController
             $licenceVehicles['results'] = $data['removedLicenceVehicleList']['results'] ?? [];
         }
 
-        $table = $this->tableFactory->getTableBuilder()->prepareTable('licence-vehicle-list-export-current-and-removed', $licenceVehicles);
+        $table = $this->tableFactory->getTableBuilder()->prepareTable(TableEnum::LICENCE_VEHICLE_LIST_EXPORT_CURRENT_AND_REMOVED, $licenceVehicles);
         return $this->responseHelper->tableToCsv(new HttpResponse(), $table, 'vehicles');
     }
 
@@ -356,14 +376,11 @@ class ListVehicleController
             'limit' => (int) ($requestQueryParams['limit'] ?? static::DEFAULT_CURRENT_VEHICLES_TABLE_LIMIT),
         ];
 
-        $table = $this->tableFactory->getTableBuilder();
-
+        $table = $this->tableFactory->prepareTable(TableEnum::LICENCE_VEHICLE_LIST_CURRENT, $currentLicenceVehicleList, $params);
         $table->setUrlParameterNameMap([
             'sort' => static::QUERY_KEY_SORT_CURRENT_VEHICLES_TABLE,
             'order' => static::QUERY_KEY_ORDER_CURRENT_VEHICLES_TABLE,
         ]);
-
-        $table = $table->prepareTable('licence-vehicles', $currentLicenceVehicleList, $params);
 
         $totalVehicles = $currentLicenceVehicleList['count'];
         if ($this->isSearchResultsPage($request)) {
@@ -442,12 +459,11 @@ class ListVehicleController
             'query' => $requestQueryParams,
             'limit' => static::DEFAULT_REMOVED_VEHICLES_TABLE_LIMIT,
         ];
-        $table = $this->tableFactory->getTableBuilder();
+        $table = $this->tableFactory->prepareTable(TableEnum::LICENCE_VEHICLE_LIST_REMOVED, $currentLicenceVehicleList, $params);
         $table->setUrlParameterNameMap([
             'sort' => static::QUERY_KEY_SORT_REMOVED_VEHICLES_TABLE,
             'order' => static::QUERY_KEY_ORDER_REMOVED_VEHICLES_TABLE
         ]);
-        $table = $table->prepareTable('licence-vehicles', $currentLicenceVehicleList, $params);
 
         // Always prefix the table title with the table total
         $table->setSetting('showTotal', true);
