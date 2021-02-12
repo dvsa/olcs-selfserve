@@ -9,9 +9,10 @@ use Common\Service\Cqrs\Response as QueryResponse;
 use Common\Service\Helper\FormHelperService;
 use Common\Service\Helper\ResponseHelperService;
 use Common\Service\Helper\TranslationHelperService;
-use Common\Service\Table\TableBuilder;
 use Common\Service\Table\TableFactory;
 use Common\Test\Builder\ServiceManagerBuilder;
+use Common\Test\Builder\TableBuilderMockBuilder;
+use Common\Test\Builder\TableFactoryMockBuilder;
 use Dvsa\Olcs\Transfer\Query\Licence\Licence;
 use Hamcrest\Arrays\IsArrayContainingKeyValuePair;
 use Hamcrest\Core\IsAnything;
@@ -251,8 +252,7 @@ class ListVehicleControllerTest extends MockeryTestCase
 
         // Define Expectations
         $paramsMatcher = IsArrayContainingKeyValuePair::hasKeyValuePair('page', 1);
-        $any = IsAnything::anything();
-        $this->injectTableBuilder($serviceManager, TableEnum::LICENCE_VEHICLE_LIST_CURRENT, $any, $paramsMatcher);
+        $this->injectTableBuilder($serviceManager, TableEnum::LICENCE_VEHICLE_LIST_CURRENT, null, $paramsMatcher);
 
         // Execute
         $sut->indexAction($request, $routeMatch);
@@ -491,7 +491,7 @@ class ListVehicleControllerTest extends MockeryTestCase
             HandleQuery::class => $this->setUpQueryHandler(),
             Url::class => $this->setUpUrlHelper(),
             ResponseHelperService::class => $this->setUpResponseHelper(),
-            TableFactory::class => $this->setUpTableFactory(),
+            TableFactory::class => (new TableFactoryMockBuilder())->build(),
             FormHelperService::class => $this->setUpFormHelper(),
         ];
     }
@@ -543,8 +543,6 @@ class ListVehicleControllerTest extends MockeryTestCase
     }
 
     /**
-     * @todo extract
-     *
      * @return MockInterface
      */
     protected function setUpTranslator(): MockInterface
@@ -555,8 +553,6 @@ class ListVehicleControllerTest extends MockeryTestCase
     }
 
     /**
-     * @todo extract
-     *
      * @param ServiceLocatorInterface $serviceLocator
      * @return MockInterface
      */
@@ -596,37 +592,6 @@ class ListVehicleControllerTest extends MockeryTestCase
     }
 
     /**
-     * @todo extract
-     *
-     * @return TableFactory
-     */
-    protected function setUpTableFactory(): TableFactory
-    {
-        $instance = m::mock(TableFactory::class);
-        $instance->shouldIgnoreMissing();
-        $instance->byDefault()->shouldReceive('getTableBuilder')->andReturnUsing([$this, 'setUpTableBuilder']);
-        $instance->byDefault()->shouldReceive('prepareTable')->andReturnUsing([$this, 'setUpTableBuilder']);
-        return $instance;
-    }
-
-    /**
-     * @todo extract
-     *
-     * @return MockInterface
-     */
-    public function setUpTableBuilder(): MockInterface
-    {
-        $tableBuilder = m::mock(TableBuilder::class);
-        $tableBuilder->shouldIgnoreMissing($tableBuilder);
-        $tableBuilder->shouldReceive('getSettings')->andReturn([])->byDefault();
-        $tableBuilder->shouldReceive('getTotal')->andReturn(0)->byDefault();
-        $tableBuilder->shouldReceive('getLimit')->andReturn(9)->byDefault();
-        return $tableBuilder;
-    }
-
-    /**
-     * @todo extract
-     *
      * @param ServiceLocatorInterface $serviceLocator
      * @param string $tableName
      * @param null $data
@@ -636,7 +601,7 @@ class ListVehicleControllerTest extends MockeryTestCase
     protected function injectTableBuilder(ServiceLocatorInterface $serviceLocator, string $tableName, $data = null, $params = null): MockInterface
     {
         $any = IsAnything::anything();
-        $tableBuilder = $this->setUpTableBuilder();
+        $tableBuilder = (new TableBuilderMockBuilder())->build();
         $tableFactory = $serviceLocator->get(TableFactory::class);
         assert($tableFactory instanceof MockInterface, 'Expected instance of MockInterface');
         $tableFactory->byDefault()->shouldReceive('prepareTable')->with($tableName, $data ?? $any, $params ?? $any)->once()->andReturn($tableBuilder);

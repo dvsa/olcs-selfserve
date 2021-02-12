@@ -41,7 +41,6 @@ class ListVehicleController
     const DEFAULT_REMOVED_VEHICLES_TABLE_LIMIT = 10;
     const DEFAULT_CURRENT_VEHICLES_TABLE_LIMIT = 10;
 
-
     /**
      * @var HandleQuery
      */
@@ -87,8 +86,7 @@ class ListVehicleController
         ResponseHelperService $responseHelper,
         TableFactory $tableFactory,
         FormHelperService $formHelper
-    )
-    {
+    ) {
         $this->queryHandler = $queryHandler;
         $this->translator = $translator;
         $this->urlHelper = $urlHelper;
@@ -396,7 +394,6 @@ class ListVehicleController
         $table->removeColumn('action');
 
         if ($table->getTotal() <= $table->getLimit()) {
-
             // Disable pagination when the query has fewer total results then the table item limit
             $table->setSettings(array_diff_key($table->getSettings(), array_flip(['paginate'])));
         }
