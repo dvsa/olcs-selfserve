@@ -123,6 +123,7 @@ class ListVehicleController
                 'page' => 1,
                 'limit' => static::DEFAULT_REMOVED_VEHICLES_TABLE_LIMIT,
                 'includeRemoved' => true,
+                'includeActive' => false,
                 'sort' => AbstractVehicleController::DEFAULT_TABLE_SORT_COLUMN,
                 'order' => AbstractVehicleController::DEFAULT_TABLE_SORT_ORDER,
             ]));
