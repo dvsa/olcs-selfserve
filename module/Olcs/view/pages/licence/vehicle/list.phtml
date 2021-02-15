@@ -22,6 +22,14 @@
                     </div>
                 </div>
 
+                <?php if (isset($this->ocrsForm)) { ?>
+                <div id="share-vehicle-details" class="govuk-!-margin-bottom-4">
+                    <h3 class="govuk-heading-m"><?php echo $this->translate('licence.vehicle.list.form.orcs.checkbox.heading'); ?></h3>
+                    <?php echo $this->formErrors($this->ocrsForm); ?>
+                    <?php echo $this->form($this->ocrsForm); ?>
+                </div>
+                <?php } ?>
+
                 <?php if ($this->currentVehiclesTable->getTotal() > 0) { ?>
                     <div id="export" class="govuk-!-margin-bottom-4">
                         <h3 class="govuk-heading-m"><?php echo $this->translate('licence.vehicle.list.section.export.header'); ?></h3>
@@ -39,21 +47,19 @@
                     </div>
                 <?php } ?>
 
-                <?php if ($this->showRemovedVehicles) {?>
-                    <a id="<?php echo $this->showRemovedVehiclesExpanded ? 'action--hide-removed-vehicles' : 'action--show-removed-vehicles'; ?>"
+                <?php if ($this->showRemovedVehicles ?? false) {?>
+                    <a id="<?php echo is_null($this->removedVehiclesTable) ? 'action--show-removed-vehicles' : 'action--hide-removed-vehicles'; ?>"
                        href="<?php echo $this->toggleRemovedAction; ?>"
                        role="button"
                        draggable="false"
                        class="govuk-button govuk-button--secondary"
                        data-module="govuk-button"
-                       aria-controls="removed-table"
-                       aria-expanded="<?php echo $this->showRemovedVehiclesExpanded ? 'true' : 'false'; ?>"
-                       title="<?php echo $this->translate($this->toggleRemovedVehiclesActionTitle); ?>">
-                        <?php echo $this->translate($this->toggleRemovedVehiclesActionLabel); ?>
+                       title="<?php echo $this->translate(is_null($this->removedVehiclesTable) ? 'licence.vehicle.list.section.removed.action.show-removed-vehicles.title' : 'licence.vehicle.list.section.removed.action.hide-removed-vehicles.title'); ?>">
+                        <?php echo $this->translate(is_null($this->removedVehiclesTable) ? 'licence.vehicle.list.section.removed.action.show-removed-vehicles.label' : 'licence.vehicle.list.section.removed.action.hide-removed-vehicles.label'); ?>
                     </a>
 
-                    <?php if ($this->showRemovedVehiclesExpanded) { ?>
-                        <div id="removed-table" class="govuk-!-margin-bottom-4">
+                    <?php if (! is_null($this->removedVehiclesTable)) { ?>
+                        <div id="removed" class="govuk-!-margin-bottom-4">
                             <div class="govuk-table">
                                 <div class="govuk-clearfix">
                                     <h3 class="govuk-heading-m"><?php echo $this->removedVehicleTableTitle; ?></h3>

@@ -4,15 +4,17 @@ declare(strict_types=1);
 
 namespace OlcsTest\Controller\Licence\Vehicle;
 
+use Common\Controller\Plugin\HandleCommand;
 use Common\Controller\Plugin\HandleQuery;
-use Common\Service\Cqrs\Response as QueryResponse;
+use Common\Service\Cqrs\Response;
+use Common\Service\Helper\FlashMessengerHelperService;
 use Common\Service\Helper\FormHelperService;
 use Common\Service\Helper\ResponseHelperService;
 use Common\Service\Helper\TranslationHelperService;
+use Common\Service\Table\TableBuilder;
 use Common\Service\Table\TableFactory;
 use Common\Test\Builder\ServiceManagerBuilder;
-use Common\Test\Builder\TableBuilderMockBuilder;
-use Common\Test\Builder\TableFactoryMockBuilder;
+use Dvsa\Olcs\Transfer\Command\Licence\UpdateVehicles;
 use Dvsa\Olcs\Transfer\Query\Licence\Licence;
 use Hamcrest\Arrays\IsArrayContainingKeyValuePair;
 use Hamcrest\Core\IsAnything;
@@ -22,7 +24,6 @@ use Hamcrest\Core\IsInstanceOf;
 use Laminas\Http\Request;
 use Laminas\Mvc\Controller\Plugin\Url;
 use Laminas\Mvc\Router\Http\RouteMatch;
-use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\ServiceManager\ServiceManager;
 use Laminas\Stdlib\Parameters;
 use Laminas\View\Model\ViewModel;
@@ -30,7 +31,6 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery as m;
 use Mockery\MockInterface;
 use Olcs\Controller\Licence\Vehicle\ListVehicleController;
-use Olcs\Table\TableEnum;
 
 class ListVehicleControllerTest extends MockeryTestCase
 {
@@ -102,7 +102,7 @@ class ListVehicleControllerTest extends MockeryTestCase
         assert($queryHandler instanceof MockInterface, 'Expected instance of MockInterface');
         $licence = ['id' => 1, 'licNo' => 'foo'];
         $licenceQueryMatcher = IsInstanceOf::anInstanceOf(Licence::class);
-        $licenceQueryResponse = m::mock(QueryResponse::class);
+        $licenceQueryResponse = m::mock(Response::class);
         $licenceQueryResponse->shouldIgnoreMissing();
         $licenceQueryResponse->shouldReceive('getResult')->andReturn($licence);
         $queryHandler->shouldReceive('__invoke')->with($licenceQueryMatcher)->andReturn($licenceQueryResponse);
@@ -190,28 +190,31 @@ class ListVehicleControllerTest extends MockeryTestCase
     }
 
     /**
-     * @test
      * @depends indexAction_RespondsInHtmlFormat_WhenHtmlFormatIsProvided
+     * @test
      */
     public function indexAction_RespondsInHtmlFormat_AndConfiguresCurrentVehicleTable_Query()
     {
         // Setup
         $serviceManager = $this->setUpServiceManager();
         $sut = $this->setUpSut($serviceManager);
-
-        $query = [
+        $request = new Request();
+        $request->setQuery(new Parameters($query = [
             ListVehicleController::QUERY_KEY_SORT_CURRENT_VEHICLES_TABLE => 'foo',
             ListVehicleController::QUERY_KEY_ORDER_CURRENT_VEHICLES_TABLE => 'bar',
             'limit' => 56,
-        ];
-        $request = new Request();
-        $request->setQuery(new Parameters($query));
+        ]));
         $routeMatch = new RouteMatch([]);
+        $tableBuilder = $this->setUpTableBuilder();
+        $tableFactory = $serviceManager->get(TableFactory::class);
+        assert($tableFactory instanceof MockInterface, 'Expected instance of MockInterface');
+        $tableFactory->shouldReceive('getTableBuilder')->andReturn($tableBuilder);
 
         // Define Expectations
         $queryMatcher = IsIdentical::identicalTo($query);
         $paramsMatcher = IsArrayContainingKeyValuePair::hasKeyValuePair('query', $queryMatcher);
-        $this->injectTableBuilder($serviceManager, TableEnum::LICENCE_VEHICLE_LIST_CURRENT, null, $paramsMatcher);
+        $any = IsAnything::anything();
+        $tableBuilder->shouldReceive('prepareTable')->with($any, $any, $paramsMatcher)->once()->andReturnSelf();
 
         // Execute
         $sut->indexAction($request, $routeMatch);
@@ -228,10 +231,15 @@ class ListVehicleControllerTest extends MockeryTestCase
         $sut = $this->setUpSut($serviceManager);
         $request = new Request();
         $routeMatch = new RouteMatch([]);
+        $tableBuilder = $this->setUpTableBuilder();
+        $tableFactory = $serviceManager->get(TableFactory::class);
+        assert($tableFactory instanceof MockInterface, 'Expected instance of MockInterface');
+        $tableFactory->shouldReceive('getTableBuilder')->andReturn($tableBuilder);
 
         // Define Expectations
         $paramsMatcher = IsArrayContainingKeyValuePair::hasKeyValuePair('page', 1);
-        $this->injectTableBuilder($serviceManager, TableEnum::LICENCE_VEHICLE_LIST_CURRENT, null, $paramsMatcher);
+        $any = IsAnything::anything();
+        $tableBuilder->shouldReceive('prepareTable')->with($any, $any, $paramsMatcher)->once()->andReturnSelf();
 
         // Execute
         $sut->indexAction($request, $routeMatch);
@@ -249,238 +257,92 @@ class ListVehicleControllerTest extends MockeryTestCase
         $request = new Request();
         $request->setQuery(new Parameters(['page' => '']));
         $routeMatch = new RouteMatch([]);
+        $tableBuilder = $this->setUpTableBuilder();
+        $tableFactory = $serviceManager->get(TableFactory::class);
+        assert($tableFactory instanceof MockInterface, 'Expected instance of MockInterface');
+        $tableFactory->shouldReceive('getTableBuilder')->andReturn($tableBuilder);
 
         // Define Expectations
         $paramsMatcher = IsArrayContainingKeyValuePair::hasKeyValuePair('page', 1);
-        $this->injectTableBuilder($serviceManager, TableEnum::LICENCE_VEHICLE_LIST_CURRENT, null, $paramsMatcher);
+        $any = IsAnything::anything();
+        $tableBuilder->shouldReceive('prepareTable')->with($any, $any, $paramsMatcher)->once()->andReturnSelf();
 
         // Execute
         $sut->indexAction($request, $routeMatch);
     }
 
-    public function setUpRemovedTableTitleData()
-    {
-        return [
-            'title when table total not equal to one' => [2, 'licence.vehicle.list.section.removed.header.title.plural'],
-            'title when table total is one' => [1, 'licence.vehicle.list.section.removed.header.title.singular'],
-        ];
-    }
-
     /**
-     * @depends indexAction_RespondsInHtmlFormat_WhenHtmlFormatIsProvided
-     * @dataProvider setUpRemovedTableTitleData
      * @test
      */
-    public function indexAction_RespondsInHtmlFormat_WithPluralRemovedVehicleTableTitle(int $total, string $expectedTranslationKey)
+    public function postAction_RespondsInHtmlFormat_SetsUserOCRSOptInPreference_Success()
     {
         // Setup
         $serviceManager = $this->setUpServiceManager();
         $sut = $this->setUpSut($serviceManager);
         $request = new Request();
-        $request->setQuery(new Parameters(['includeRemoved' => '']));
         $routeMatch = new RouteMatch([]);
-        $expectedTitle = 'foo';
-        $tableBuilder = $this->injectTableBuilder($serviceManager, TableEnum::LICENCE_VEHICLE_LIST_REMOVED);
-        $tableBuilder->shouldReceive('getTotal')->andReturn($total);
-        $tableBuilder->shouldReceive('getLimit')->andReturn($total);
-        $translator = $this->resolveTranslator($serviceManager);
+        $commandHandler = $serviceManager->get(HandleCommand::class);
+        assert($commandHandler instanceof MockInterface, 'Expected instance of MockInterface');
 
         // Define Expectations
-        $translator->shouldReceive('translateReplace')->once()->with($expectedTranslationKey, [$total])->andReturn($expectedTitle);
+        $updateVehicleCommandMatcher = IsInstanceOf::anInstanceOf(UpdateVehicles::class);
+        $commandHandler->shouldReceive('__invoke')->with($updateVehicleCommandMatcher)->andReturn(null);
 
         // Execute
-        $result = $sut->indexAction($request, $routeMatch);
-        $title = $result->getVariable('removedVehicleTableTitle');
-
-        // Assert
-        $this->assertEquals($expectedTitle, $title);
+        $sut->postAction($request, $routeMatch);
     }
 
-    /**
-     * @test
-     * @depends indexAction_RespondsInHtmlFormat_WhenHtmlFormatIsProvided
-     */
-    public function indexAction_SetShowRemovedVehiclesToFalse_WhenALicenceHasNoRemovedVehicles()
-    {
-        // Setup
-        $serviceManager = $this->setUpServiceManager();
-        $sut = $this->setUpSut($serviceManager);
-        $request = new Request();
-        $routeMatch = new RouteMatch([]);
-        $tableBuilder = $this->injectTableBuilder($serviceManager, TableEnum::LICENCE_VEHICLE_LIST_REMOVED);
-        $tableBuilder->shouldReceive('getTotal')->andReturn(0);
-
-        // Execute
-        $result = $sut->indexAction($request, $routeMatch);
-
-        // Assert
-        $matcher = IsArrayContainingKeyValuePair::hasKeyValuePair('showRemovedVehicles', false);
-        $this->assertTrue($matcher->matches((array) $result->getVariables()), 'Expected result variables to have a key "showRemovedVehicles" with a value of false');
-    }
-
-    /**
-     * @test
-     * @depends indexAction_RespondsInHtmlFormat_WhenHtmlFormatIsProvided
-     */
-    public function indexAction_SetShowRemovedVehiclesToTrue_WhenALicenceHasOneRemovedVehicle()
-    {
-        // Setup
-        $serviceManager = $this->setUpServiceManager();
-        $sut = $this->setUpSut($serviceManager);
-        $request = new Request();
-        $routeMatch = new RouteMatch([]);
-        $tableBuilder = $this->injectTableBuilder($serviceManager, TableEnum::LICENCE_VEHICLE_LIST_REMOVED);
-        $tableBuilder->shouldReceive('getTotal')->andReturn(1);
-
-        // Execute
-        $result = $sut->indexAction($request, $routeMatch);
-
-        // Assert
-        $matcher = IsArrayContainingKeyValuePair::hasKeyValuePair('showRemovedVehicles', true);
-        $this->assertTrue($matcher->matches((array) $result->getVariables()), 'Expected result variables to have a key "showRemovedVehicles" with a value of true');
-    }
-
-    /**
-     * @test
-     * @depends indexAction_SetShowRemovedVehiclesToTrue_WhenALicenceHasOneRemovedVehicle
-     */
-    public function indexAction_SetsExpandRemovedVehicles_WhenQueryParamIsSet_AndALicenceHasOneRemovedVehicle()
-    {
-        // Setup
-        $serviceManager = $this->setUpServiceManager();
-        $sut = $this->setUpSut($serviceManager);
-        $request = new Request();
-        $request->setQuery(new Parameters(['includeRemoved' => '']));
-        $routeMatch = new RouteMatch([]);
-        $tableBuilder = $this->injectTableBuilder($serviceManager, TableEnum::LICENCE_VEHICLE_LIST_REMOVED);
-        $tableBuilder->shouldReceive('getTotal')->andReturn(1);
-
-        // Execute
-        $result = $sut->indexAction($request, $routeMatch);
-
-        // Assert
-        $this->assertTrue($result->getVariable('showRemovedVehiclesExpanded'));
-    }
-
-    /**
-     * @test
-     * @depends indexAction_SetShowRemovedVehiclesToTrue_WhenALicenceHasOneRemovedVehicle
-     */
-    public function indexAction_DoesNotSetExpandRemovedVehicles_WhenQueryParamIsSet_AndThereAreNoRemovedVehicles()
-    {
-        // Setup
-        $serviceManager = $this->setUpServiceManager();
-        $sut = $this->setUpSut($serviceManager);
-        $request = new Request();
-        $request->setQuery(new Parameters(['includeRemoved' => '']));
-        $routeMatch = new RouteMatch([]);
-        $tableBuilder = $this->injectTableBuilder($serviceManager, TableEnum::LICENCE_VEHICLE_LIST_REMOVED);
-        $tableBuilder->shouldReceive('getTotal')->andReturn(0);
-
-        // Execute
-        $result = $sut->indexAction($request, $routeMatch);
-
-        // Assert
-        $this->assertArrayNotHasKey('showRemovedVehiclesExpanded', $result->getVariables());
-    }
-
-    /**
-     * @return array
-     */
-    public function buttonTranslationKeyTypes(): array
-    {
-        return [
-            'title' => ['title'],
-            'label' => ['label'],
-        ];
-    }
-
-    /**
-     * @param string $type
-     * @test
-     * @depends indexAction_SetShowRemovedVehiclesToTrue_WhenALicenceHasOneRemovedVehicle
-     * @dataProvider buttonTranslationKeyTypes
-     */
-    public function indexAction_SetToggleRemovedVehiclesActionTitle_WithRelevantMessage_WhenQueryParamIsSet_AndLicenceHasRemovedVehicles(string $type)
-    {
-        // Setup
-        $serviceManager = $this->setUpServiceManager();
-        $sut = $this->setUpSut($serviceManager);
-        $request = new Request();
-        $request->setQuery(new Parameters(['includeRemoved' => '']));
-        $routeMatch = new RouteMatch([]);
-        $tableBuilder = $this->injectTableBuilder($serviceManager, TableEnum::LICENCE_VEHICLE_LIST_REMOVED);
-        $tableBuilder->shouldReceive('getTotal')->andReturn(1);
-        $expectedKey = sprintf('toggleRemovedVehiclesAction%s', ucfirst($type));
-        $expectedTitle = sprintf('licence.vehicle.list.section.removed.action.hide-removed-vehicles.%s', $type);
-
-        // Execute
-        $result = $sut->indexAction($request, $routeMatch);
-
-        // Assert
-        $variables = (array) $result->getVariables();
-        $this->assertArrayHasKey($expectedKey, $variables, sprintf('Expected result variables to have a key "%s"', $expectedKey));
-        $this->assertEquals($expectedTitle, $variables[$expectedKey], sprintf('Expected result variable "%s" to have a value of "%s"', $expectedKey, $expectedTitle));
-    }
-
-    /**
-     * @param string $type
-     * @test
-     * @depends indexAction_SetShowRemovedVehiclesToTrue_WhenALicenceHasOneRemovedVehicle
-     * @dataProvider buttonTranslationKeyTypes
-     */
-    public function indexAction_SetToggleRemovedVehiclesButtonTitle_WithRelevantMessage_WhenQueryParamIsNotSet_AndLicenceDoesNotHaveRemovedVehicles(string $type)
-    {
-        // Setup
-        $serviceManager = $this->setUpServiceManager();
-        $sut = $this->setUpSut($serviceManager);
-        $request = new Request();
-        $request->setQuery(new Parameters(['includeRemoved' => '']));
-        $routeMatch = new RouteMatch([]);
-        $tableBuilder = $this->injectTableBuilder($serviceManager, TableEnum::LICENCE_VEHICLE_LIST_REMOVED);
-        $tableBuilder->shouldReceive('getTotal')->andReturn(0);
-        $expectedKey = sprintf('toggleRemovedVehiclesAction%s', ucfirst($type));
-        $expectedTitle = sprintf('licence.vehicle.list.section.removed.action.show-removed-vehicles.%s', $type);
-
-        // Execute
-        $result = $sut->indexAction($request, $routeMatch);
-
-        // Assert
-        $variables = (array) $result->getVariables();
-        $this->assertArrayHasKey($expectedKey, $variables, sprintf('Expected result variables to have a key "%s"', $expectedKey));
-        $this->assertEquals($expectedTitle, $variables[$expectedKey], sprintf('Expected result variable "%s" to have a value of "%s"', $expectedKey, $expectedTitle));
-    }
-
-    /**
-     * @param string $type
-     * @test
-     * @depends indexAction_SetShowRemovedVehiclesToTrue_WhenALicenceHasOneRemovedVehicle
-     * @dataProvider buttonTranslationKeyTypes
-     */
-    public function indexAction_SetToggleRemovedVehiclesButtonTitle_WithRelevantMessage_WhenQueryParamIsSet_AndLicenceHasRemovedVehicles(string $type)
-    {
-        // Setup
-        $serviceManager = $this->setUpServiceManager();
-        $sut = $this->setUpSut($serviceManager);
-        $request = new Request();
-        $request->setQuery(new Parameters(['includeRemoved' => '']));
-        $routeMatch = new RouteMatch([]);
-        $tableBuilder = $this->injectTableBuilder($serviceManager, TableEnum::LICENCE_VEHICLE_LIST_REMOVED);
-        $tableBuilder->shouldReceive('getTotal')->andReturn(1);
-        $expectedKey = sprintf('toggleRemovedVehiclesAction%s', ucfirst($type));
-        $expectedTitle = sprintf('licence.vehicle.list.section.removed.action.hide-removed-vehicles.%s', $type);
-
-        // Execute
-        $result = $sut->indexAction($request, $routeMatch);
-
-        // Assert
-        $variables = (array) $result->getVariables();
-        $this->assertArrayHasKey($expectedKey, $variables, sprintf('Expected result variables to have a key "%s"', $expectedKey));
-        $this->assertEquals($expectedTitle, $variables[$expectedKey], sprintf('Expected result variable "%s" to have a value of "%s"', $expectedKey, $expectedTitle));
-    }
+//    @todo Re-add in VOL-136
+//
+//    public function setUpRemovedTableTitleData()
+//    {
+//        return [
+//            'title when table total not equal to one' => [2, 'licence.vehicle.list.section.removed.header.title.plural'],
+//            'title when table total is one' => [1, 'licence.vehicle.list.section.removed.header.title.singular'],
+//        ];
+//    }
+//
+//    /**
+//     * @depends indexActionRespondsInHtmlFormatWhenHtmlFormatIsProvided
+//     * @dataProvider setUpRemovedTableTitleData
+//     * @test
+//     */
+//    public function indexActionRespondsInHtmlFormatWithPluralRemovedVehicleTableTitle(int $total, string $expectedTranslationKey)
+//    {
+//        // Setup
+//        $serviceManager = $this->newServiceManager();
+//        $sut = $this->newSut($serviceManager);
+//        $request = new Request();
+//        $request->setQuery(new Parameters(['includeRemoved' => '']));
+//        $routeMatch = new RouteMatch([]);
+//        $expectedTitle = 'foo';
+//
+//        $tableBuilder = $this->setUpTableBuilder();
+//        $tableBuilder->shouldReceive('getTotal')->andReturn($total);
+//        $tableBuilder->shouldReceive('getLimit')->andReturn($total);
+//
+//        $tableBuilderFactory = $serviceManager->get(TableFactory::class);
+//        assert($tableBuilderFactory instanceof MockInterface, 'Expected instance of MockInterface');
+//        $tableBuilderFactory->shouldReceive('getTableBuilder')->andReturn($tableBuilder);
+//
+//        $translator = $serviceManager->get(TranslationHelperService::class);
+//        assert($translator instanceof MockInterface, 'Expected instance of MockInterface');
+//
+//        // Define Expectations
+//        $translator->shouldReceive('translateReplace')->once()->with($expectedTranslationKey, [$total])->andReturn($expectedTitle);
+//
+//        // Execute
+//        $result = $sut->indexAction($request, $routeMatch);
+//        $title = $result->getVariable('removedVehicleTableTitle');
+//
+//        // Assert
+//        $this->assertEquals($expectedTitle, $title);
+//    }
 
     /**
      * Sets up default services.
+     *
+     * @todo implement an interface around this method
      *
      * @return array
      */
@@ -491,7 +353,7 @@ class ListVehicleControllerTest extends MockeryTestCase
             HandleQuery::class => $this->setUpQueryHandler(),
             Url::class => $this->setUpUrlHelper(),
             ResponseHelperService::class => $this->setUpResponseHelper(),
-            TableFactory::class => (new TableFactoryMockBuilder())->build(),
+            TableFactory::class => $this->setUpTableFactory(),
             FormHelperService::class => $this->setUpFormHelper(),
         ];
     }
@@ -503,12 +365,14 @@ class ListVehicleControllerTest extends MockeryTestCase
     protected function setUpSut(ServiceManager $serviceManager)
     {
         $translationService = $serviceManager->get(TranslationHelperService::class);
+        $commandHandler = $serviceManager->get(HandleCommand::class);
         $queryHandler = $serviceManager->get(HandleQuery::class);
         $urlHelper = $serviceManager->get(Url::class);
         $responseHelper = $serviceManager->get(ResponseHelperService::class);
         $tableFactory = $serviceManager->get(TableFactory::class);
         $formHelper = $serviceManager->get(FormHelperService::class);
-        return new ListVehicleController($queryHandler, $translationService, $urlHelper, $responseHelper, $tableFactory, $formHelper);
+        $flashMessengerHelper = $serviceManager->get(FlashMessengerHelperService::class);
+        return new ListVehicleController($commandHandler, $queryHandler, $translationService, $urlHelper, $responseHelper, $tableFactory, $formHelper, $flashMessengerHelper);
     }
 
     /**
@@ -526,39 +390,61 @@ class ListVehicleControllerTest extends MockeryTestCase
     {
         $instance = m::mock(HandleQuery::class);
         $instance->shouldIgnoreMissing();
-        $instance->shouldReceive('__invoke')->andReturn($this->setUpQueryResponse())->byDefault();
+
+        $response = m::mock(Response::class);
+        $response->shouldIgnoreMissing();
+        $response->shouldReceive('getResult')->andReturn(['count' => 0, 'results' => []])->byDefault();
+        $instance->shouldReceive('__invoke')->andReturn($response)->byDefault();
+
         return $instance;
     }
 
     /**
-     * @param mixed $data
-     * @return QueryResponse|MockInterface
+     * @return HandleCommand
      */
-    protected function setUpQueryResponse($data = ['count' => 0, 'results' => []])
+    protected function setUpCommandHandler(): HandleCommand
     {
-        $response = m::mock(QueryResponse::class);
+        $instance = m::mock(HandleCommand::class);
+        $instance->shouldIgnoreMissing();
+
+        $response = m::mock(Response::class);
         $response->shouldIgnoreMissing();
-        $response->shouldReceive('getResult')->andReturn($data)->byDefault();
-        return $response;
+        $response->shouldReceive('getResult')->andReturn(['count' => 0, 'results' => []])->byDefault();
+        $instance->shouldReceive('__invoke')->andReturn($response)->byDefault();
+
+        return $instance;
+    }
+
+    /**
+     * @return TableFactory
+     */
+    protected function setUpTableFactory(): TableFactory
+    {
+        $instance = m::mock(TableFactory::class);
+        $instance->shouldIgnoreMissing();
+        $instance->shouldReceive('getTableBuilder')->andReturnUsing([$this, 'setUpTableBuilder'])->byDefault();
+        return $instance;
     }
 
     /**
      * @return MockInterface
      */
-    protected function setUpTranslator(): MockInterface
+    public function setUpTableBuilder(): MockInterface
+    {
+        $tableBuilder = m::mock(TableBuilder::class);
+        $tableBuilder->shouldIgnoreMissing($tableBuilder);
+        $tableBuilder->shouldReceive('getSettings')->andReturn([])->byDefault();
+        return $tableBuilder;
+    }
+
+    /**
+     * @return TranslationHelperService
+     */
+    protected function setUpTranslator(): TranslationHelperService
     {
         $instance = m::mock(TranslationHelperService::class);
         $instance->shouldIgnoreMissing('');
         return $instance;
-    }
-
-    /**
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return MockInterface
-     */
-    protected function resolveTranslator(ServiceLocatorInterface $serviceLocator): MockInterface
-    {
-        return $serviceLocator->get(TranslationHelperService::class);
     }
 
     /**
@@ -592,19 +478,12 @@ class ListVehicleControllerTest extends MockeryTestCase
     }
 
     /**
-     * @param ServiceLocatorInterface $serviceLocator
-     * @param string $tableName
-     * @param null $data
-     * @param null $params
-     * @return MockInterface
+     * @return FlashMessengerHelperService
      */
-    protected function injectTableBuilder(ServiceLocatorInterface $serviceLocator, string $tableName, $data = null, $params = null): MockInterface
+    protected function setUpFlashMessengerHelperService(): FlashMessengerHelperService
     {
-        $any = IsAnything::anything();
-        $tableBuilder = (new TableBuilderMockBuilder())->build();
-        $tableFactory = $serviceLocator->get(TableFactory::class);
-        assert($tableFactory instanceof MockInterface, 'Expected instance of MockInterface');
-        $tableFactory->byDefault()->shouldReceive('prepareTable')->with($tableName, $data ?? $any, $params ?? $any)->once()->andReturn($tableBuilder);
-        return $tableBuilder;
+        $instance = m::mock(FlashMessengerHelperService::class);
+        $instance->shouldIgnoreMissing();
+        return $instance;
     }
 }
