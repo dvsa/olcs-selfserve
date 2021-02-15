@@ -222,7 +222,7 @@ class ListVehicleController
         if ($data['currentVehiclesTable']->getTotal() > $data['currentVehiclesTable']->getLimit() || $this->isSearchResultsPage($request)) {
             $searchFormUrl = $this->urlHelper->fromRoute('licence/vehicle/list/GET', ['licence' => $data['licence']['id']]);
             $view->setVariable('searchForm', $this->createSearchForm($searchFormUrl, $urlQueryParams));
-            $view->setVariable('clearUrl', $this->buildSearchClearUrl($request)); // $this->getLink('licence/vehicle/list/GET'));
+            $view->setVariable('clearUrl', $this->buildSearchClearUrl($request));
         }
 
         $data['toggleRemovedVehiclesActionTitle'] = 'licence.vehicle.list.section.removed.action.show-removed-vehicles.title';
@@ -231,6 +231,7 @@ class ListVehicleController
         $tableTotal = $data['removedVehiclesTable']->getTotal();
         $data['showRemovedVehicles'] = $tableTotal > 0;
         if ($data['showRemovedVehicles'] && array_key_exists(static::QUERY_KEY_INCLUDE_REMOVED, $urlQueryParams)) {
+            $tableTotal = $tableTotal > static::DEFAULT_REMOVED_VEHICLES_TABLE_LIMIT ? static::DEFAULT_REMOVED_VEHICLES_TABLE_LIMIT : $tableTotal;
             $data['removedVehicleTableTitle'] = $this->translator->translateReplace(
                 sprintf('licence.vehicle.list.section.removed.header.title.%s', $tableTotal === 1 ? 'singular' : 'plural'),
                 [$tableTotal]
