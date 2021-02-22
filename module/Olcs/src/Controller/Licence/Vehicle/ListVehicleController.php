@@ -176,15 +176,14 @@ class ListVehicleController
             return $this->indexAction($request, $routeMatch);
         }
 
-        $complianceCheckbox = $request->getPost('ocrsCheckbox');
-        $complianceCheckbox = ($complianceCheckbox == 'Y') ? 'Y': 'N';
+        $complianceCheckbox = $form->getData()['ocrsCheckbox'];
 
         $updateVehicles = UpdateVehicles::create([
             'id' => $licenceId,
             'shareInfo' => $complianceCheckbox
         ]);
 
-        $this->commandHandler->__invoke($updateVehicles)->getResult();
+        $this->commandHandler->__invoke($updateVehicles);
 
         return $this->indexAction($request, $routeMatch);
     }

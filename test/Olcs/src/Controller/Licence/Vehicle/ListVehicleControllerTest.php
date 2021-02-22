@@ -24,6 +24,7 @@ use Hamcrest\Core\IsInstanceOf;
 use Laminas\Http\Request;
 use Laminas\Mvc\Controller\Plugin\Url;
 use Laminas\Mvc\Router\Http\RouteMatch;
+use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\ServiceManager\ServiceManager;
 use Laminas\Stdlib\Parameters;
 use Laminas\View\Model\ViewModel;
@@ -45,6 +46,19 @@ class ListVehicleControllerTest extends MockeryTestCase
 
         // Assert
         $this->assertIsCallable([$sut, 'indexAction']);
+    }
+
+    /**
+     * @test
+     */
+    public function postAction_IsCallable()
+    {
+        // Setup
+        $serviceManager = $this->setUpServiceManager();
+        $sut = $this->setUpSut($serviceManager);
+
+        // Assert
+        $this->assertIsCallable([$sut, 'postAction']);
     }
 
     /**
@@ -272,9 +286,10 @@ class ListVehicleControllerTest extends MockeryTestCase
     }
 
     /**
+     * @depends postAction_IsCallable
      * @test
      */
-    public function postAction_RespondsInHtmlFormat_SetsUserOCRSOptInPreference_Success()
+    public function postAction_RespondsInHtmlFormat_SetsUserOCRSOptInPreference_CommandIsExecuted()
     {
         // Setup
         $serviceManager = $this->setUpServiceManager();
@@ -286,11 +301,68 @@ class ListVehicleControllerTest extends MockeryTestCase
 
         // Define Expectations
         $updateVehicleCommandMatcher = IsInstanceOf::anInstanceOf(UpdateVehicles::class);
-        $commandHandler->shouldReceive('__invoke')->with($updateVehicleCommandMatcher)->andReturn(null);
+
+        $commandHandler->shouldReceive('__invoke')->with($updateVehicleCommandMatcher)->once()->andReturn(null);
 
         // Execute
         $sut->postAction($request, $routeMatch);
     }
+
+    /**
+     * @depends postAction_IsCallable
+     * @test
+     */
+    public function postAction_RespondsInHtmlFormat_SetsUserOCRSOptInPreference_CheckboxValidValuesRunsCommand()
+    {
+        // Setup
+        $serviceManager = $this->setUpServiceManager();
+        $sut = $this->setUpSut($serviceManager);
+        $request = new Request();
+        $routeMatch = new RouteMatch([]);
+        $commandHandler = $this->resolveMockService($serviceManager, HandleCommand::class);
+        $formHelper = $this->resolveMockService($serviceManager, FormHelperService::class);
+        $mockForm = $this->setUpForm();
+        $mockForm->shouldReceive('getData')->andReturn(['ocrsCheckbox' => $expected = 'Y']);
+        $formHelper->shouldReceive('createForm')->andReturn($mockForm);
+
+        // Define Expectations
+        $commandHandler
+            ->shouldReceive('__invoke')
+            ->withArgs(function($command) use ($expected) {
+                return $command instanceof UpdateVehicles && $command->getShareInfo() === $expected;
+            })
+            ->once()
+            ->andReturn(null);
+
+        // Execute
+        $sut->postAction($request, $routeMatch);
+    }
+
+    /**
+     * @depends postAction_IsCallable
+     * @test
+     */
+    public function postAction_RespondsInHtmlFormat_SetsUserOCRSOptInPreference_CheckboxInvalidValues_ReturnsIndexActionWithErrors()
+    {
+        // Setup
+        $serviceManager = $this->setUpServiceManager();
+        $sut = $this->setUpSut($serviceManager);
+        $request = new Request();
+        $routeMatch = new RouteMatch([]);
+        $commandHandler = $this->resolveMockService($serviceManager, HandleCommand::class);
+        $formHelper = $this->resolveMockService($serviceManager, FormHelperService::class);
+        $mockForm = $this->setUpForm();
+        $mockForm->shouldReceive('isValid')->andReturnFalse();
+        $formHelper->shouldReceive('createForm')->andReturn($mockForm);
+
+        // Define Expectations
+        $updateVehicleCommandMatcher = IsInstanceOf::anInstanceOf(UpdateVehicles::class);
+        $commandHandler->shouldReceive('__invoke')->with($updateVehicleCommandMatcher)->never()->andReturn(null);
+
+        // Execute
+        $sut->postAction($request, $routeMatch);
+    }
+
 
 //    @todo Re-add in VOL-136
 //
@@ -350,11 +422,13 @@ class ListVehicleControllerTest extends MockeryTestCase
     {
         return [
             TranslationHelperService::class => $this->setUpTranslator(),
+            HandleCommand::class => $this->setUpCommandHandler(),
             HandleQuery::class => $this->setUpQueryHandler(),
             Url::class => $this->setUpUrlHelper(),
             ResponseHelperService::class => $this->setUpResponseHelper(),
             TableFactory::class => $this->setUpTableFactory(),
             FormHelperService::class => $this->setUpFormHelper(),
+            FlashMessengerHelperService::class => $this->setUpFlashMessengerHelperService(),
         ];
     }
 
@@ -474,6 +548,10 @@ class ListVehicleControllerTest extends MockeryTestCase
     {
         $instance = m::mock(FormHelperService::class);
         $instance->shouldIgnoreMissing();
+
+        $mockForm = $this->setUpForm();
+        $instance->shouldReceive('createForm')->andReturn($mockForm)->byDefault();
+
         return $instance;
     }
 
@@ -485,5 +563,28 @@ class ListVehicleControllerTest extends MockeryTestCase
         $instance = m::mock(FlashMessengerHelperService::class);
         $instance->shouldIgnoreMissing();
         return $instance;
+    }
+
+    protected function setUpForm(): MockInterface
+    {
+        $mockForm = m::mock(\Laminas\Form\Form::class);
+        $mockForm->shouldIgnoreMissing();
+        $mockForm->shouldReceive('isValid')->andReturnTrue()->byDefault();
+
+        return $mockForm;
+    }
+
+    /**
+     * Resolves a mock service from a service container.
+     *
+     * @param ServiceLocatorInterface $serviceManager
+     * @param string $service
+     * @return MockInterface
+     */
+    protected function resolveMockService(ServiceLocatorInterface $serviceManager, string $service): MockInterface
+    {
+        $service = $serviceManager->get($service);
+        assert($service instanceof MockInterface, 'Expected instance of MockInterface');
+        return $service;
     }
 }
