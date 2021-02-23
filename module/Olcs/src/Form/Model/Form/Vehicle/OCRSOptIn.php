@@ -37,7 +37,7 @@ class OCRSOptIn
 
     /**
      * @Form\Attributes({"type":"submit","class":"action--secondary large"})
-     * @Form\Options({"label":"Save preferences"})
+     * @Form\Options({"label":"licence.vehicle.list.form.orcs.submit.label"})
      * @Form\Type("\Laminas\Form\Element\Button")
      */
     public $submit = null;
