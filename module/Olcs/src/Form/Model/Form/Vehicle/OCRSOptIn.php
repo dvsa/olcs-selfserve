@@ -27,6 +27,7 @@ class OCRSOptIn
      *         "haystack": {
      *             "Y", "N"
      *         },
+     *         "strict": true,
      *         "messages": {
      *             Laminas\Validator\InArray::NOT_IN_ARRAY: "licence.vehicle.list.form.orcs.checkbox.invalid-value"
      *         }

@@ -334,7 +334,7 @@ class ListVehicleControllerTest extends MockeryTestCase
 
         // Define Expectations
         $updateVehicleCommandMatcher = IsInstanceOf::anInstanceOf(UpdateVehicles::class);
-        $commandHandler->shouldReceive('__invoke')->with($updateVehicleCommandMatcher)->never()->andReturn(null);
+        $commandHandler->shouldReceive('__invoke')->with($updateVehicleCommandMatcher)->never();
 
         // Execute
         $sut->postAction($request, $routeMatch);
@@ -460,7 +460,6 @@ class ListVehicleControllerTest extends MockeryTestCase
 
         $response = m::mock(Response::class);
         $response->shouldIgnoreMissing();
-        $response->shouldReceive('getResult')->andReturn(['count' => 0, 'results' => []])->byDefault();
         $instance->shouldReceive('__invoke')->andReturn($response)->byDefault();
 
         return $instance;
@@ -542,6 +541,9 @@ class ListVehicleControllerTest extends MockeryTestCase
         return $instance;
     }
 
+    /**
+     * @return MockInterface
+     */
     protected function setUpForm(): MockInterface
     {
         $mockForm = m::mock(\Laminas\Form\Form::class);

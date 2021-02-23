@@ -19,7 +19,7 @@ class OCRSOptInTest extends AbstractFormValidationTestCase
 
     /**
      * @test
-     * @dataProvider Checkbox_Value_Valid_DataProvider
+     * @dataProvider checkboxValueValid_DataProvider
      * @param $value
      */
     public function checkboxValueValid($value)
@@ -34,7 +34,7 @@ class OCRSOptInTest extends AbstractFormValidationTestCase
 
     /**
      * @test
-     * @dataProvider Checkbox_Value_Not_Valid_DataProvider
+     * @dataProvider checkboxValueNotValid_DataProvider
      * @param $value
      * @param array $expectedValidationErrors
      */
@@ -103,19 +103,25 @@ class OCRSOptInTest extends AbstractFormValidationTestCase
                 ],
             ],
             'False' => [
-                'false',
+                false,
                 [
-                    \Laminas\Validator\InArray::NOT_IN_ARRAY
+                    \Laminas\Validator\NotEmpty::IS_EMPTY
                 ],
             ],
             'True' => [
-                'true',
+                true,
                 [
                     \Laminas\Validator\InArray::NOT_IN_ARRAY
                 ],
             ],
             'Whitespace' => [
                 ' ',
+                [
+                    \Laminas\Validator\NotEmpty::IS_EMPTY
+                ],
+            ],
+            'Empty string' => [
+                '',
                 [
                     \Laminas\Validator\NotEmpty::IS_EMPTY
                 ],
