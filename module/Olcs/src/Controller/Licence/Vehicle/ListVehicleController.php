@@ -356,6 +356,12 @@ class ListVehicleController
         return $this->queryHandler->__invoke($query)->getResult();
     }
 
+    /**
+     * Creates a OCRS Opt-In form.
+     *
+     * @param array $data
+     * @return Form
+     */
     protected function createOcrsOptInForm(array $data = []): Form
     {
         $form = $this->formHelper->createForm(OCRSOptIn::class, true, false);
