@@ -139,7 +139,7 @@ class ListVehicleController
                 'vrm' => $urlQueryData['vehicleSearch'][AbstractInputSearch::ELEMENT_INPUT_NAME] ?? null,
             ]));
 
-            $shareVehicleInfoState = (($licence['organisation']['confirmShareVehicleInfo'] ?? 'N') == 'Y');
+            $shareVehicleInfoState = (($licence['organisation']['confirmShareVehicleInfo'] ?? 'N') === 'Y');
 
             $response = $this->renderHtmlResponse($request, [
                 'title' => $this->isSearchResultsPage($request) ? 'licence.vehicle.list.search.header' : 'licence.vehicle.list.header',
@@ -362,7 +362,7 @@ class ListVehicleController
         $form->setData($data);
 
         if (in_array('ocrsCheckbox', $data)) {
-            $checked = $data['ocrsCheckbox'] == 'Y';
+            $checked = $data['ocrsCheckbox'] === 'Y';
 
             $checkbox =  $form->get('ocrsCheckbox');
             assert($checkbox instanceof OlcsCheckbox, '$checkbox is not an instance of OlcsCheckbox');
