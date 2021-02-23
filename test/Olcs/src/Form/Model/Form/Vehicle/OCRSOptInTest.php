@@ -22,7 +22,7 @@ class OCRSOptInTest extends AbstractFormValidationTestCase
      * @dataProvider Checkbox_Value_Valid_DataProvider
      * @param $value
      */
-    public function Checkbox_Value_Valid($value)
+    public function checkboxValueValid($value)
     {
         $element = ['ocrsCheckbox'];
 
@@ -38,7 +38,7 @@ class OCRSOptInTest extends AbstractFormValidationTestCase
      * @param $value
      * @param array $expectedValidationErrors
      */
-    public function Checkbox_Value_Not_Valid($value, array $expectedValidationErrors)
+    public function checkboxValueNotValid($value, array $expectedValidationErrors)
     {
         $element = ['ocrsCheckbox'];
 
@@ -52,7 +52,7 @@ class OCRSOptInTest extends AbstractFormValidationTestCase
     /**
      * @dataProvider
      */
-    public function Checkbox_Value_Valid_DataProvider(): array
+    public function checkboxValueValid_DataProvider(): array
     {
         return [
             'Uppercase Y' => ['Y'],
@@ -63,7 +63,7 @@ class OCRSOptInTest extends AbstractFormValidationTestCase
     /**
      * @dataProvider
      */
-    public function Checkbox_Value_Not_Valid_DataProvider(): array
+    public function checkboxValueNotValid_DataProvider(): array
     {
         return [
             'Lowercase y' => [
@@ -132,7 +132,7 @@ class OCRSOptInTest extends AbstractFormValidationTestCase
     /**
      * @test
      */
-    public function Submit_Is_ActionButton()
+    public function submitIsActionButton()
     {
         $element = ['submit'];
         $this->assertFormElementActionButton($element);
