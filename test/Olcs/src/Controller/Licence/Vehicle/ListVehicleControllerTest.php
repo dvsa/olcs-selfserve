@@ -289,29 +289,6 @@ class ListVehicleControllerTest extends MockeryTestCase
      * @depends postAction_IsCallable
      * @test
      */
-    public function postAction_RespondsInHtmlFormat_SetsUserOCRSOptInPreference_CommandIsExecuted()
-    {
-        // Setup
-        $serviceManager = $this->setUpServiceManager();
-        $sut = $this->setUpSut($serviceManager);
-        $request = new Request();
-        $routeMatch = new RouteMatch([]);
-        $commandHandler = $serviceManager->get(HandleCommand::class);
-        assert($commandHandler instanceof MockInterface, 'Expected instance of MockInterface');
-
-        // Define Expectations
-        $updateVehicleCommandMatcher = IsInstanceOf::anInstanceOf(UpdateVehicles::class);
-
-        $commandHandler->shouldReceive('__invoke')->with($updateVehicleCommandMatcher)->once()->andReturn(null);
-
-        // Execute
-        $sut->postAction($request, $routeMatch);
-    }
-
-    /**
-     * @depends postAction_IsCallable
-     * @test
-     */
     public function postAction_RespondsInHtmlFormat_SetsUserOCRSOptInPreference_CheckboxValidValuesRunsCommand()
     {
         // Setup
