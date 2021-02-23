@@ -161,7 +161,7 @@ class ListVehicleController
     }
 
     /**
-     * Handles a request from a user to change the .
+     * Handles a request from a user to change the user's opt-in preference for OCRS.
      *
      * @param Request $request
      * @param RouteMatch $routeMatch
