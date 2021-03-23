@@ -21,20 +21,18 @@ use Dvsa\Olcs\Transfer\Query\AbstractQuery;
 use Dvsa\Olcs\Transfer\Query\Licence\GoodsVehiclesExport;
 use Dvsa\Olcs\Transfer\Query\Licence\Licence;
 use Dvsa\Olcs\Transfer\Query\Licence\Vehicles;
-use Laminas\Filter\StringToUpper;
 use Laminas\Form\Element\Hidden;
 use Laminas\Form\Form;
 use Laminas\Http\Request;
 use Laminas\Http\Response;
-use Laminas\InputFilter\Input;
-use Laminas\InputFilter\InputFilter;
 use Laminas\Mvc\Controller\Plugin\Url;
 use Laminas\Mvc\Router\RouteMatch;
-use Laminas\Validator\InArray;
 use Olcs\Form\Model\Form\Vehicle\ListVehicleSearch;
 use Laminas\View\Model\ViewModel;
 use Laminas\Http\PhpEnvironment\Response as HttpResponse;
 use Olcs\Form\Model\Form\Vehicle\OCRSOptIn;
+use Olcs\InputFilter\ListVehicleIndexActionInputFilter;
+use Olcs\Mvc\Strategy\Validation\ValidationException;
 use Olcs\Table\TableEnum;
 use Laminas\Stdlib\ResponseInterface;
 
@@ -141,22 +139,13 @@ class ListVehicleController
      * @param Request $request
      * @param RouteMatch $routeMatch
      * @return ViewModel|ResponseInterface
+     * @throws ValidationException
      */
     public function indexAction(Request $request, RouteMatch $routeMatch)
     {
         $licenceId = (int) $routeMatch->getParam('licence');
-        $inputFilter = $this->newInputFilter($request->getQuery()->toArray());
-        if (! $inputFilter->isValid()) {
-            foreach ($inputFilter->getMessages() as $messages) {
-                foreach ($messages as $message) {
-                    $this->flashMessenger->addErrorMessage($message);
-                }
-            }
-            return $this->redirectHelper->refresh();
-        }
-        $input = array_filter(array_merge($inputFilter->getValues(), $inputFilter->getUnknown()), function ($val) {
-            return $val !== null;
-        });
+        $input = $request->getQuery()->toArray();
+        ListVehicleIndexActionInputFilter::validate($input);
 
         $format = $input['format'] ?? static::FORMAT_HTML;
         if ($format === static::FORMAT_CSV) {
@@ -217,9 +206,11 @@ class ListVehicleController
      */
     public function postAction(Request $request, RouteMatch $routeMatch)
     {
-        $licenceId = (int) $routeMatch->getParam('licence');
+        $input = $request->getPost()->toArray();
+        // @todo implement validator for here and remove form validation below
 
-        $form = $this->createOcrsOptInForm($request->getPost()->toArray());
+        $licenceId = (int) $routeMatch->getParam('licence');
+        $form = $this->createOcrsOptInForm($input);
         if (!$form->isValid()) {
             return $this->indexAction($request, $routeMatch);
         }
@@ -233,79 +224,8 @@ class ListVehicleController
 
         $this->commandHandler->__invoke($updateVehicles);
 
+        // @todo use redirect!
         return $this->indexAction($request, $routeMatch);
-    }
-
-    /**
-     * @param array $data
-     * @return InputFilter
-     */
-    protected function newInputFilter(array $data)
-    {
-        $filter = new InputFilter();
-        $filter->add($this->newSortColumnInput(static::QUERY_KEY_SORT_REMOVED_VEHICLES, ['v.vrm', 'specifiedDate', 'removalDate']));
-        $filter->add($this->newSortColumnInput(static::QUERY_KEY_SORT_CURRENT_VEHICLES, ['v.vrm', 'specifiedDate']));
-        $filter->add($this->newOrderInput(static::QUERY_KEY_ORDER_REMOVED_VEHICLES));
-        $filter->add($this->newOrderInput(static::QUERY_KEY_ORDER_CURRENT_VEHICLES));
-        $filter->setData($data);
-        return $filter;
-    }
-
-    /**
-     * @param string $name
-     * @return Input
-     */
-    protected function newInput(string $name): Input
-    {
-        $input = new Input($name);
-        $input->setContinueIfEmpty(true);
-        return $input;
-    }
-
-    /**
-     * @param string $name
-     * @param array $validColumnNames
-     * @return Input
-     */
-    protected function newSortColumnInput(string $name, array $validColumnNames): Input
-    {
-        $input = $this->newInput($name);
-        $input->setRequired(false);
-
-        $sortValidatorChain = $input->getValidatorChain();
-
-        $inArrayValidator = new InArray();
-        $inArrayValidator->setHaystack($validColumnNames);
-        $inArrayValidator->setMessages([InArray::NOT_IN_ARRAY => 'table.validation.error.sort.in-array']);
-        $inArrayValidator->setTranslator($this->translator->getTranslator());
-        $sortValidatorChain->attach($inArrayValidator);
-
-        return $input;
-    }
-
-    /**
-     * @param string $name
-     * @return Input
-     */
-    protected function newOrderInput(string $name): Input
-    {
-        $input = $this->newInput($name);
-        $input->setRequired(false);
-
-        // Build validator chain
-        $sortValidatorChain = $input->getValidatorChain();
-
-        $inArrayValidator = new InArray();
-        $inArrayValidator->setHaystack(['ASC', 'DESC']);
-        $inArrayValidator->setMessages([InArray::NOT_IN_ARRAY => 'table.validation.error.order.in-array']);
-        $inArrayValidator->setTranslator($this->translator->getTranslator());
-        $sortValidatorChain->attach($inArrayValidator);
-
-        // Build filter chain
-        $sortFilterChain = $input->getFilterChain();
-        $sortFilterChain->attach(new StringToUpper());
-
-        return $input;
     }
 
     /**

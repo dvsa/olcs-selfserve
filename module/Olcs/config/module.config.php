@@ -1363,6 +1363,7 @@ return array(
             'QaTemplateVarsGenerator' => QaService\TemplateVarsGeneratorFactory::class,
             'QaQuestionArrayProvider' => QaService\QuestionArrayProviderFactory::class,
             'QaViewGeneratorProvider' => QaService\ViewGeneratorProviderFactory::class,
+            \Olcs\Mvc\Strategy\Validation\ValidationStrategy::class => \Olcs\Mvc\Strategy\Validation\ValidationStrategyFactory::class,
         )
     ),
     'search' => [
