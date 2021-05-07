@@ -3,7 +3,7 @@
 namespace Olcs\Controller\Licence\Vehicle\Reprint;
 
 use Olcs\Controller\Licence\Vehicle\AbstractVehicleController;
-use Olcs\Form\Model\Form\Vehicle\ListVehicleSearch;
+use Olcs\Form\Model\Form\Vehicle\TableSearchFormElement;
 use Olcs\Form\Model\Form\Vehicle\Vehicles as VehiclesForm;
 use Common\Form\Form;
 use Laminas\Http\Request;
@@ -23,7 +23,7 @@ class ReprintLicenceVehicleDiscController extends AbstractVehicleController
     protected $formConfig = [
         'default' => [
             'searchForm' => [
-                'formClass' => ListVehicleSearch::class
+                'formClass' => TableSearchFormElement::class
             ],
             'goodsVehicleForm' => [
                 'formClass' => VehiclesForm::class,

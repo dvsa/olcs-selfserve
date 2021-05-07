@@ -7,7 +7,7 @@ use Common\Form\Form;
 use Dvsa\Olcs\Transfer\Query\Licence\OtherActiveLicences;
 use Olcs\DTO\Licence\OtherActiveLicenceListDTO;
 use Olcs\Form\Model\Form\Vehicle\Fieldset\VehicleTransferFormActions;
-use Olcs\Form\Model\Form\Vehicle\ListVehicleSearch;
+use Olcs\Form\Model\Form\Vehicle\TableSearchFormElement;
 use Olcs\Form\Model\Form\Vehicle\VehicleTransferForm;
 use Laminas\View\Model\ViewModel;
 use Olcs\Exception\Licence\NoOtherLicencesFoundException;
@@ -25,7 +25,7 @@ class TransferVehicleController extends AbstractVehicleController
     protected $formConfig = [
         'default' => [
             'searchForm' => [
-                'formClass' => ListVehicleSearch::class
+                'formClass' => TableSearchFormElement::class
             ],
             'goodsVehicleForm' => [
                 'formClass' => VehicleTransferForm::class,

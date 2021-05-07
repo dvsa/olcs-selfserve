@@ -31,12 +31,13 @@ use Laminas\InputFilter\InputFilter;
 use Laminas\Mvc\Controller\Plugin\Url;
 use Laminas\Mvc\Router\RouteMatch;
 use Laminas\Validator\InArray;
-use Olcs\Form\Model\Form\Vehicle\ListVehicleSearch;
+use Olcs\Form\Model\Form\Vehicle\TableSearchFormElement;
 use Laminas\View\Model\ViewModel;
 use Laminas\Http\PhpEnvironment\Response as HttpResponse;
 use Olcs\Form\Model\Form\Vehicle\OCRSOptIn;
 use Olcs\Table\TableEnum;
 use Laminas\Stdlib\ResponseInterface;
+use Olcs\Form\Model\Form\Vehicle\TableSearchViewModel;
 
 /**
  * @see ListVehicleControllerFactory
@@ -171,7 +172,7 @@ class ListVehicleController
             'limit' => (int) ($input['limit'] ?? static::DEFAULT_LIMIT_CURRENT_VEHICLES),
             'sort' => $input[static::QUERY_KEY_SORT_CURRENT_VEHICLES] ?? static::DEFAULT_SORT_CURRENT_VEHICLES,
             'order' => $input[static::QUERY_KEY_ORDER_CURRENT_VEHICLES] ?? static::DEFAULT_ORDER_CURRENT_VEHICLES,
-            'vrm' => $input[ListVehicleSearch::FIELD_VEHICLE_SEARCH][AbstractInputSearch::ELEMENT_INPUT_NAME] ?? null,
+            'vrm' => $input[TableSearchFormElement::FIELD_SEARCH][AbstractInputSearch::ELEMENT_INPUT_NAME] ?? null,
         ]));
 
         $viewData = [
@@ -180,6 +181,7 @@ class ListVehicleController
             'backLink' => $this->urlHelper->fromRoute('licence/vehicle/GET', ['licence' => $licenceId]),
             'shareVehicleInfoState' => $licence['organisation']['confirmShareVehicleInfo'],
             'exportCurrentAndRemovedCsvAction' => $this->buildCurrentAndRemovedCsvUrl($licenceId),
+            'input' => $input,
         ];
 
         // Build current vehicle data
@@ -188,17 +190,12 @@ class ListVehicleController
         // Build OCRS data
         $viewData['ocrsForm'] = $this->createOcrsOptInForm(['ocrsCheckbox' => $viewData['shareVehicleInfoState']]);
 
-        // Build search data
-        $isSearchResultsPage = $this->isSearchResultsPage($input);
-        if ($viewData['currentVehiclesTable']->getTotal() > $viewData['currentVehiclesTable']->getLimit() || $isSearchResultsPage) {
-            $searchFormUrl = $this->urlHelper->fromRoute('licence/vehicle/list/GET', ['licence' => $viewData['licence']['id']]);
-            $viewData['searchForm'] = $this->createSearchForm($searchFormUrl, $input);
-            $viewData['clearUrl'] = $this->buildSearchClearUrl($request);
-        }
-
         // Build removed vehicles data
+        $viewData['showSearch'] = true;
+        $isSearchResultsPage = $this->isSearchResultsPage($input);
         if (! $isSearchResultsPage) {
             $viewData = array_merge($viewData, $this->getLatestRemovedVehiclesData($licenceId, $input));
+            $viewData['showSearch'] = $viewData['currentVehiclesTable']->getTotal() > $viewData['currentVehiclesTable']->getLimit();
         }
 
         $view = new ViewModel();
@@ -316,7 +313,7 @@ class ListVehicleController
      */
     protected function isSearchResultsPage(array $input): bool
     {
-        return array_key_exists(ListVehicleSearch::FIELD_VEHICLE_SEARCH, $input);
+        return array_key_exists(TableSearchFormElement::FIELD_SEARCH, $input);
     }
 
     /**
@@ -329,19 +326,6 @@ class ListVehicleController
             'format' => static::FORMAT_CSV,
             static::QUERY_KEY_INCLUDE_REMOVED => '',
         ]]);
-    }
-
-    /**
-     * @param Request $request
-     * @return string
-     */
-    protected function buildSearchClearUrl(Request $request): string
-    {
-        $urlQueryParams = $request->getQuery()->toArray();
-        unset($urlQueryParams[ListVehicleSearch::FIELD_VEHICLE_SEARCH]);
-        $url = $request->getUri();
-        $url->setQuery($urlQueryParams);
-        return $url->toString();
     }
 
     /**
@@ -420,47 +404,6 @@ class ListVehicleController
             $checkbox->setChecked($checked);
         }
 
-        return $form;
-    }
-
-    /**
-     * @param string $action
-     * @param array $data
-     * @return Form
-     */
-    protected function createSearchForm(string $action, array $data = []): Form
-    {
-        $form = $this->formHelper->createForm(ListVehicleSearch::class, true, false);
-        assert($form instanceof Form, 'Expected instance of Form');
-        $form->get(ListVehicleSearch::FIELD_VEHICLE_SEARCH)->setOption('legend', 'licence.vehicle.table.search.list.legend');
-        $form->setAttribute('action', $action);
-
-        $searchFormData = array_intersect_key($data, array_flip([ListVehicleSearch::FIELD_VEHICLE_SEARCH]));
-        if (! empty($searchFormData)) {
-            $form->setData($searchFormData);
-            $form->isValid();
-        }
-
-        // Add hidden fields for any other data that is not search related
-        $extraFormData = array_diff_key($data, array_flip([ListVehicleSearch::FIELD_VEHICLE_SEARCH]));
-        while (! empty($extraFormData)) {
-            end($extraFormData);
-            $key = key($extraFormData);
-            $value = array_pop($extraFormData);
-            if (is_array($value)) {
-                foreach ($value as $arrayItemKey => $arrayItemValue) {
-                    $extraFormData[sprintf('%s[%s]', $key, $arrayItemKey)] = $arrayItemValue;
-                }
-                continue;
-            }
-            $hiddenInputElement = new Hidden();
-            $hiddenInputElement->setAttribute('name', $key);
-            $hiddenInputElement->setAttribute('value', $value);
-            $form->add($hiddenInputElement);
-        }
-
-        $form->remove('security');
-        $form->prepare();
         return $form;
     }
 

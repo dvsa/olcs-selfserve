@@ -40,7 +40,7 @@ use Mockery as m;
 use Mockery\MockInterface;
 use Olcs\Controller\Licence\Vehicle\ListVehicleController;
 use Olcs\Controller\Licence\Vehicle\ListVehicleControllerFactory;
-use Olcs\Form\Model\Form\Vehicle\ListVehicleSearch;
+use Olcs\Form\Model\Form\Vehicle\TableSearchFormElement;
 use Olcs\Table\TableEnum;
 
 class ListVehicleControllerTest extends MockeryTestCase
@@ -844,7 +844,7 @@ class ListVehicleControllerTest extends MockeryTestCase
         $serviceManager = $this->setUpServiceManager();
         $sut = $this->setUpSut($serviceManager);
         $request = $this->setUpRequest('/foo/bar');
-        $request->setQuery(new Parameters([ListVehicleSearch::FIELD_VEHICLE_SEARCH => [AbstractInputSearch::ELEMENT_INPUT_NAME => 'foo']]));
+        $request->setQuery(new Parameters([TableSearchFormElement::FIELD_SEARCH => [AbstractInputSearch::ELEMENT_INPUT_NAME => 'foo']]));
         $routeMatch = new RouteMatch([]);
         $this->injectRemovedVehiclesQueryResultData($serviceManager, ['count' => 1, ['results' => []]]);
 
@@ -1034,7 +1034,7 @@ class ListVehicleControllerTest extends MockeryTestCase
         // Mock search form by default
         $searchForm = $this->setUpForm();
         $any = IsAnything::anything();
-        $instance->shouldReceive('createForm')->with(ListVehicleSearch::class, $any, $any)->andReturn($searchForm)->byDefault();
+        $instance->shouldReceive('createForm')->with(TableSearchFormElement::class, $any, $any)->andReturn($searchForm)->byDefault();
 
 
         return $instance;

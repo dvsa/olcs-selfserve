@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Olcs\Controller\Licence\Vehicle;
 
 use Common\Form\Form;
-use Olcs\Form\Model\Form\Vehicle\ListVehicleSearch;
+use Olcs\Form\Model\Form\Vehicle\TableSearchFormElement;
 use Olcs\Form\Model\Form\Vehicle\Vehicles as VehiclesForm;
 use Laminas\View\Model\ViewModel;
 
@@ -20,7 +20,7 @@ class RemoveVehicleController extends AbstractVehicleController
     protected $formConfig = [
         'default' => [
             'searchForm' => [
-                'formClass' => ListVehicleSearch::class
+                'formClass' => TableSearchFormElement::class
             ],
             'goodsVehicleForm' => [
                 'formClass' => VehiclesForm::class,
