@@ -215,6 +215,28 @@ return [
                                 'route' => ':action[/:child_id][/]',
                             ],
                         ],
+                        'ocrs' => [
+                            'may_terminate' => false,
+                            'type' => Segment::class,
+                            'options' => [
+                                'route' => 'ocrs[/]',
+                                'defaults' => [
+                                    'controller' => \Dvsa\Olcs\Application\Controller\Vehicle\OCRSController::class,
+                                ]
+                            ],
+                            'child_routes' => [
+                                'GET' => [
+                                    'may_terminate' => true,
+                                    'type' => Method::class,
+                                    'options' => [
+                                        'verb' => 'GET',
+                                        'defaults' => [
+                                            'action' => 'index',
+                                        ],
+                                    ],
+                                ]
+                            ],
+                        ],
                         'add' => [
                             'may_terminate' => false,
                             'type' => Segment::class,

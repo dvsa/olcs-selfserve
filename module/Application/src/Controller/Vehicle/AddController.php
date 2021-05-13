@@ -97,7 +97,7 @@ class AddController
         $variables =  [
         'title' => 'Add a vehicle',
         'searchForm' => $form,
-        'backLink' => ''//TODO: Add link to OCRS once it's done
+        'backLink' => $this->urlHelper->fromRoute('lva-application/vehicles/ocrs/GET', [], [], true)
     ];
 
         $view->setVariables($variables);
@@ -136,7 +136,7 @@ class AddController
             'searchForm' => $searchForm,
             'confirmationForm' => $confirmationForm,
             'vehicleData' => $vehicleData,
-            'backLink' => ''//TODO: Add link to OCRS once it's done
+            'backLink' => $this->urlHelper->fromRoute('lva-application/vehicles/ocrs/GET', [], [], true)
         ];
 
         $view->setVariables($variables);
