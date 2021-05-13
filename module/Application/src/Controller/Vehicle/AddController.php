@@ -6,6 +6,7 @@ namespace Dvsa\Olcs\Application\Controller\Vehicle;
 
 use Common\Controller\Plugin\HandleCommand;
 use Common\Controller\Plugin\HandleQuery;
+use Common\Controller\Plugin\Redirect;
 use Common\Service\Cqrs\Exception\NotFoundException;
 use Common\Service\Helper\FormHelperService;
 use Dvsa\Olcs\Application\Controller\Vehicle\Factory\AddControllerFactory;
@@ -47,12 +48,17 @@ class AddController
      * @var Url
      */
     private $urlHelper;
+    /**
+     * @var Redirect
+     */
+    private $redirectHelper;
 
     /**
      * AddController constructor.
      * @param HandleCommand $commandHandler
      * @param FormHelperService $formHelper
      * @param HandleQuery $queryHandler
+     * @param Redirect $redirectHelper
      * @param Vehicles $session
      * @param Url $urlHelper
      */
@@ -60,6 +66,7 @@ class AddController
         HandleCommand $commandHandler,
         FormHelperService $formHelper,
         HandleQuery $queryHandler,
+        Redirect $redirectHelper,
         Vehicles $session,
         Url $urlHelper
     )
@@ -67,6 +74,7 @@ class AddController
         $this->commandHandler = $commandHandler;
         $this->formHelper = $formHelper;
         $this->queryHandler = $queryHandler;
+        $this->redirectHelper = $redirectHelper;
         $this->session = $session;
         $this->urlHelper = $urlHelper;
     }
@@ -74,12 +82,16 @@ class AddController
     /**
      * @return ViewModel
      */
-    public function indexAction(): ViewModel
+    public function indexAction(Request $request): ViewModel
     {
         $view = new ViewModel();
         $view->setTemplate('pages/vehicle/add');
 
         $form = $this->formHelper->createForm(AddVehicleSearch::class);
+        if ($request->isPost()){
+            $form->setData($request->getPost()->toArray());
+            $form->isValid();
+        }
         $form->prepare();
 
         $variables =  [
@@ -99,20 +111,25 @@ class AddController
     public function searchAction(Request $request)
     {
         $formData = $request->getPost()->toArray();
-        $vehicleData = $this->getVehicleData($formData['vehicle-search']['search-value']);
-
-        $this->session->setVehicleData($vehicleData);
-
-        $view = new ViewModel();
-        $view->setTemplate('pages/vehicle/add');
 
         $searchForm = $this->formHelper->createForm(AddVehicleSearch::class);
         $searchForm->setData($formData);
-        $searchForm->prepare();
+
+        if (!$searchForm->isValid()) {
+            return $this->indexAction($request);
+        }
+
+        $vehicleData = $this->getVehicleData($formData['vehicle-search']['search-value']);
+        $this->session->setVehicleData($vehicleData);
 
         $confirmationForm = $this->formHelper->createForm(ConfirmVehicle::class);
         $confirmationForm->setAttribute('action', $this->urlHelper->fromRoute('lva-application/vehicles/add/confirmation', [], [], true));
 
+        $confirmationForm->prepare();
+        $searchForm->prepare();
+
+        $view = new ViewModel();
+        $view->setTemplate('pages/vehicle/add');
 
         $variables =  [
             'title' => 'Add a vehicle search results',
@@ -132,9 +149,7 @@ class AddController
     public function confirmationAction(Request $request, RouteMatch $routeMatch)
     {
         if (!$this->session->hasVehicleData()) {
-            // Redirect to add page
-            echo "MISSING SESSION";
-            die();
+            return $this->redirectHelper->toRoute('lva-application/vehicles/add/GET', [], [], true);
         }
 
         $vehicleData = $this->session->getVehicleData();

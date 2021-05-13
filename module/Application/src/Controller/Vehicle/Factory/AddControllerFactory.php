@@ -8,6 +8,7 @@ use Common\Controller\Dispatcher;
 use Common\Controller\Factory\FeatureToggle\BinaryFeatureToggleAwareControllerFactory;
 use Common\Controller\Plugin\HandleCommand;
 use Common\Controller\Plugin\HandleQuery;
+use Common\Controller\Plugin\Redirect;
 use Common\FeatureToggle;
 use Common\Service\Helper\FormHelperService;
 use Dvsa\Olcs\Application\Controller\Vehicle\AddController;
@@ -46,6 +47,7 @@ class AddControllerFactory extends BinaryFeatureToggleAwareControllerFactory
             $controllerPluginManager->get(HandleCommand::class),
             $container->get(FormHelperService::class),
             $controllerPluginManager->get(HandleQuery::class),
+            $redirectHelper = $controllerPluginManager->get(Redirect::class),
             $container->get(Vehicles::class),
             $urlHelper = $controllerPluginManager->get(Url::class)
         );
@@ -55,6 +57,7 @@ class AddControllerFactory extends BinaryFeatureToggleAwareControllerFactory
 
         // Initialize plugins
         $urlHelper->setController($instance);
+        $redirectHelper->setController($instance);
 
         return $instance;
     }
