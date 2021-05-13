@@ -40,6 +40,19 @@ class Vehicles extends Container
         return $this;
     }
 
+    public function wasVehicleNotFound()
+    {
+        return $this->offsetGet('vehicleNotFound') ?? false;
+    }
+
+    public function markVehicleNotFound()
+    {
+        $this->offsetSet('vehicleNotFound', true);
+        return $this;
+    }
+
+
+
     /**
      * Destroys session container
      */
