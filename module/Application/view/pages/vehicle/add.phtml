@@ -1,0 +1,35 @@
+<div class="govuk-width-container">
+    <div class="js-body">
+       <?php echo $this->partial(
+            'partials/page-header-simple',  [
+                'pageTitle' => $this->title,
+                'backUrl' => ['url' => $this->backLink,],
+            ]); ?>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <?php echo $this->formErrors($this->searchForm); ?>
+                <?php echo $this->form($this->searchForm);?>
+
+                <?php if (isset($this->vehicleData)): ?>
+                    <div class="govuk-phase-banner govuk-!-margin-bottom-6">
+                        <h2 class="govuk-heading-m govuk-!-margin-bottom-0">
+                            <?php echo $this->translateReplace('licence.vehicle.add.result.header', [$this->vehicleData['registrationNumber']]) ?>
+                        </h2>
+                    </div>
+                    <div class="govuk-inset-text">
+                        <?php echo $this->translate('licence.vehicle.add.result.note');?>
+                    </div>
+                    <?php echo $this->partial('partials/licence/vehicle/vehicle-details', [
+                        'vehicleDetails' => $this->vehicleData,
+                        'copy' => [
+                            'registrationNumberRowHeading' => $this->translate('licence.vehicle.add.result.vrm'),
+                            'revenueWeightRowHeading' => $this->translate('licence.vehicle.add.result.weight'),
+                            'makeRowHeading' => $this->translate('licence.vehicle.add.result.make'),
+                        ],
+                    ]); ?>
+                    <?php echo $this->form($this->confirmationForm); ?>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</div>

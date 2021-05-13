@@ -215,6 +215,49 @@ return [
                                 'route' => ':action[/:child_id][/]',
                             ],
                         ],
+                        'add' => [
+                            'may_terminate' => false,
+                            'type' => Segment::class,
+                            'options' => [
+                                'route' => 'add[/]',
+                                'defaults' => [
+                                    'controller' => \Dvsa\Olcs\Application\Controller\Vehicle\AddController::class,
+                                ]
+                            ],
+                            'child_routes' => [
+                                'GET' => [
+                                    'may_terminate' => true,
+                                    'type' => Method::class,
+                                    'options' => [
+                                        'verb' => 'GET',
+                                        'defaults' => [
+                                            'action' => 'index',
+                                        ],
+                                    ],
+                                ],
+                                'POST' => [
+                                    'may_terminate' => true,
+                                    'type' => Method::class,
+                                    'options' => [
+                                        'verb' => 'POST',
+                                        'defaults' => [
+                                            'action' => 'search',
+                                        ],
+                                    ],
+                                ],
+                                'confirmation' =>  [
+                                    'may_terminate' => true,
+                                    'type' => Segment::class,
+                                    'options' => [
+                                        'route' => 'confirmation[/]',
+                                        'defaults' => [
+                                            'verb' => 'POST',
+                                            'action' => 'confirmation',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
                     ],
                 ],
                 'vehicles_psv' => [

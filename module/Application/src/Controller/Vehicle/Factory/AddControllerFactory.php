@@ -6,10 +6,21 @@ namespace Dvsa\Olcs\Application\Controller\Vehicle\Factory;
 
 use Common\Controller\Dispatcher;
 use Common\Controller\Factory\FeatureToggle\BinaryFeatureToggleAwareControllerFactory;
+use Common\Controller\Plugin\HandleCommand;
+use Common\Controller\Plugin\HandleQuery;
 use Common\FeatureToggle;
+use Common\Service\Helper\FormHelperService;
 use Dvsa\Olcs\Application\Controller\Vehicle\AddController;
+use Dvsa\Olcs\Application\Controller\VehiclesController;
+use Dvsa\Olcs\Application\Session\Vehicles;
 use Interop\Container\ContainerInterface;
+use Laminas\Mvc\Controller\Plugin\Url;
+use Laminas\ServiceManager\FactoryInterface;
+use Laminas\ServiceManager\ServiceLocatorAwareInterface;
 
+/**
+ * @See AddController
+ */
 class AddControllerFactory extends BinaryFeatureToggleAwareControllerFactory
 {
 
@@ -26,7 +37,26 @@ class AddControllerFactory extends BinaryFeatureToggleAwareControllerFactory
      */
     protected function createServiceWhenEnabled(ContainerInterface $container, $requestedName, array $options = null)
     {
-        return new Dispatcher(new AddController());
+        if ($container instanceof ServiceLocatorAwareInterface) {
+            $container = $container->getServiceLocator();
+        }
+        $controllerPluginManager = $container->get('ControllerPluginManager');
+
+        $controller = new AddController(
+            $controllerPluginManager->get(HandleCommand::class),
+            $container->get(FormHelperService::class),
+            $controllerPluginManager->get(HandleQuery::class),
+            $container->get(Vehicles::class),
+            $urlHelper = $controllerPluginManager->get(Url::class)
+        );
+
+        // Decorate controller
+        $instance = new Dispatcher($controller);
+
+        // Initialize plugins
+        $urlHelper->setController($instance);
+
+        return $instance;
     }
 
     /**
@@ -35,7 +65,12 @@ class AddControllerFactory extends BinaryFeatureToggleAwareControllerFactory
     protected function createServiceWhenDisabled(ContainerInterface $container, $requestedName, array $options = null)
     {
         // TODO: Throw a real error here
-        echo "Not implemented";
-        die;
+        $instance = new VehiclesController();
+        if ($instance instanceof FactoryInterface) {
+            $instance = $instance->createService($container);
+        }
+
+        var_dump($instance);
+        return $instance;
     }
 }

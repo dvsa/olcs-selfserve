@@ -27,6 +27,8 @@ return [
         ],
         'factories' => [
             'Application/TransportManagers' => \Dvsa\Olcs\Application\Controller\Factory\TransportManagersControllerFactory::class,
+            'Application/Vehicles' => \Olcs\Application\Controller\Factory\VehicleControllerFactory::class,
+            \Dvsa\Olcs\Application\Controller\Vehicle\AddController::class => \Dvsa\Olcs\Application\Controller\Vehicle\Factory\AddControllerFactory::class
         ],
         'delegators' => [
             'Application/BusinessType' => [
