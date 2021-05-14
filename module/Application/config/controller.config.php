@@ -28,8 +28,8 @@ return [
         'factories' => [
             'Application/TransportManagers' => \Dvsa\Olcs\Application\Controller\Factory\TransportManagersControllerFactory::class,
             'Application/Vehicles' => \Olcs\Application\Controller\Factory\VehicleControllerFactory::class,
-            \Dvsa\Olcs\Application\Controller\Vehicle\AddController::class => \Dvsa\Olcs\Application\Controller\Vehicle\Factory\AddControllerFactory::class,
-            \Dvsa\Olcs\Application\Controller\Vehicle\OCRSController::class => \Dvsa\Olcs\Application\Controller\Vehicle\Factory\OCRSControllerFactory::class
+            \Dvsa\Olcs\Application\Controller\Vehicles\AddController::class => \Dvsa\Olcs\Application\Controller\Vehicles\Factory\AddControllerFactory::class,
+            \Dvsa\Olcs\Application\Controller\Vehicles\OCRSController::class => \Dvsa\Olcs\Application\Controller\Vehicles\Factory\OCRSControllerFactory::class
         ],
         'delegators' => [
             'Application/BusinessType' => [

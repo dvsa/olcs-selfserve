@@ -221,7 +221,7 @@ return [
                             'options' => [
                                 'route' => 'ocrs[/]',
                                 'defaults' => [
-                                    'controller' => \Dvsa\Olcs\Application\Controller\Vehicle\OCRSController::class,
+                                    'controller' => \Dvsa\Olcs\Application\Controller\Vehicles\OCRSController::class,
                                 ]
                             ],
                             'child_routes' => [
@@ -243,7 +243,7 @@ return [
                             'options' => [
                                 'route' => 'add[/]',
                                 'defaults' => [
-                                    'controller' => \Dvsa\Olcs\Application\Controller\Vehicle\AddController::class,
+                                    'controller' => \Dvsa\Olcs\Application\Controller\Vehicles\AddController::class,
                                 ]
                             ],
                             'child_routes' => [

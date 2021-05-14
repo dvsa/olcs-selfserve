@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Dvsa\Olcs\Application\Controller\Vehicle;
+namespace Dvsa\Olcs\Application\Controller\Vehicles;
 
 use Common\Controller\Plugin\HandleCommand;
 use Common\Controller\Plugin\HandleQuery;
@@ -11,7 +11,7 @@ use Common\Form\Elements\Types\AbstractInputSearch;
 use Common\Service\Cqrs\Exception\NotFoundException;
 use Common\Service\Helper\FormHelperService;
 use Common\Service\Helper\TranslationHelperService;
-use Dvsa\Olcs\Application\Controller\Vehicle\Factory\AddControllerFactory;
+use Dvsa\Olcs\Application\Controller\Vehicles\Factory\AddControllerFactory;
 use Dvsa\Olcs\Application\Session\Vehicles;
 use Dvsa\Olcs\Transfer\Command\Application\CreateGoodsVehicle;
 use Dvsa\Olcs\Transfer\Query\DvlaSearch\Vehicle;
@@ -179,6 +179,7 @@ class AddController
         $vehicleData = $this->session->getVehicleData();
         $this->session->destroy();
 
+        // TODO: Pull into method
         $dtoData = [
             'id' => $routeMatch->getParam('application'),
             'vrm' => $vehicleData["registrationNumber"],
@@ -194,7 +195,6 @@ class AddController
             $this->redirectHelper->toRoute(static::ROUTE_APPLICATION_VEHICLES, [], [], true);
         }
 
-        // Is the VRM already defined on a licence?
         if (isset($response->getResult()['messages']['VE-VRM-2'])) {
             die("Duplicate vehicle functionality not yet implemented");
         }

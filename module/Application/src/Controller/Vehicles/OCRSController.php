@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Dvsa\Olcs\Application\Controller\Vehicle;
+namespace Dvsa\Olcs\Application\Controller\Vehicles;
 
 class OCRSController
 {

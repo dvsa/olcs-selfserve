@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace Dvsa\Olcs\Application\Controller\Vehicle\Factory;
+namespace Dvsa\Olcs\Application\Controller\Vehicles\Factory;
 
 use Common\Controller\Dispatcher;
 use Common\Controller\Factory\FeatureToggle\BinaryFeatureToggleAwareControllerFactory;
 use Common\FeatureToggle;
-use Dvsa\Olcs\Application\Controller\Vehicle\OCRSController;
+use Dvsa\Olcs\Application\Controller\Vehicles\OCRSController;
 use Interop\Container\ContainerInterface;
 
 class OCRSControllerFactory extends BinaryFeatureToggleAwareControllerFactory
