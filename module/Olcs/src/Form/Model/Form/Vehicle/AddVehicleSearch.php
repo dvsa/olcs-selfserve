@@ -11,6 +11,7 @@ use Laminas\Form\Annotation as Form;
  */
 class AddVehicleSearch
 {
+    const FORM_NAME = 'vehicle-search';
     /**
      * @Form\Name("vehicle-search")
      * @Form\Options({
