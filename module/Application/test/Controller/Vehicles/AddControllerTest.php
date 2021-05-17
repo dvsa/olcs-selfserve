@@ -37,8 +37,9 @@ class AddControllerTest extends MockeryTestCase
 
     protected const APPLICATION_ID = 'APPLICATION ID';
     protected const APPLICATION_ID_ROUTE_PARAMETER_NAME = 'application';
-
     protected const VALID_VRM = 'AB129';
+    protected const EXPECTED_ERROR_FLASH_MESSAGE_KEY = 'licence.vehicle.add.search.query-error';
+    protected const EXPECTED_ERROR_FLASH_MESSAGE = 'licence.vehicle.add.search.query-error_translated';
 
     /**
      * @var AddController
@@ -145,7 +146,6 @@ class AddControllerTest extends MockeryTestCase
         //Setup
         $serviceManager = $this->setUpServiceManager();
         $this->setupSut($serviceManager);
-
         $request = $this->setUpPostRequest('VRM1');
 
         // Execute
@@ -164,7 +164,6 @@ class AddControllerTest extends MockeryTestCase
         //Setup
         $serviceManager = $this->setUpServiceManager();
         $this->setupSut($serviceManager);
-
         $request = $this->setUpPostRequest(static::VALID_VRM);
 
         // Execute
@@ -183,7 +182,6 @@ class AddControllerTest extends MockeryTestCase
         //Setup
         $serviceManager = $this->setUpServiceManager();
         $this->setupSut($serviceManager);
-
         $session = $this->serviceManager->get(Vehicles::class);
         assert($session instanceof Vehicles, 'expected $session to be instance of ' . Vehicles::class);
         $session->setVehicleData($this->setUpDefaultVehicleData());
@@ -205,6 +203,7 @@ class AddControllerTest extends MockeryTestCase
         $serviceManager = $this->setUpServiceManager();
         $this->setupSut($serviceManager);
 
+        // Define Expectations
         $formHelper = $this->serviceManager->get(FormHelperService::class);
         $formHelper->shouldReceive('createForm')
             ->with(ConfirmVehicle::class)
@@ -247,7 +246,6 @@ class AddControllerTest extends MockeryTestCase
         //Setup
         $serviceManager = $this->setUpServiceManager();
         $this->setupSut($serviceManager);
-
         $request = $this->setUpPostRequest(static::VALID_VRM);
 
         // Execute
@@ -265,9 +263,9 @@ class AddControllerTest extends MockeryTestCase
         //Setup
         $serviceManager = $this->setUpServiceManager();
         $this->setupSut($serviceManager);
-
         $request = $this->setUpPostRequest(static::VALID_VRM);
 
+        // Define Expectations
         $queryHandler = $this->serviceManager->get(HandleQuery::class);
         $queryHandler->shouldReceive('__invoke')
             ->with(Vehicle::class)
@@ -293,16 +291,16 @@ class AddControllerTest extends MockeryTestCase
         //Setup
         $serviceManager = $this->setUpServiceManager();
         $this->setupSut($serviceManager);
-
         $request = $this->setUpPostRequest(static::VALID_VRM);
 
+        // Define Expectations
         $queryHandler = $this->serviceManager->get(HandleQuery::class);
         $queryHandler->shouldReceive('__invoke')
             ->with(IsInstanceOf::anInstanceOf(Vehicle::class))
             ->andReturn($this->setUpQueryResponse(['count' => 0,'result' => []]));
 
         // Execute
-        $result = $this->sut->searchAction($request);
+        $this->sut->searchAction($request);
 
         // Assert
         $session = $this->serviceManager->get(Vehicles::class);
@@ -320,23 +318,22 @@ class AddControllerTest extends MockeryTestCase
         //Setup
         $serviceManager = $this->setUpServiceManager();
         $this->setupSut($serviceManager);
-
         $request = $this->setUpPostRequest(static::VALID_VRM);
 
+        // Define Expectations
         $queryHandler = $this->serviceManager->get(HandleQuery::class);
         $queryHandler->shouldReceive('__invoke')
             ->with(IsInstanceOf::anInstanceOf(Vehicle::class))
             ->andReturn($this->setUpQueryResponse(['count' => 0,'result' => []], 400));
 
-        // Execute
-        $result = $this->sut->searchAction($request);
+        $translator = $this->serviceManager->get(TranslationHelperService::class);
+        $translator->shouldReceive('translate')->with(static::EXPECTED_ERROR_FLASH_MESSAGE_KEY)->once()->andReturn(static::EXPECTED_ERROR_FLASH_MESSAGE);
 
-        // Assert
         $flashMessenger = $this->serviceManager->get(FlashMessenger::class);
-        assert($flashMessenger instanceof FlashMessenger, 'expected $flashMessenger to be instance of ' . FlashMessenger::class);
+        $flashMessenger->shouldReceive('addErrorMessage')->with(static::EXPECTED_ERROR_FLASH_MESSAGE)->once();
 
-        $this->assertNotEmpty($flashMessenger->getErrorMessages());
-
+        // Execute
+        $this->sut->searchAction($request);
     }
 
 
