@@ -191,8 +191,8 @@ class AddController
         $response = $this->commandHandler->__invoke($command);
 
         if ($response->isOk()) {
-            $this->flashMessenger->addSuccessMessage(sprintf("Vehicle %s has been added", $dtoData['vrm']));
-            $this->redirectHelper->toRoute(static::ROUTE_APPLICATION_VEHICLES, [], [], true);
+            $this->flashMessenger->addSuccessMessage($this->translator->translateReplace('licence.vehicle.add.success', [$dtoData['vrm']]));
+            return $this->redirectHelper->toRoute(static::ROUTE_APPLICATION_VEHICLES, [], [], true);
         }
 
         if (isset($response->getResult()['messages']['VE-VRM-2'])) {

@@ -10,11 +10,14 @@ use Common\Controller\Plugin\Redirect;
 use Common\Form\Elements\Types\AbstractInputSearch;
 use Common\Form\Form;
 use Common\Service\Cqrs\Response as QueryResponse;
+use Common\Service\Cqrs\Response as CommandResponse;
 use Common\Service\Helper\FormHelperService;
 use Common\Service\Helper\TranslationHelperService;
 use Common\Test\MockeryTestCase;
 use Common\Test\MocksServicesTrait;
+use Dvsa\Olcs\Application\Controller\Vehicles\Factory\AddControllerFactory;
 use Dvsa\Olcs\Application\Session\Vehicles;
+use Dvsa\Olcs\Transfer\Command\Application\CreateGoodsVehicle;
 use Dvsa\Olcs\Transfer\Query\DvlaSearch\Vehicle;
 use Hamcrest\Core\IsInstanceOf;
 use Laminas\Form\Annotation\AnnotationBuilder;
@@ -22,6 +25,7 @@ use Laminas\Http\Request;
 use Laminas\Http\Response as HttpResponse;
 use Laminas\Mvc\Controller\Plugin\FlashMessenger;
 use Laminas\Mvc\Controller\Plugin\Url;
+use Laminas\Mvc\Router\Http\RouteMatch;
 use Laminas\ServiceManager\ServiceManager;
 use Laminas\Stdlib\Parameters;
 use Laminas\View\Model\ViewModel;
@@ -38,8 +42,18 @@ class AddControllerTest extends MockeryTestCase
     protected const APPLICATION_ID = 'APPLICATION ID';
     protected const APPLICATION_ID_ROUTE_PARAMETER_NAME = 'application';
     protected const VALID_VRM = 'AB129';
+    protected const INVALID_VRM = 'VRM1';
+
+    protected const VARIABLE_VEHICLE_DATA = 'vehicleData';
+    protected const VARIABLE_BACKLINK = 'backLink';
+    protected const VARIABLE_SEARCH_FORM = 'searchForm';
+    protected const VARIABLE_CONFIRMATION_FORM = 'confirmationForm';
+
     protected const EXPECTED_ERROR_FLASH_MESSAGE_KEY = 'licence.vehicle.add.search.query-error';
     protected const EXPECTED_ERROR_FLASH_MESSAGE = 'licence.vehicle.add.search.query-error_translated';
+    protected const EXPECTED_SUCCESS_FLASH_MESSAGE_KEY = 'licence.vehicle.add.success';
+    protected const EXPECTED_SUCCESS_FLASH_MESSAGE = 'licence.vehicle.add.success_translated';
+    protected const EXPECTED_NOT_DUPLICATE_ERROR_MESSAGE = 'Error adding vehicle';
 
     /**
      * @var AddController
@@ -52,8 +66,10 @@ class AddControllerTest extends MockeryTestCase
     public function indexAction_IsCallable()
     {
         // Setup
-        $serviceManager = $this->setUpServiceManager();
-        $this->setUpSut($serviceManager);
+        $this->setUpServiceManager();
+        $this->setUpSut();
+
+        var_dump($this->sut);
 
         // Assert
         $this->assertIsCallable([$this->sut, 'indexAction']);
@@ -66,8 +82,8 @@ class AddControllerTest extends MockeryTestCase
     public function indexAction_ReturnsViewModel()
     {
         // Setup
-        $serviceManager = $this->setUpServiceManager();
-        $this->setUpSut($serviceManager);
+        $this->setUpServiceManager();
+        $this->setUpSut();
 
         // Execute
         $result = $this->sut->indexAction(new Request());
@@ -83,8 +99,8 @@ class AddControllerTest extends MockeryTestCase
     public function indexAction_ReturnsViewModel_WithBackRouteToLicenceOverview()
     {
         // Setup
-        $serviceManager = $this->setUpServiceManager();
-        $this->setUpSut($serviceManager);
+        $this->setUpServiceManager();
+        $this->setUpSut();
         $expectedUrl = 'application/vehicles/ocrs';
 
         // Define Expectations
@@ -97,7 +113,7 @@ class AddControllerTest extends MockeryTestCase
         $result = $this->sut->indexAction(new Request());
 
         // Assert
-        $this->assertSame($expectedUrl, $result->getVariable('backLink'));
+        $this->assertSame($expectedUrl, $result->getVariable(static::VARIABLE_BACKLINK));
     }
 
     /**
@@ -107,14 +123,14 @@ class AddControllerTest extends MockeryTestCase
     public function indexAction_ReturnsViewModel_WithVehicleSearchForm()
     {
         //Setup
-        $serviceManager = $this->setUpServiceManager();
-        $this->setupSut($serviceManager);
+        $this->setUpServiceManager();
+        $this->setupSut();
 
         // Execute
         $result = $this->sut->indexAction(new Request());
 
         // Assert
-        $this->assertInstanceOf(Form::class, $result->getVariable('searchForm'));
+        $this->assertInstanceOf(Form::class, $result->getVariable(static::VARIABLE_SEARCH_FORM));
     }
 
     /**
@@ -124,8 +140,8 @@ class AddControllerTest extends MockeryTestCase
     public function indexAction_ReturnsViewModel_WithoutVehicleData_WhenRequestIsNotPost()
     {
         //Setup
-        $serviceManager = $this->setUpServiceManager();
-        $this->setupSut($serviceManager);
+        $this->setUpServiceManager();
+        $this->setupSut();
 
         $request = new Request();
         $request->setMethod(Request::METHOD_GET);
@@ -134,7 +150,7 @@ class AddControllerTest extends MockeryTestCase
         $result = $this->sut->indexAction($request);
 
         // Assert
-        $this->assertEmpty($result->getVariable('vehicleData'));
+        $this->assertEmpty($result->getVariable(static::VARIABLE_VEHICLE_DATA));
     }
 
     /**
@@ -144,15 +160,15 @@ class AddControllerTest extends MockeryTestCase
     public function indexAction_ReturnsViewModel_WithoutVehicleData_WhenSearchFormIsNotValid()
     {
         //Setup
-        $serviceManager = $this->setUpServiceManager();
-        $this->setupSut($serviceManager);
-        $request = $this->setUpPostRequest('VRM1');
+        $this->setUpServiceManager();
+        $this->setupSut();
+        $request = $this->setUpPostRequest(static::INVALID_VRM);
 
         // Execute
         $result = $this->sut->indexAction($request);
 
         // Assert
-        $this->assertEmpty($result->getVariable('vehicleData'));
+        $this->assertEmpty($result->getVariable(static::VARIABLE_VEHICLE_DATA));
     }
 
     /**
@@ -162,15 +178,15 @@ class AddControllerTest extends MockeryTestCase
     public function indexAction_ReturnsViewModel_WithoutVehicleData_WhenVehicleDataIsNotPresent()
     {
         //Setup
-        $serviceManager = $this->setUpServiceManager();
-        $this->setupSut($serviceManager);
+        $this->setUpServiceManager();
+        $this->setupSut();
         $request = $this->setUpPostRequest(static::VALID_VRM);
 
         // Execute
         $result = $this->sut->indexAction($request);
 
         // Assert
-        $this->assertEmpty($result->getVariable('vehicleData'));
+        $this->assertEmpty($result->getVariable(static::VARIABLE_VEHICLE_DATA));
     }
 
     /**
@@ -180,8 +196,8 @@ class AddControllerTest extends MockeryTestCase
     public function indexAction_ReturnsViewModel_WithVehicleData_WhenVehicleDataPresent()
     {
         //Setup
-        $serviceManager = $this->setUpServiceManager();
-        $this->setupSut($serviceManager);
+        $this->setUpServiceManager();
+        $this->setupSut();
         $session = $this->serviceManager->get(Vehicles::class);
         assert($session instanceof Vehicles, 'expected $session to be instance of ' . Vehicles::class);
         $session->setVehicleData($this->setUpDefaultVehicleData());
@@ -190,7 +206,7 @@ class AddControllerTest extends MockeryTestCase
         $result = $this->sut->indexAction($this->setUpPostRequest(static::VALID_VRM));
 
         // Assert
-        $this->assertEquals($this->setUpDefaultVehicleData(), $result->getVariable('vehicleData'));
+        $this->assertEquals($this->setUpDefaultVehicleData(), $result->getVariable(static::VARIABLE_VEHICLE_DATA));
     }
 
     /**
@@ -200,8 +216,8 @@ class AddControllerTest extends MockeryTestCase
     public function indexAction_ReturnsViewModel_WithConfirmationForm_WhenVehicleDataPresent()
     {
         //Setup
-        $serviceManager = $this->setUpServiceManager();
-        $this->setupSut($serviceManager);
+        $this->setUpServiceManager();
+        $this->setupSut();
 
         // Define Expectations
         $formHelper = $this->serviceManager->get(FormHelperService::class);
@@ -221,7 +237,7 @@ class AddControllerTest extends MockeryTestCase
         $result = $this->sut->indexAction($this->setUpPostRequest(static::VALID_VRM));
 
         // Assert
-        $this->assertInstanceOf(Form::class, $result->getVariable('confirmationForm'));
+        $this->assertInstanceOf(Form::class, $result->getVariable(static::VARIABLE_CONFIRMATION_FORM));
     }
 
     /**
@@ -230,8 +246,8 @@ class AddControllerTest extends MockeryTestCase
     public function searchAction_IsCallable()
     {
         // Setup
-        $serviceManager = $this->setUpServiceManager();
-        $this->setUpSut($serviceManager);
+        $this->setUpServiceManager();
+        $this->setUpSut();
 
         // Assert
         $this->assertIsCallable([$this->sut, 'searchAction']);
@@ -244,8 +260,8 @@ class AddControllerTest extends MockeryTestCase
     public function searchAction_ShouldReturnIndexAction()
     {
         //Setup
-        $serviceManager = $this->setUpServiceManager();
-        $this->setupSut($serviceManager);
+        $this->setUpServiceManager();
+        $this->setupSut();
         $request = $this->setUpPostRequest(static::VALID_VRM);
 
         // Execute
@@ -261,8 +277,8 @@ class AddControllerTest extends MockeryTestCase
     public function searchAction_ShouldSetVehicleData_WhenVehicleDataIsFound()
     {
         //Setup
-        $serviceManager = $this->setUpServiceManager();
-        $this->setupSut($serviceManager);
+        $this->setUpServiceManager();
+        $this->setupSut();
         $request = $this->setUpPostRequest(static::VALID_VRM);
 
         // Define Expectations
@@ -289,8 +305,8 @@ class AddControllerTest extends MockeryTestCase
     public function searchAction_ShouldMarkVehicleNotFound_WhenVehicleDataIsNotFound()
     {
         //Setup
-        $serviceManager = $this->setUpServiceManager();
-        $this->setupSut($serviceManager);
+        $this->setUpServiceManager();
+        $this->setupSut();
         $request = $this->setUpPostRequest(static::VALID_VRM);
 
         // Define Expectations
@@ -316,8 +332,8 @@ class AddControllerTest extends MockeryTestCase
     public function searchAction_ShouldFlashMessage_WhenErrorGettingVehicleData()
     {
         //Setup
-        $serviceManager = $this->setUpServiceManager();
-        $this->setupSut($serviceManager);
+        $this->setUpServiceManager();
+        $this->setupSut();
         $request = $this->setUpPostRequest(static::VALID_VRM);
 
         // Define Expectations
@@ -336,21 +352,180 @@ class AddControllerTest extends MockeryTestCase
         $this->sut->searchAction($request);
     }
 
+    /**
+     * @test
+     */
+    public function confirmationAction_IsCallable()
+    {
+        // Setup
+        $this->setUpServiceManager();
+        $this->setUpSut();
+
+        // Assert
+        $this->assertIsCallable([$this->sut, 'confirmationAction']);
+    }
+
+    /**
+     * @test
+     * @depends confirmationAction_IsCallable
+     */
+    public function confirmationAction_ReturnsIndexAction_WhenVehicleDataNotPresent()
+    {
+        // Setup
+        $this->setUpServiceManager();
+        $this->setUpSut();
+
+        // Define expectations
+        $expectedResponse = $this->setUpRedirect(AddController::ROUTE_APPLICATION_VEHICLES_ADD);
+
+        // Execute
+        $response = $this->sut->confirmationAction(new Request(), new RouteMatch([]));
+
+        // Assert
+        $this->assertSame($expectedResponse, $response);
+    }
+
+    /**
+     * @test
+     */
+    public function confirmationAction_DestroysVehicleSession()
+    {
+        // Setup
+        $this->setUpServiceManager();
+        $this->setUpSut();
+        $this->setUpRedirect(AddController::ROUTE_APPLICATION_VEHICLES);
+        $session = $this->setUpSession();
+
+        $commandHandler = $this->serviceManager->get(HandleCommand::class);
+        $commandHandler->shouldReceive('__invoke')
+            ->with(CreateGoodsVehicle::class)
+            ->andReturn($this->setUpCommandResponse([]));
+
+        // Execute
+        $this->sut->confirmationAction(new Request(), new RouteMatch([]));
+
+        // Assert
+        $this->assertFalse($session->hasVehicleData());
+
+    }
+
+    /**
+     * @test
+     */
+    public function confirmationAction_AddsSuccessFlashMessage_WhenVehicleIsAdded()
+    {
+        // Setup
+        $this->setUpServiceManager();
+        $this->setUpSut();
+        $this->setUpRedirect(AddController::ROUTE_APPLICATION_VEHICLES);
+        $this->setUpSession();
+
+        $commandHandler = $this->serviceManager->get(HandleCommand::class);
+        $commandHandler->shouldReceive('__invoke')
+            ->with(CreateGoodsVehicle::class)
+            ->andReturn($this->setUpCommandResponse([]));
+
+        // Define Expectations
+        $translator = $this->serviceManager->get(TranslationHelperService::class);
+        $translator->shouldReceive('translateReplace')->with(static::EXPECTED_SUCCESS_FLASH_MESSAGE_KEY, [static::VALID_VRM])->once()->andReturn(static::EXPECTED_SUCCESS_FLASH_MESSAGE);
+
+        $flashMessenger = $this->serviceManager->get(FlashMessenger::class);
+        $flashMessenger->shouldReceive('addSuccessMessage')->with(static::EXPECTED_SUCCESS_FLASH_MESSAGE)->once();
+
+        // Execute
+        $this->sut->confirmationAction(new Request(), new RouteMatch([]));
+    }
+
+    /**
+     * @test
+     * @depends confirmationAction_AddsSuccessFlashMessage_WhenVehicleIsAdded
+     */
+    public function confirmationAction_RedirectsToVehiclesPage_WhenVehicleIsAdded()
+    {
+        // Setup
+        $this->setUpServiceManager();
+        $this->setUpSut();
+        $this->setUpSession();
+
+        // Define expectations
+        $expectedResponse = $this->setUpRedirect(AddController::ROUTE_APPLICATION_VEHICLES);
+
+        $commandHandler = $this->serviceManager->get(HandleCommand::class);
+        $commandHandler->shouldReceive('__invoke')
+            ->with(CreateGoodsVehicle::class)
+            ->andReturn($this->setUpCommandResponse([]));
+
+        // Execute
+        $response = $this->sut->confirmationAction(new Request(), new RouteMatch([]));
+
+        // Assert
+        $this->assertSame($expectedResponse, $response);
+    }
+
+    /**
+     * @test
+     */
+    public function confirmationAction_AddsErrorFlashMessage_WhenErrorAddingVehicle_ThatIsNotDuplicate()
+    {
+        // Setup
+        $this->setUpServiceManager();
+        $this->setUpSut();
+        $this->setUpRedirect(AddController::ROUTE_APPLICATION_VEHICLES_ADD);
+        $this->setUpSession();
+
+        $commandHandler = $this->serviceManager->get(HandleCommand::class);
+        $commandHandler->shouldReceive('__invoke')
+            ->with(CreateGoodsVehicle::class)
+            ->andReturn($this->setUpCommandResponse(['messages' => ['vrm' => [static::EXPECTED_NOT_DUPLICATE_ERROR_MESSAGE]]], 400));
+
+        // Define Expectations
+        $flashMessenger = $this->serviceManager->get(FlashMessenger::class);
+        $flashMessenger->shouldReceive('addErrorMessage')->with(static::EXPECTED_NOT_DUPLICATE_ERROR_MESSAGE)->once();
+
+        // Execute
+        $this->sut->confirmationAction(new Request(), new RouteMatch([]));
+    }
+
+    /**
+     * @test
+     * @depends confirmationAction_AddsErrorFlashMessage_WhenErrorAddingVehicle_ThatIsNotDuplicate
+     */
+    public function confirmationAction_RedirectsToAddVehiclePage_WhenErrorAddingVehicle_ThatIsNotDuplicate()
+    {
+        // Setup
+        $this->setUpServiceManager();
+        $this->setUpSut();
+        $this->setUpSession();
+
+        $commandHandler = $this->serviceManager->get(HandleCommand::class);
+        $commandHandler->shouldReceive('__invoke')
+            ->with(CreateGoodsVehicle::class)
+            ->andReturn($this->setUpCommandResponse(['messages' => ['vrm' => [static::EXPECTED_NOT_DUPLICATE_ERROR_MESSAGE]]], 400));
+
+        // Define Expectations
+        $expectedResponse = $this->setUpRedirect(AddController::ROUTE_APPLICATION_VEHICLES_ADD);
+
+        // Execute
+        $response = $this->sut->confirmationAction(new Request(), new RouteMatch([]));
+
+        // Assert
+        $this->assertSame($expectedResponse, $response);
+    }
 
     /**
      * @param ServiceManager $serviceManager
      */
-    protected function setupSut(ServiceManager $serviceManager)
+    protected function setupSut()
     {
         $this->sut = new AddController(
-            $serviceManager->get(HandleCommand::class),
-            $serviceManager->get(FlashMessenger::class),
-            $serviceManager->get(FormHelperService::class),
-            $serviceManager->get(HandleQuery::class),
-            $serviceManager->get(Redirect::class),
-            $serviceManager->get(Vehicles::class),
-            $serviceManager->get(TranslationHelperService::class),
-            $serviceManager->get(Url::class)
+            $this->serviceManager->get(HandleCommand::class),
+            $this->serviceManager->get(FlashMessenger::class),
+            $this->serviceManager->get(FormHelperService::class),
+            $this->serviceManager->get(HandleQuery::class),
+            $this->serviceManager->get(Redirect::class),
+            $this->serviceManager->get(Vehicles::class),
+            $this->serviceManager->get(TranslationHelperService::class),
+            $this->serviceManager->get(Url::class)
         );
     }
 
@@ -396,7 +571,24 @@ class AddControllerTest extends MockeryTestCase
 
         $queryResponse = new QueryResponse($httpResponse);
         $queryResponse->setResult($data);
+
         return $queryResponse;
+    }
+
+    /**
+     * @param array $data
+     * @param int $statusCode
+     * @return CommandResponse
+     */
+    protected function setUpCommandResponse(array $data, int $statusCode = 200): CommandResponse
+    {
+        $httpResponse = new HttpResponse();
+        $httpResponse->setStatusCode($statusCode);
+
+        $commandResponse = new CommandResponse($httpResponse);
+        $commandResponse->setResult($data);
+
+        return $commandResponse;
     }
 
     /**
@@ -417,10 +609,37 @@ class AddControllerTest extends MockeryTestCase
         return ['registrationNumber' => static::VALID_VRM, 'revenueWeight' => 2300];
     }
 
+    /**
+     * @param string $route
+     * @return HttpResponse
+     */
+    protected function setUpRedirect(string $route): HttpResponse
+    {
+        $expectedResponse = new HttpResponse();
+
+        $redirectHelper = $this->serviceManager->get(Redirect::class);
+        $redirectHelper->shouldReceive('toRoute')
+            ->with($route, [], [], true)
+            ->andReturn($expectedResponse);
+
+        return $expectedResponse;
+    }
+
     protected function tearDown(): void
     {
         $this->serviceManager->get(Vehicles::class)->destroy();
         parent::tearDown();
+    }
+
+    /**
+     * @return Vehicles
+     */
+    protected function setUpSession(): Vehicles
+    {
+        $session = $this->serviceManager->get(Vehicles::class);
+        assert($session instanceof Vehicles, 'expected $session to be instance of ' . Vehicles::class);
+        $session->setVehicleData($this->setUpDefaultVehicleData());
+        return $session;
     }
 }
 
