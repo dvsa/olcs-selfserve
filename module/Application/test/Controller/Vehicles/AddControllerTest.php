@@ -68,9 +68,7 @@ class AddControllerTest extends MockeryTestCase
         // Setup
         $this->setUpServiceManager();
         $this->setUpSut();
-
-        var_dump($this->sut);
-
+        
         // Assert
         $this->assertIsCallable([$this->sut, 'indexAction']);
     }
