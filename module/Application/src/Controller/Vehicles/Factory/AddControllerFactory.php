@@ -77,7 +77,6 @@ class AddControllerFactory extends BinaryFeatureToggleAwareControllerFactory
             $instance = $instance->createService($container);
         }
 
-        var_dump($instance);
         return $instance;
     }
 }

@@ -68,7 +68,7 @@ class AddControllerTest extends MockeryTestCase
         // Setup
         $this->setUpServiceManager();
         $this->setUpSut();
-        
+
         // Assert
         $this->assertIsCallable([$this->sut, 'indexAction']);
     }
@@ -374,7 +374,7 @@ class AddControllerTest extends MockeryTestCase
         $this->setUpSut();
 
         // Define expectations
-        $expectedResponse = $this->setUpRedirect(AddController::ROUTE_APPLICATION_VEHICLES_ADD);
+        $expectedResponse = $this->setUpRedirect(AddController::ROUTE_APPLICATION_VEHICLES_ADD_SEARCH);
 
         // Execute
         $response = $this->sut->confirmationAction(new Request(), new RouteMatch([]));
@@ -468,7 +468,7 @@ class AddControllerTest extends MockeryTestCase
         // Setup
         $this->setUpServiceManager();
         $this->setUpSut();
-        $this->setUpRedirect(AddController::ROUTE_APPLICATION_VEHICLES_ADD);
+        $this->setUpRedirect(AddController::ROUTE_APPLICATION_VEHICLES_ADD_SEARCH);
         $this->setUpSession();
 
         $commandHandler = $this->serviceManager->get(HandleCommand::class);
@@ -501,7 +501,7 @@ class AddControllerTest extends MockeryTestCase
             ->andReturn($this->setUpCommandResponse(['messages' => ['vrm' => [static::EXPECTED_NOT_DUPLICATE_ERROR_MESSAGE]]], 400));
 
         // Define Expectations
-        $expectedResponse = $this->setUpRedirect(AddController::ROUTE_APPLICATION_VEHICLES_ADD);
+        $expectedResponse = $this->setUpRedirect(AddController::ROUTE_APPLICATION_VEHICLES_ADD_SEARCH);
 
         // Execute
         $response = $this->sut->confirmationAction(new Request(), new RouteMatch([]));

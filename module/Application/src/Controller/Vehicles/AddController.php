@@ -30,8 +30,8 @@ use Olcs\Form\Model\Form\Vehicle\ConfirmVehicle;
  */
 class AddController
 {
-    const ROUTE_APPLICATION_VEHICLES_ADD = 'lva-application/vehicles/add/GET';
-    const ROUTE_APPLICATION_VEHICLES_ADD_CONFIRMATION = 'lva-application/vehicles/add/confirmation';
+    const ROUTE_APPLICATION_VEHICLES_ADD_SEARCH = 'lva-application/vehicles/add/search/GET';
+    const ROUTE_APPLICATION_VEHICLES_ADD_SEARCH_CONFIRMATION = 'lva-application/vehicles/add/search/confirmation';
     const ROUTE_APPLICATION_VEHICLES_OCRS = 'lva-application/vehicles/ocrs/GET';
     const ROUTE_APPLICATION_VEHICLES = 'lva-application/vehicles';
 
@@ -120,7 +120,7 @@ class AddController
             $confirmationForm = $this->formHelper->createForm(ConfirmVehicle::class);
             $confirmationForm->setAttribute(
                 'action',
-                $this->urlHelper->fromRoute(static::ROUTE_APPLICATION_VEHICLES_ADD_CONFIRMATION, [], [], true)
+                $this->urlHelper->fromRoute(static::ROUTE_APPLICATION_VEHICLES_ADD_SEARCH_CONFIRMATION, [], [], true)
             );
             $confirmationForm->prepare();
         }
@@ -173,7 +173,7 @@ class AddController
     public function confirmationAction(Request $request, RouteMatch $routeMatch): Response
     {
         if (!$this->session->hasVehicleData()) {
-            return $this->redirectHelper->toRoute(static::ROUTE_APPLICATION_VEHICLES_ADD, [], [], true);
+            return $this->redirectHelper->toRoute(static::ROUTE_APPLICATION_VEHICLES_ADD_SEARCH, [], [], true);
         }
 
         $vehicleData = $this->session->getVehicleData();
@@ -202,7 +202,7 @@ class AddController
         $message = array_values($response->getResult()['messages']['vrm'])[0];
         $this->flashMessenger->addErrorMessage($message);
 
-        return $this->redirectHelper->toRoute(static::ROUTE_APPLICATION_VEHICLES_ADD, [], [], true);
+        return $this->redirectHelper->toRoute(static::ROUTE_APPLICATION_VEHICLES_ADD_SEARCH, [], [], true);
 
     }
 
