@@ -71,12 +71,7 @@ class AddControllerFactory extends BinaryFeatureToggleAwareControllerFactory
      */
     protected function createServiceWhenDisabled(ContainerInterface $container, $requestedName, array $options = null)
     {
-        // TODO: Throw a real error here
-        $instance = new VehiclesController();
-        if ($instance instanceof FactoryInterface) {
-            $instance = $instance->createService($container);
-        }
-
-        return $instance;
+        //TODO: Throw a real error here
+        die("Not implemented for LVA journey");
     }
 }
