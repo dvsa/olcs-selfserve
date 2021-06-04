@@ -38,6 +38,7 @@ class ViewControllerTest extends MockeryTestCase
         //  mock plugins
         $this->mockPluginManager = (new ControllerPluginManagerHelper)->getMockPluginManager(
             [
+                'handleCommand' => 'handleCommand',
                 'handleQuery' => 'handleQuery',
                 'url' => 'Url',
                 'params' => 'Params',
@@ -164,6 +165,9 @@ class ViewControllerTest extends MockeryTestCase
         ];
 
         //  mock plugins
+        $mockCommandHandler = $this->mockPluginManager->get('handleCommand', '');
+        $mockCommandHandler->shouldReceive('isOk')->andReturn(true);
+
         $mockQueryHandler = $this->mockPluginManager->get('handleQuery', '');
         $mockQueryHandler->shouldReceive('isNotFound')->andReturn(false);
         $mockQueryHandler->shouldReceive('isClientError')->andReturn(false);

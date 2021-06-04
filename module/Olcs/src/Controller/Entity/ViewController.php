@@ -5,6 +5,7 @@ namespace Olcs\Controller\Entity;
 use Common\Controller\Lva\AbstractController;
 use Common\Exception\ResourceNotFoundException;
 use Common\RefData;
+use Dvsa\Olcs\Transfer\Command\Audit\ReadLicence;
 use Dvsa\Olcs\Transfer\Query\Search\Licence as SearchLicence;
 use Laminas\Session\Container;
 
@@ -82,6 +83,11 @@ class ViewController extends AbstractController
         if (in_array($result['status']['id'], $cannotViewStatuses)) {
             return $this->notFoundAction();
         };
+
+        // If user type is partner, record access log
+        if ($this->userType === self::USER_TYPE_PARTNER) {
+            $this->handleCommand(ReadLicence::create(['id' => $entityId]));
+        }
 
         // setup layout and view
         $content = $this->generateContent($result);
