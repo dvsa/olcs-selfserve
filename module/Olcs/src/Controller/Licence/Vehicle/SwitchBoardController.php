@@ -107,10 +107,15 @@ class SwitchBoardController
 
         $licence = $this->getLicence($licenceId);
 
+        $flashedInput = null;
+        if ($this->flashMessenger->hasMessages(static::FLASH_MESSAGE_INPUT_NAMESPACE)) {
+            $flashedInput = json_decode(array_values($this->flashMessenger->getMessages(static::FLASH_MESSAGE_INPUT_NAMESPACE))[0], true);
+        }
+
         $viewVariables = [
             'title' => 'licence.vehicle.switchboard.header',
             'subTitle' => $licence['licNo'],
-            'form' => $this->createSwitchBoardForm($licence),
+            'form' => $this->createSwitchBoardForm($licence, $flashedInput),
             'backLink' => $this->urlHelper->fromRoute(static::ROUTE_LICENCE_OVERVIEW, [], [], true)
         ];
 
@@ -147,15 +152,12 @@ class SwitchBoardController
         $formData = $request->getPost()->toArray();
         $form = $this->createSwitchBoardForm($licence, $formData);
 
-        if (!$form->isValid()) {
+        if (! $form->isValid()) {
+            $this->flashMessenger->addMessage(json_encode($form->getData()), static::FLASH_MESSAGE_INPUT_NAMESPACE);
             return $this->redirectHelper->toRoute('lva-licence/vehicles', [], [], true);
         }
-
-        $selectedOption = $formData[SwitchBoardForm::FIELD_OPTIONS_FIELDSET_NAME]
-            [SwitchBoardForm::FIELD_OPTIONS_NAME]
-            ?? '';
-
-        switch ($selectedOption) {
+        
+        switch ($formData[SwitchBoardForm::FIELD_OPTIONS_NAME]) {
             case SwitchBoardForm::FIELD_OPTIONS_VALUE_LICENCE_VEHICLE_ADD:
                 return $this->redirectHelper->toRoute(static::ROUTE_LICENCE_VEHICLE_ADD, [], [], true);
             case SwitchBoardForm::FIELD_OPTIONS_VALUE_LICENCE_VEHICLE_REMOVE:
@@ -190,12 +192,11 @@ class SwitchBoardController
      * @param array $formData
      * @return Form
      */
-    protected function createSwitchBoardForm(array $licence, array $formData = []): Form
+    protected function createSwitchBoardForm(array $licence, array $formData = null): Form
     {
         $form = $this->formHelper->createForm(SwitchBoardForm::class);
 
         $radioFieldOptions = $form
-            ->get(SwitchBoardForm::FIELD_OPTIONS_FIELDSET_NAME)
             ->get(SwitchBoardForm::FIELD_OPTIONS_NAME);
 
         if (!$licence['isMlh']) {
@@ -214,7 +215,10 @@ class SwitchBoardController
             $radioFieldOptions->unsetValueOption(SwitchBoardForm::FIELD_OPTIONS_VALUE_LICENCE_VEHICLE_VIEW_REMOVED);
         }
 
-        $form->setData($formData);
+        if (null !== $formData) {
+            $form->setData($formData);
+            $form->isValid();
+        }
 
         return $form;
     }
