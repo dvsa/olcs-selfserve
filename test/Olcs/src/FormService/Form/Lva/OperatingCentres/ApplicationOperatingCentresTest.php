@@ -127,8 +127,25 @@ class ApplicationOperatingCentresTest extends MockeryTestCase
 
     protected function mockPopulateFormTable($data)
     {
+        $rows = [
+            ['noOfLgvVehiclesRequired' => 1]
+        ];
+
         $table = m::mock(TableBuilder::class);
+        $table->shouldReceive('getRows')
+            ->withNoArgs()
+            ->andReturn($rows);
+        $table->shouldReceive('removeColumn')
+            ->with('noOfComplaints')
+            ->once();
+
         $tableElement = m::mock(Fieldset::class);
+        $tableElement->shouldReceive('get')
+            ->with('table')
+            ->andReturnSelf()
+            ->shouldReceive('getTable')
+            ->withNoArgs()
+            ->andReturn($table);
 
         $this->form->shouldReceive('get')
             ->with('table')

@@ -147,8 +147,22 @@ class LicenceOperatingCentresTest extends MockeryTestCase
 
     protected function mockPopulateFormTable($data)
     {
+        $rows = [
+            ['noOfLgvVehiclesRequired' => 1]
+        ];
+
         $table = m::mock(TableBuilder::class);
+        $table->shouldReceive('getRows')
+            ->withNoArgs()
+            ->andReturn($rows);
+
         $tableElement = m::mock(Fieldset::class);
+        $tableElement->shouldReceive('get')
+            ->with('table')
+            ->andReturnSelf()
+            ->shouldReceive('getTable')
+            ->withNoArgs()
+            ->andReturn($table);
 
         $this->form->shouldReceive('get')
             ->with('table')

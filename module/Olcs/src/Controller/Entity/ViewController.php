@@ -5,6 +5,7 @@ namespace Olcs\Controller\Entity;
 use Common\Controller\Lva\AbstractController;
 use Common\Exception\ResourceNotFoundException;
 use Common\RefData;
+use Common\Traits\OperatingCentresTableLgvModifierTrait;
 use Dvsa\Olcs\Transfer\Query\Search\Licence as SearchLicence;
 use Laminas\Session\Container;
 
@@ -15,6 +16,8 @@ use Laminas\Session\Container;
  */
 class ViewController extends AbstractController
 {
+    use OperatingCentresTableLgvModifierTrait;
+
     const USER_TYPE_PARTNER = 'partner';
     const USER_TYPE_ANONYMOUS = 'anonymous';
 
@@ -218,8 +221,12 @@ class ViewController extends AbstractController
 
         $tables['operatingCentresTable'] = $tableService->buildTable(
             'entity-view-operating-centres-' . $this->userType,
-            $data['operatingCentres'] ?: []
+            $data['operatingCentres'] ?: [],
+            [],
+            false
         );
+
+        $this->alterFormTableForLgv($tables['operatingCentresTable']);
 
         // Using OCs again, just using different data
         $tables['oppositionsTable'] = $tableService->buildTable(

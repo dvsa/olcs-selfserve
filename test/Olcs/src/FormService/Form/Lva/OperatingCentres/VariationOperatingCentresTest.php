@@ -82,7 +82,7 @@ class VariationOperatingCentresTest extends MockeryTestCase
             ]
         ];
 
-        $tableElement = $this->mockPopulateFormTable([]);
+        $this->mockPopulateFormTable([]);
 
         $this->mockFormHelper->shouldReceive('getValidator->setMessage')
             ->with('OperatingCentreNoOfOperatingCentres.required', 'required');
@@ -141,9 +141,6 @@ class VariationOperatingCentresTest extends MockeryTestCase
         $this->mockFormHelper->shouldReceive('disableElement')
             ->with($this->form, 'data->totCommunityLicences');
 
-        $tableElement->shouldReceive('get->getTable->removeColumn')
-            ->with('noOfComplaints');
-
         $this->mockFormHelper->shouldReceive('lockElement')
             ->with($totCommunityLicences, 'community-licence-changes-contact-office');
 
@@ -166,8 +163,25 @@ class VariationOperatingCentresTest extends MockeryTestCase
 
     protected function mockPopulateFormTable($data)
     {
+        $rows = [
+            ['noOfLgvVehiclesRequired' => 1]
+        ];
+
         $table = m::mock(TableBuilder::class);
+        $table->shouldReceive('getRows')
+            ->withNoArgs()
+            ->andReturn($rows);
+        $table->shouldReceive('removeColumn')
+            ->with('noOfComplaints')
+            ->once();
+
         $tableElement = m::mock(Fieldset::class);
+        $tableElement->shouldReceive('get')
+            ->with('table')
+            ->andReturnSelf()
+            ->shouldReceive('getTable')
+            ->withNoArgs()
+            ->andReturn($table);
 
         $this->form->shouldReceive('get')
             ->with('table')

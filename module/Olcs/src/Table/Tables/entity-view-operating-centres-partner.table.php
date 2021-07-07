@@ -17,11 +17,17 @@ return array(
             'name' => 'isInterim'
         ),
         array(
-            'title' => 'entity-view-table-header-vehicles-authorised',
+            'title' => 'entity-view-table-header-vehicles-authorised-hgv',
+            'name' => 'noOfHgvVehiclesRequired',
             'formatter' => function ($data) {
-                return !empty($data['noOfVehiclesRequired']) ?
-                    $data['noOfVehiclesRequired'] : '0';
+                return !empty($data['noOfHgvVehiclesRequired']) ?
+                    $data['noOfHgvVehiclesRequired'] : '0';
             }
+        ),
+        array(
+            'title' => 'entity-view-table-header-vehicles-authorised-lgv',
+            'name' => 'noOfLgvVehiclesRequired',
+            'formatter' => 'OcNoOfLgvVehiclesRequired'
         ),
         array(
             'title' => 'entity-view-table-header-trailers-authorised',

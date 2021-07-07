@@ -106,9 +106,18 @@ class ViewControllerTest extends MockeryTestCase
             ->with('entity-view-transport-managers', $mockResult['transportManagers'])
             ->andReturn('transportManagersTableResult');
 
+        $operatingCentresRows = [
+            ['noOfLgvVehiclesRequired' => 1]
+        ];
+
+        $mockOperatingCentresTableBuilder = m::mock(\Common\Service\Table\TableBuilder::class);
+        $mockOperatingCentresTableBuilder->shouldReceive('getRows')
+            ->withNoArgs()
+            ->andReturn($operatingCentresRows);
+
         $mockTable->shouldReceive('buildTable')
-            ->with('entity-view-operating-centres-anonymous', $mockResult['operatingCentres'])
-            ->andReturn('operatingCentresTableResult');
+            ->with('entity-view-operating-centres-anonymous', $mockResult['operatingCentres'], [], false)
+            ->andReturn($mockOperatingCentresTableBuilder);
 
         $mockTable->shouldReceive('buildTable')
             ->with('entity-view-oppositions-anonymous', $mockResult['operatingCentres'])
@@ -136,7 +145,7 @@ class ViewControllerTest extends MockeryTestCase
         static::assertEquals($result->userType, ViewController::USER_TYPE_ANONYMOUS);
         static::assertEquals($content->relatedOperatorLicencesTable, 'otherLicencesTableResult');
         static::assertEquals($content->transportManagerTable, 'transportManagersTableResult');
-        static::assertEquals($content->operatingCentresTable, 'operatingCentresTableResult');
+        static::assertSame($content->operatingCentresTable, $mockOperatingCentresTableBuilder);
     }
 
     /**
@@ -185,9 +194,18 @@ class ViewControllerTest extends MockeryTestCase
             ->with('entity-view-transport-managers', $mockResult['transportManagers'])
             ->andReturn('transportManagersTableResult');
 
+        $operatingCentresRows = [
+            ['noOfLgvVehiclesRequired' => 1]
+        ];
+
+        $mockOperatingCentresTableBuilder = m::mock(\Common\Service\Table\TableBuilder::class);
+        $mockOperatingCentresTableBuilder->shouldReceive('getRows')
+            ->withNoArgs()
+            ->andReturn($operatingCentresRows);
+
         $mockTable->shouldReceive('buildTable')
-            ->with('entity-view-operating-centres-partner', $mockResult['operatingCentres'])
-            ->andReturn('operatingCentresTableResult');
+            ->with('entity-view-operating-centres-partner', $mockResult['operatingCentres'], [], false)
+            ->andReturn($mockOperatingCentresTableBuilder);
 
         $mockTable->shouldReceive('buildTable')
             ->with('entity-view-oppositions-partner', $mockResult['operatingCentres'])
@@ -227,7 +245,7 @@ class ViewControllerTest extends MockeryTestCase
         static::assertEquals($result->userType, ViewController::USER_TYPE_PARTNER);
         static::assertEquals($content->relatedOperatorLicencesTable, 'otherLicencesTableResult');
         static::assertEquals($content->transportManagerTable, 'transportManagersTableResult');
-        static::assertEquals($content->operatingCentresTable, 'operatingCentresTableResult');
+        static::assertSame($content->operatingCentresTable, $mockOperatingCentresTableBuilder);
         static::assertEquals($content->vehiclesTable, 'vehiclesTableResult');
         static::assertEquals($content->currentApplicationsTable, 'currentApplicationsTableResult');
         static::assertEquals($content->conditionsUndertakingsTable, 'conditionsUndertakingsTableResult');

@@ -12,13 +12,19 @@ return array(
             'name' => 'operatingCentre->address'
         ),
         array(
-            'title' => 'search-result-label-vehicles',
+            'title' => 'search-result-label-vehicles-hgv',
+            'name' => 'noOfHgvVehiclesRequired',
             'formatter' => function ($data, $column) {
-                if (empty($data['noOfVehiclesRequired'])) {
+                if (empty($data['noOfHgvVehiclesRequired'])) {
                     return '0';
                 }
-                return $data['noOfVehiclesRequired'];
+                return $data['noOfHgvVehiclesRequired'];
             }
+        ),
+        array(
+            'title' => 'search-result-label-vehicles-lgv',
+            'name' => 'noOfLgvVehiclesRequired',
+            'formatter' => 'OcNoOfLgvVehiclesRequired'
         ),
         array(
             'title' => 'search-result-label-trailers',
