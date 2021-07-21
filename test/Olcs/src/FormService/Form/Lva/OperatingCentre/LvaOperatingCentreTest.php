@@ -127,6 +127,21 @@ class LvaOperatingCentreTest extends MockeryTestCase
             ->andReturn(
                 m::mock()
                     ->shouldReceive('get')
+                    ->with('noOfHgvVehiclesRequired')
+                    ->once()
+                    ->andReturn(
+                        m::mock()
+                            ->shouldReceive('setOptions')
+                            ->with(
+                                [
+                                    'label' => 'application_operating-centres_authorisation-sub-action.data.noOfVehiclesRequired',
+                                    'error-message' => 'Your total number of vehicles',
+                                ]
+                            )
+                            ->once()
+                            ->getMock()
+                    )
+                    ->shouldReceive('get')
                     ->with('guidance')
                     ->andReturn(
                         m::mock()
@@ -144,7 +159,6 @@ class LvaOperatingCentreTest extends MockeryTestCase
                     ->once()
                     ->getMock()
             )
-            ->once()
             ->getMock();
 
         $adSendByPost = m::mock();
@@ -198,6 +212,14 @@ class LvaOperatingCentreTest extends MockeryTestCase
             ->with('advertisements')
             ->andReturn($advertisements);
 
+        $this->formHelper
+            ->shouldReceive('remove')
+            ->with($form, 'data->lgvHtml')
+            ->once()
+            ->shouldReceive('remove')
+            ->with($form, 'data->noOfLgvVehiclesRequired')
+            ->once();
+
         $this->sut->alterForm($form, $params);
     }
 
@@ -231,6 +253,21 @@ class LvaOperatingCentreTest extends MockeryTestCase
             ->andReturn(
                 m::mock()
                     ->shouldReceive('get')
+                    ->with('noOfHgvVehiclesRequired')
+                    ->once()
+                    ->andReturn(
+                        m::mock()
+                            ->shouldReceive('setOptions')
+                            ->with(
+                                [
+                                    'label' => 'application_operating-centres_authorisation-sub-action.data.noOfVehiclesRequired',
+                                    'error-message' => 'Your total number of vehicles',
+                                ]
+                            )
+                            ->once()
+                            ->getMock()
+                    )
+                    ->shouldReceive('get')
                     ->with('guidance')
                     ->andReturn(
                         m::mock()
@@ -248,7 +285,6 @@ class LvaOperatingCentreTest extends MockeryTestCase
                     ->once()
                     ->getMock()
             )
-            ->once()
             ->getMock();
 
         $form->shouldReceive('getInputFilter')
@@ -323,6 +359,14 @@ class LvaOperatingCentreTest extends MockeryTestCase
         $form->shouldReceive('get')
             ->with('advertisements')
             ->andReturn($advertisements);
+
+        $this->formHelper
+            ->shouldReceive('remove')
+            ->with($form, 'data->lgvHtml')
+            ->once()
+            ->shouldReceive('remove')
+            ->with($form, 'data->noOfLgvVehiclesRequired')
+            ->once();
 
         $this->sut->alterForm($form, $params);
     }
