@@ -98,7 +98,7 @@ class LicenceOperatingCentresTest extends MockeryTestCase
             ->with('totAuthLargeVehicles')
             ->andReturn(false)
             ->shouldReceive('has')
-            ->with('totAuthVehicles')
+            ->with('totAuthHgvVehicles')
             ->andReturn(false)
             ->shouldReceive('has')
             ->with('totAuthTrailers')
