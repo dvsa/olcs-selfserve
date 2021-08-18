@@ -6,17 +6,16 @@ use Common\FormService\Form\Lva\OperatingCentres\LicenceOperatingCentres as Comm
 use Laminas\Form\Form;
 
 /**
- * Licence Operating Centres
- *
- * @author Rob Caiger <rob@clocal.co.uk>
+ * @see \OlcsTest\FormService\Form\Lva\OperatingCentres\LicenceOperatingCentresTest
  */
 class LicenceOperatingCentres extends CommonLicenceOperatingCentres
 {
     protected $mainTableConfigName = 'lva-licence-operating-centres';
 
     private $lockElements = [
-        'totAuthHgvVehicles',
-        'totAuthTrailers'
+        'totAuthHgvVehiclesFieldset->totAuthHgvVehicles',
+        'totAuthLgvVehiclesFieldset->totAuthLgvVehicles',
+        'totAuthTrailersFieldset->totAuthTrailers',
     ];
 
     /**
@@ -31,18 +30,25 @@ class LicenceOperatingCentres extends CommonLicenceOperatingCentres
     {
         parent::alterForm($form, $params);
 
-        $this->getFormHelper()->disableElements($form->get('data'));
+        $dataElement = $form->get('data');
+
+        $this->getFormHelper()->disableElements($dataElement);
 
         if ($form->has('dataTrafficArea')) {
             $form->get('dataTrafficArea')->remove('enforcementArea');
         }
 
-        foreach ($this->lockElements as $lockElement) {
-            if ($form->get('data')->has($lockElement)) {
-                $this->getFormHelper()->lockElement(
-                    $form->get('data')->get($lockElement),
-                    'operating-centres-licence-locked'
-                );
+        foreach ($this->lockElements as $lockElementRef) {
+            $lockElementRefComponents = explode('->', $lockElementRef);
+            $lockElement = $dataElement;
+            foreach ($lockElementRefComponents as $elementRef) {
+                if (null === $lockElement) {
+                    break;
+                }
+                $lockElement = $lockElement->has($elementRef) ? $lockElement->get($elementRef) : null;
+            }
+            if (null !== $lockElement) {
+                $this->getFormHelper()->lockElement($lockElement, 'operating-centres-licence-locked');
             }
         }
 

@@ -39,9 +39,12 @@ class VariationOperatingCentres extends CommonVariationOperatingCentres
         $this->alterFormWithTranslationKey($form, 'community-licence-changes-contact-office.psv');
     }
 
-    protected function alterFormForGoodsLicences(Form $form)
+    /**
+     * @inheritDoc
+     */
+    protected function alterFormForGoodsLicences(Form $form, array $params): void
     {
-        parent::alterFormForGoodsLicences($form);
+        parent::alterFormForGoodsLicences($form, $params);
         $this->alterFormWithTranslationKey($form, 'community-licence-changes-contact-office');
     }
 
@@ -55,9 +58,9 @@ class VariationOperatingCentres extends CommonVariationOperatingCentres
      */
     protected function alterFormWithTranslationKey(Form $form, $translationKey)
     {
-        if ($form->get('data')->has('totCommunityLicences')) {
+        if ($form->get('data')->has('totCommunityLicencesFieldset')) {
             $this->getFormHelper()->lockElement(
-                $form->get('data')->get('totCommunityLicences'),
+                $form->get('data')->get('totCommunityLicencesFieldset')->get('totCommunityLicences'),
                 $translationKey
             );
         }
