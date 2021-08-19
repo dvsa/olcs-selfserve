@@ -15,14 +15,14 @@ use Laminas\Form\Fieldset;
 use Laminas\Form\Form;
 use Common\Service\Helper\FormHelperService;
 use Common\RefData;
-use Common\Test\FormService\Form\Lva\OperatingCentres\OperatingCentresTestCase;
 use \Common\FormService\Form\Lva\Licence as LvaLicenceFormService;
 use Laminas\View\Renderer\PhpRenderer;
+use Common\Test\FormService\Form\Lva\OperatingCentres\LicenceOperatingCentresTestCase;
 
 /**
  * @see LicenceOperatingCentres
  */
-class LicenceOperatingCentresTest extends OperatingCentresTestCase
+class LicenceOperatingCentresTest extends LicenceOperatingCentresTestCase
 {
     protected const LOCKED_ELEMENT_MESSAGE = 'operating-centres-licence-locked';
 
@@ -67,6 +67,7 @@ class LicenceOperatingCentresTest extends OperatingCentresTestCase
             'canHaveCommunityLicences' => true,
             'isPsv' => false,
             'licenceType' => ['id' => RefData::LICENCE_TYPE_STANDARD_INTERNATIONAL],
+            'isEligibleForLgv' => true,
             'totAuthLgvVehicles' => 0,
         ];
 
@@ -191,7 +192,7 @@ class LicenceOperatingCentresTest extends OperatingCentresTestCase
     {
         return [
             'totAuthHgvVehicles' => ['totAuthHgvVehicles', $this->paramsForLicence()],
-            'totAuthLgvVehicles' => ['totAuthLgvVehicles', $this->paramsForStandardInternationalGoodsLicence()],
+            'totAuthLgvVehicles' => ['totAuthLgvVehicles', $this->paramsForLicenceThatIsEligibleForLgvs()],
             'totAuthTrailers' => ['totAuthTrailers', $this->paramsForLicence()],
         ];
     }
