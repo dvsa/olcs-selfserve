@@ -6,6 +6,7 @@ namespace Olcs\Controller\Auth;
 use Common\Auth\Service\AuthenticationServiceInterface;
 use Common\Controller\Plugin\CurrentUser;
 use Common\Controller\Plugin\Redirect;
+use Common\Rbac\User;
 use Common\Service\Helper\FormHelperService;
 use Dvsa\Olcs\Auth\Service\Auth\CookieService;
 use Laminas\Authentication\Adapter\ValidatableAdapterInterface;
@@ -30,6 +31,9 @@ class LoginController
     const ROUTE_AUTH_EXPIRED_PASSWORD = 'auth/expired-password';
     const ROUTE_AUTH_LOGIN_GET = 'auth/login/GET';
     const ROUTE_DASHBOARD = 'dashboard';
+    const ROUTE_PROMPT = 'prompt';
+    const ROUTE_BUS_REGISTRATION = 'bus-registration';
+    const ROUTE_SEARCH = 'search';
     const DVSA_OLCS_AUTH_CLIENT_OPENAM = 'Dvsa\Olcs\Auth\Client\OpenAm';
     const CHALLENGE_NEW_PASSWORD_REQUIRED = 'NEW_PASSWORD_REQUIRED';
     const DVSA_OLCS_AUTH_CLIENT_COGNITO = 'Dvsa\Olcs\Auth\Client\CognitoAdapter';
@@ -104,8 +108,9 @@ class LoginController
 
     public function indexAction()
     {
-        if (!$this->currentUser->getIdentity()->isAnonymous()) {
-            return $this->redirectHelper->toRoute(static::ROUTE_DASHBOARD);
+        $user = $this->currentUser->getIdentity();
+        if (!$user->isAnonymous()) {
+            return $this->redirectHelper->toRoute($this->getDefaultRoute($user));
         }
 
         $view = new ViewModel();
@@ -133,8 +138,9 @@ class LoginController
      */
     public function postAction(Request $request, RouteMatch $routeMatch, Response $response): Response
     {
-        if (!$this->currentUser->getIdentity()->isAnonymous()) {
-            return $this->redirectHelper->toRoute(static::ROUTE_DASHBOARD);
+        $user = $this->currentUser->getIdentity();
+        if (!$user->isAnonymous()) {
+            return $this->redirectHelper->toRoute($this->getDefaultRoute($user));
         }
 
         $form = $this->createLoginForm($request->getPost()->toArray());
@@ -297,5 +303,20 @@ class LoginController
 
         //Unsupported challenge so redirect to login
         return $this->redirectHelper->toRoute(self::ROUTE_AUTH_LOGIN_GET);
+    }
+
+    private function getDefaultRoute (User $identity): string {
+        // redir to the dashboard onluy if eligible
+        if ($this->isGranted(RefData::PERMISSION_SELFSERVE_DASHBOARD)) {
+            if ($identity->getUserData()['eligibleForPrompt']) {
+                return self::ROUTE_PROMPT;
+            }
+            return self::ROUTE_DASHBOARD;
+        }
+        // redir to the bus reg page
+        if ($identity->getUserType() === User::USER_TYPE_LOCAL_AUTHORITY) {
+            return self::ROUTE_BUS_REGISTRATION;
+        }
+        return self::ROUTE_SEARCH;
     }
 }
