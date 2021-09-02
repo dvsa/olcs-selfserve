@@ -257,8 +257,8 @@ class LoginController
         if ($this->validateGotoUrl($gotoUrl, $request)) {
             return $this->redirectHelper->toUrl($gotoUrl);
         }
-
-        return $this->redirectHelper->toRoute(static::ROUTE_DASHBOARD);
+        $identity = $this->currentUser->getIdentity();
+        return $this->redirectHelper->toRoute($this->getDefaultRoute($identity));
     }
 
     /**
@@ -269,7 +269,8 @@ class LoginController
      */
     private function handleSuccessCognitoResult()
     {
-        return $this->redirectHelper->toRoute(static::ROUTE_DASHBOARD);
+        $identity = $this->currentUser->getIdentity();
+        return $this->redirectHelper->toRoute($this->getDefaultRoute($identity));
     }
 
     /**
@@ -307,7 +308,7 @@ class LoginController
 
     private function getDefaultRoute (User $identity): string {
         // redir to the dashboard onluy if eligible
-        if ($this->isGranted(RefData::PERMISSION_SELFSERVE_DASHBOARD)) {
+        if ($identity->isGranted(RefData::PERMISSION_SELFSERVE_DASHBOARD)) {
             if ($identity->getUserData()['eligibleForPrompt']) {
                 return self::ROUTE_PROMPT;
             }

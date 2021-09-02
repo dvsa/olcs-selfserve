@@ -483,6 +483,11 @@ class LoginControllerTest extends MockeryTestCase
     }
 
     /**
+     * @test
+     */
+
+
+    /**
      * @return LoginController
      */
     protected function setUpSut()
