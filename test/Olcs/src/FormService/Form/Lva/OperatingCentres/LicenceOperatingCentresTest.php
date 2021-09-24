@@ -18,6 +18,7 @@ use Common\RefData;
 use \Common\FormService\Form\Lva\Licence as LvaLicenceFormService;
 use Laminas\View\Renderer\PhpRenderer;
 use Common\Test\FormService\Form\Lva\OperatingCentres\LicenceOperatingCentresTestCase;
+use Common\Form\Elements\Types\Table as TableElement;
 
 /**
  * @see LicenceOperatingCentres
@@ -71,19 +72,46 @@ class LicenceOperatingCentresTest extends LicenceOperatingCentresTestCase
             'totAuthLgvVehicles' => 0,
         ];
 
+        $columns = [
+            'noOfVehiclesRequired' => [
+                'title' => 'unmodified-column-name'
+            ]
+        ];
+
+        $expectedModifiedColumns = [
+            'noOfVehiclesRequired' => [
+                'title' => 'application_operating-centres_authorisation.table.hgvs'
+            ]
+        ];
+
         $table = m::mock(TableBuilder::class);
-        $tableElement = m::mock(Fieldset::class);
+        $table->shouldReceive('getColumns')
+            ->withNoArgs()
+            ->andReturn($columns);
+        $table->shouldReceive('setColumns')
+            ->with($expectedModifiedColumns)
+            ->once();
+
+        $tableElement = m::mock(TableElement::class);
+        $tableElement->shouldReceive('getTable')
+            ->withNoArgs()
+            ->andReturn($table);
+
+        $tableFieldset = m::mock(Fieldset::class);
+        $tableFieldset->shouldReceive('get')
+            ->with('table')
+            ->andReturn($tableElement);
 
         $form->shouldReceive('get')
             ->with('table')
-            ->andReturn($tableElement);
+            ->andReturn($tableFieldset);
 
         $tableBuilder->shouldReceive('prepareTable')
             ->with('lva-licence-operating-centres', [], [])
             ->andReturn($table);
 
         $mockFormHelper->shouldReceive('populateFormTable')
-            ->with($tableElement, $table);
+            ->with($tableFieldset, $table);
 
         $mockFormHelper->shouldReceive('getValidator->setMessage')
             ->with('OperatingCentreNoOfOperatingCentres.required', 'required');

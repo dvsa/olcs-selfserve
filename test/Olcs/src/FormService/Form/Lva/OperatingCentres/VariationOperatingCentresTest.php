@@ -179,8 +179,32 @@ class VariationOperatingCentresTest extends MockeryTestCase
         $this->mockFormHelper->shouldReceive('disableElement')
             ->with($this->form, 'data->totCommunityLicencesFieldset->totCommunityLicences');
 
-        $tableElement->shouldReceive('get->getTable->removeColumn')
-            ->with('noOfComplaints');
+        $columns = [
+            'noOfVehiclesRequired' => [
+                'title' => 'unmodified-column-name'
+            ]
+        ];
+
+        $expectedModifiedColumns = [
+            'noOfVehiclesRequired' => [
+                'title' => 'application_operating-centres_authorisation.table.hgvs'
+            ]
+        ];
+
+        $tableBuilder = m::mock(TableBuilder::class);
+        $tableBuilder->shouldReceive('removeColumn')
+            ->with('noOfComplaints')
+            ->once();
+        $tableBuilder->shouldReceive('getColumns')
+            ->withNoArgs()
+            ->andReturn($columns);
+        $tableBuilder->shouldReceive('setColumns')
+            ->with($expectedModifiedColumns)
+            ->once();
+
+        $tableElement->shouldReceive('get->getTable')
+            ->withNoArgs()
+            ->andReturn($tableBuilder);
 
         $this->mockFormHelper->shouldReceive('lockElement')
             ->with($totCommunityLicences, 'community-licence-changes-contact-office');
