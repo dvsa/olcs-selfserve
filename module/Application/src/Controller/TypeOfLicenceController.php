@@ -5,6 +5,7 @@ namespace Dvsa\Olcs\Application\Controller;
 use Common\Controller\Lva\Application\AbstractTypeOfLicenceController;
 use Dvsa\Olcs\Transfer\Command\Application\CreateApplication;
 use Laminas\Form\Form;
+use Common\RefData;
 use Common\View\Model\Section;
 use Olcs\Controller\Lva\Traits\ApplicationControllerTrait;
 
@@ -68,14 +69,19 @@ class TypeOfLicenceController extends AbstractTypeOfLicenceController
             $form->setData($data);
 
             $tolFormManagerService->maybeAlterFormForNi($form);
+            $tolFormManagerService->maybeAlterFormForGoodsStandardInternational($form);
 
             if ($form->isValid()) {
+                $data = $form->getData();
+                $vehicleType = $data['type-of-licence']['licence-type']['ltyp_siContent']['vehicle-type'];
+
                 $dto = CreateApplication::create(
                     [
                         'organisation' => $this->getCurrentOrganisationId(),
                         'niFlag' => $this->getOperatorLocation($organisationData, $data),
                         'operatorType' => $data['type-of-licence']['operator-type'],
-                        'licenceType' => $data['type-of-licence']['licence-type']
+                        'licenceType' => $data['type-of-licence']['licence-type']['licence-type'],
+                        'vehicleType' => $vehicleType,
                     ]
                 );
 
@@ -85,7 +91,16 @@ class TypeOfLicenceController extends AbstractTypeOfLicenceController
                 $response = $this->getServiceLocator()->get('CommandService')->send($command);
 
                 if ($response->isOk()) {
-                    return $this->goToOverview($response->getResult()['id']['application']);
+                    $applicationId = $response->getResult()['id']['application'];
+
+                    if ($vehicleType === RefData::APP_VEHICLE_TYPE_LGV) {
+                        return $this->redirect()->toRoute(
+                            'lva-application/lgv-undertakings',
+                            ['application' => $applicationId]
+                        );
+                    }
+
+                    return $this->goToOverview($applicationId);
                 }
 
                 if ($response->isClientError()) {
