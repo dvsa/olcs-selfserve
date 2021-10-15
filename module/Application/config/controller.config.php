@@ -5,6 +5,7 @@ return [
         'invokables' => [
             'Application' => \Dvsa\Olcs\Application\Controller\OverviewController::class,
             'Application/TypeOfLicence' => \Dvsa\Olcs\Application\Controller\TypeOfLicenceController::class,
+            'Application/LgvUndertakings' => \Dvsa\Olcs\Application\Controller\LgvUndertakingsController::class,
             'Application/BusinessType' => \Dvsa\Olcs\Application\Controller\BusinessTypeController::class,
             'Application/BusinessDetails' => \Dvsa\Olcs\Application\Controller\BusinessDetailsController::class,
             'Application/Addresses' => \Dvsa\Olcs\Application\Controller\AddressesController::class,
