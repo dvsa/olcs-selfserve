@@ -73,7 +73,8 @@ trait ApplicationControllerTrait
         $sectionName = $titleSuffix;
         // overrides for any instance where the section name differs from the view template name
         $sectionOverrides = [
-            'person' => 'people'
+            'person' => 'people',
+            'lgv-undertakings' => 'type_of_licence',
         ];
         if (array_key_exists($titleSuffix, $sectionOverrides)) {
             $sectionName = $sectionOverrides[$titleSuffix];
