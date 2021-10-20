@@ -1389,6 +1389,7 @@ return array(
             'lva-licence-type_of_licence' => LvaFormService\TypeOfLicence\LicenceTypeOfLicence::class,
             'lva-variation-type_of_licence' => LvaFormService\TypeOfLicence\VariationTypeOfLicence::class,
             'lva-application-type_of_licence' => LvaFormService\TypeOfLicence\ApplicationTypeOfLicence::class,
+            'lva-lgv-undertakings' => LvaFormService\LgvUndertakings::class,
 
             // Address
             'lva-licence-addresses' => LvaFormService\Addresses\LicenceAddresses::class,

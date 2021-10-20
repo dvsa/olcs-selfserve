@@ -46,6 +46,17 @@ return [
                         ],
                     ],
                 ],
+                'lgv-undertakings' => [
+                    'type' => \Common\Util\LvaRoute::class,
+                    'options' => [
+                        'route' => 'lgv-undertakings[/]',
+                        'defaults' => [
+                            'controller' => 'Application/LgvUndertakings',
+                            'action' => 'index',
+                        ],
+                    ],
+                    'may_terminate' => true,
+                ],
                 'business_type' => [
                     'type' => \Common\Util\LvaRoute::class,
                     'options' => [
