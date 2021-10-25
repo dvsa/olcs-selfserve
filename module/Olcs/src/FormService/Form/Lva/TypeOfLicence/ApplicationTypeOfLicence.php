@@ -24,6 +24,12 @@ class ApplicationTypeOfLicence extends CommonLicenceTypeOfLicence
     {
         parent::alterForm($form, $params);
         $form->get('form-actions')->get('saveAndContinue')->setLabel('lva.external.save_and_continue.button');
+
         $this->getFormHelper()->remove($form, 'form-actions->save');
+
+        $this->getFormHelper()->remove(
+            $form,
+            'type-of-licence->licence-type->ltyp_siContent->lgv-declaration-confirmation'
+        );
     }
 }

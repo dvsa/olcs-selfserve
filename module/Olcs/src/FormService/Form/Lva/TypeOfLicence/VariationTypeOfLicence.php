@@ -29,5 +29,10 @@ class VariationTypeOfLicence extends CommonLicenceTypeOfLicence
         } else {
             $this->getFormHelper()->remove($form, 'form-actions->cancel');
         }
+
+        $this->getFormHelper()->remove(
+            $form,
+            'type-of-licence->licence-type->ltyp_siContent->lgv-declaration-confirmation'
+        );
     }
 }

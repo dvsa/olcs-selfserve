@@ -9,6 +9,7 @@ use Olcs\FormService\Form\Lva\TypeOfLicence\LicenceTypeOfLicence;
 use Laminas\Form\Form;
 use Common\FormService\FormServiceManager;
 use Laminas\Form\Element;
+use Laminas\Form\Fieldset;
 use Common\RefData;
 use Common\Form\Elements\InputFilters\Lva\BackToLicenceActionLink;
 
@@ -51,6 +52,9 @@ class LicenceTypeOfLicenceTest extends MockeryTestCase
             ->andReturn($mockForm)
             ->shouldReceive('remove')
             ->with($mockForm, $removeElement)
+            ->shouldReceive('remove')
+            ->with($mockForm, 'type-of-licence->licence-type->ltyp_siContent->lgv-declaration-confirmation')
+            ->once()
             ->getMock();
 
         $this->fsm->shouldReceive('get')
@@ -107,8 +111,13 @@ class LicenceTypeOfLicenceTest extends MockeryTestCase
             ->once()
             ->getMock();
 
-        $mockLicenceType = m::mock(Element::class)
-            ->shouldReceive('setLabel')
+        $mockLicenceType = m::mock(Element::class);
+
+        $ltFieldset = m::mock(Fieldset::class);
+        $ltFieldset->shouldReceive('get')
+            ->with('licence-type')
+            ->andReturn($mockLicenceType);
+        $ltFieldset->shouldReceive('setLabel')
             ->with('licence-type')
             ->once()
             ->getMock();
@@ -124,7 +133,7 @@ class LicenceTypeOfLicenceTest extends MockeryTestCase
             ->twice()
             ->shouldReceive('get')
             ->with('licence-type')
-            ->andReturn($mockLicenceType)
+            ->andReturn($ltFieldset)
             ->times($accessToLicenceType)
             ->getMock();
 
@@ -157,10 +166,13 @@ class LicenceTypeOfLicenceTest extends MockeryTestCase
 
         if (!$params['canUpdateLicenceType']) {
             $this->fh->shouldReceive('disableElement')
-                ->with($mockForm, 'type-of-licence->licence-type')
+                ->with($mockForm, 'type-of-licence->licence-type->licence-type')
+                ->once()
+                ->shouldReceive('disableElement')
+                ->with($mockForm, 'type-of-licence->licence-type->ltyp_siContent->vehicle-type')
                 ->once()
                 ->shouldReceive('lockElement')
-                ->with($mockLicenceType, 'licence-type-lock-message')
+                ->with($ltFieldset, 'licence-type-lock-message')
                 ->once()
                 ->getMock();
 
