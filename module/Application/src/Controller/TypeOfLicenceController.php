@@ -73,15 +73,31 @@ class TypeOfLicenceController extends AbstractTypeOfLicenceController
 
             if ($form->isValid()) {
                 $data = $form->getData();
-                $vehicleType = $data['type-of-licence']['licence-type']['ltyp_siContent']['vehicle-type'];
+
+                $typeOfLicenceData = $data['type-of-licence'];
+                $licenceTypeData = $typeOfLicenceData['licence-type'];
+                $operatorType = $typeOfLicenceData['operator-type'];
+                $licenceType = $licenceTypeData['licence-type'];
+                $vehicleType = null;
+                $lgvDeclarationConfirmation = 0;
+
+                if (isset($licenceTypeData['ltyp_siContent'])) {
+                    $siContentData = $licenceTypeData['ltyp_siContent'];
+                    $vehicleType = $siContentData['vehicle-type'];
+
+                    if (isset($siContentData['lgv-declaration']['lgv-declaration-confirmation'])) {
+                        $lgvDeclarationConfirmation = $siContentData['lgv-declaration']['lgv-declaration-confirmation'];
+                    }
+                }
 
                 $dto = CreateApplication::create(
                     [
                         'organisation' => $this->getCurrentOrganisationId(),
                         'niFlag' => $this->getOperatorLocation($organisationData, $data),
-                        'operatorType' => $data['type-of-licence']['operator-type'],
-                        'licenceType' => $data['type-of-licence']['licence-type']['licence-type'],
+                        'operatorType' => $operatorType,
+                        'licenceType' => $licenceType,
                         'vehicleType' => $vehicleType,
+                        'lgvDeclarationConfirmation' => $lgvDeclarationConfirmation
                     ]
                 );
 
@@ -91,16 +107,7 @@ class TypeOfLicenceController extends AbstractTypeOfLicenceController
                 $response = $this->getServiceLocator()->get('CommandService')->send($command);
 
                 if ($response->isOk()) {
-                    $applicationId = $response->getResult()['id']['application'];
-
-                    if ($vehicleType === RefData::APP_VEHICLE_TYPE_LGV) {
-                        return $this->redirect()->toRoute(
-                            'lva-application/lgv-undertakings',
-                            ['application' => $applicationId]
-                        );
-                    }
-
-                    return $this->goToOverview($applicationId);
+                    return $this->goToOverview($response->getResult()['id']['application']);
                 }
 
                 if ($response->isClientError()) {
