@@ -8,6 +8,7 @@ use Laminas\Session\Config\SessionConfig;
 use Laminas\Session\Container;
 use Laminas\Session\SessionManager;
 use Laminas\Validator\AbstractValidator;
+use Olcs\Mvc\RefreshJWTListener;
 
 /**
  * Module.php
@@ -63,6 +64,9 @@ class Module
 
         $cookieListener = $sm->get('CookieListener');
         $cookieListener->attach($eventManager, 2);
+
+        $refreshJWTListener = $sm->get(RefreshJWTListener::class);
+        $refreshJWTListener->attach($eventManager, 1);
 
         $this->initSession(
             [
