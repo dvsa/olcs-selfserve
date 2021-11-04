@@ -37,7 +37,7 @@ class RefreshJWTListener implements ListenerAggregateInterface
         $this->listeners[] = $events->attach(MvcEvent::EVENT_ROUTE, [$this, 'onRoute'], $priority);
     }
 
-    public function onRoute(MvcEvent $e)
+    public function onRoute(MvcEvent $e): void
     {
         $request = $e->getRequest();
 
@@ -56,8 +56,22 @@ class RefreshJWTListener implements ListenerAggregateInterface
         }
 
         $refreshCommand = RefreshToken::create(['refreshToken' => $token['refresh_token']]);
-        $response = $this->commandSender->send($refreshCommand);
+        $result = $this->commandSender->send($refreshCommand);
 
-        var_dump($response);exit;
+        if (!$result->isOk()) {
+            throw new \Exception("Refresh failed");
+        }
+
+        $flags = $result->getResult()['flags'];
+        if (!$flags['isValid']) {
+            throw new \Exception("Refresh failed");
+        }
+
+        $identity = $flags['identity'];
+        if (empty($identity)) {
+            throw new \Exception("Refresh failed");
+        }
+
+        $this->session->offsetSet('storage', $identity);
     }
 }
