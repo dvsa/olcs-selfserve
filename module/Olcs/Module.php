@@ -2,13 +2,12 @@
 
 namespace Olcs;
 
+use Common\Auth\Listener\RefreshJWTListener;
 use Laminas\Mvc\ModuleRouteListener;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Session\Config\SessionConfig;
 use Laminas\Session\Container;
 use Laminas\Session\SessionManager;
-use Laminas\Validator\AbstractValidator;
-use Olcs\Mvc\RefreshJWTListener;
 
 /**
  * Module.php
