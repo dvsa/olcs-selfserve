@@ -34,10 +34,10 @@ class RefreshJWTListener implements ListenerAggregateInterface
 
     public function attach(EventManagerInterface $events, $priority = 1)
     {
-        $this->listeners[] = $events->attach(MvcEvent::EVENT_ROUTE, [$this, 'onRoute'], $priority);
+        $this->listeners[] = $events->attach(MvcEvent::EVENT_DISPATCH, [$this, 'onDispatch'], $priority);
     }
 
-    public function onRoute(MvcEvent $e): void
+    public function onDispatch(MvcEvent $e): void
     {
         $request = $e->getRequest();
 
