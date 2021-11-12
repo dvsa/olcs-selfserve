@@ -55,8 +55,10 @@ class LicenceOperatingCentres extends CommonLicenceOperatingCentres
 
         $this->removeStandardFormActions($form);
 
-        $table = $form->get('table')->get('table')->getTable();
-        $this->alterTableForLgv($table, $params);
+        if ($form->has('table')) {
+            $table = $form->get('table')->get('table')->getTable();
+            $this->alterTableForLgv($table, $params);
+        }
     }
 
     /**

@@ -83,6 +83,7 @@ class VariationOperatingCentresTest extends MockeryTestCase
                 'totAuthTrailers' => 12
             ],
             'licenceType' => ['id' => RefData::LICENCE_TYPE_STANDARD_INTERNATIONAL],
+            'vehicleType' => ['id' => RefData::APP_VEHICLE_TYPE_MIXED],
             'isEligibleForLgv' => true,
             'totAuthLgvVehicles' => 0,
         ];
@@ -230,6 +231,10 @@ class VariationOperatingCentresTest extends MockeryTestCase
     {
         $table = m::mock(TableBuilder::class);
         $tableElement = m::mock(Fieldset::class);
+
+        $this->form->shouldReceive('has')
+            ->with('table')
+            ->andReturnTrue();
 
         $this->form->shouldReceive('get')
             ->with('table')

@@ -76,7 +76,7 @@ class ApplicationOperatingCentresTest extends MockeryTestCase
             'canHaveCommunityLicences' => true,
             'isPsv' => false,
             'licenceType' => ['id' => RefData::LICENCE_TYPE_STANDARD_INTERNATIONAL],
-            'isEligibleForLgv' => true,
+            'vehicleType' => ['id' => RefData::APP_VEHICLE_TYPE_MIXED],
             'totAuthLgvVehicles' => 0,
         ];
 
@@ -133,6 +133,10 @@ class ApplicationOperatingCentresTest extends MockeryTestCase
     {
         $table = m::mock(TableBuilder::class);
         $tableElement = m::mock(Fieldset::class);
+
+        $this->form->shouldReceive('has')
+            ->with('table')
+            ->andReturnTrue();
 
         $this->form->shouldReceive('get')
             ->with('table')

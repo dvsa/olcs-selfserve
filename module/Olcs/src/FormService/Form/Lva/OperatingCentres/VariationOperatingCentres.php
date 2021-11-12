@@ -25,9 +25,11 @@ class VariationOperatingCentres extends CommonVariationOperatingCentres
     {
         parent::alterForm($form, $params);
 
-        $table = $form->get('table')->get('table')->getTable();
-        $table->removeColumn('noOfComplaints');
-        $this->alterTableForLgv($table, $params);
+        if ($form->has('table')) {
+            $table = $form->get('table')->get('table')->getTable();
+            $table->removeColumn('noOfComplaints');
+            $this->alterTableForLgv($table, $params);
+        }
 
         if ($form->has('dataTrafficArea')) {
             $form->get('dataTrafficArea')->remove('enforcementArea');

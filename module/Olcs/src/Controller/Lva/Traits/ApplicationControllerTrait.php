@@ -83,11 +83,9 @@ trait ApplicationControllerTrait
 
         $data = $this->getApplicationData($this->getApplicationId());
 
-        $lvaTitleSuffix = ($titleSuffix === 'people') ?
-            ($titleSuffix . '.' . $data['licence']['organisation']['type']['id']) : $titleSuffix;
         $params = array_merge(
             [
-                'title' => 'lva.section.title.' . $lvaTitleSuffix,
+                'title' => $this->getSectionTitle($sectionName, $data),
                 'form' => $form,
                 'reference' => $data['licence']['licNo']  . ' / ' . $this->getApplicationId(),
                 'status' => $data['status']['id'],
@@ -107,6 +105,39 @@ trait ApplicationControllerTrait
             ->addChild($section, 'content');
 
         return $base;
+    }
+
+    /**
+     * get section title
+     *
+     * @param string $sectionName
+     * @param array $data
+     *
+     * @return string
+     */
+    private function getSectionTitle(string $sectionName, array $data): string
+    {
+        // default section title
+        $sectionTitle = 'lva.section.title.' . $sectionName;
+
+        switch ($sectionName) {
+            case 'people':
+                // change the section name based on org type
+                $orgType = $data['licence']['organisation']['type']['id'];
+                $sectionTitle .= '.' . $orgType;
+                break;
+            case 'operating_centres':
+                // change the section name if it is LGV only
+                if (RefData::APP_VEHICLE_TYPE_LGV === $data['vehicleType']['id']) {
+                    $sectionTitle .= '.lgv';
+
+                    // overwrite page title too
+                    $this->placeholder()->setPlaceholder('pageTitle', $sectionTitle);
+                }
+                break;
+        }
+
+        return $sectionTitle;
     }
 
     /**
