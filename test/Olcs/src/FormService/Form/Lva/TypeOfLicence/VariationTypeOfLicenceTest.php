@@ -170,6 +170,12 @@ class VariationTypeOfLicenceTest extends MockeryTestCase
                 ->shouldReceive('disableElement')
                 ->with($mockForm, 'type-of-licence->licence-type->ltyp_siContent->vehicle-type')
                 ->once()
+                ->shouldReceive('disableElement')
+                ->with(
+                    $mockForm,
+                    'type-of-licence->licence-type->ltyp_siContent->lgv-declaration->lgv-declaration-confirmation'
+                )
+                ->once()
                 ->shouldReceive('lockElement')
                 ->with($ltFieldset, 'licence-type-lock-message')
                 ->once()
