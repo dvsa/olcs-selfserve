@@ -108,39 +108,6 @@ trait ApplicationControllerTrait
     }
 
     /**
-     * get section title
-     *
-     * @param string $sectionName
-     * @param array $data
-     *
-     * @return string
-     */
-    private function getSectionTitle(string $sectionName, array $data): string
-    {
-        // default section title
-        $sectionTitle = 'lva.section.title.' . $sectionName;
-
-        switch ($sectionName) {
-            case 'people':
-                // change the section name based on org type
-                $orgType = $data['licence']['organisation']['type']['id'];
-                $sectionTitle .= '.' . $orgType;
-                break;
-            case 'operating_centres':
-                // change the section name if it is LGV only
-                if (RefData::APP_VEHICLE_TYPE_LGV === $data['vehicleType']['id']) {
-                    $sectionTitle .= '.lgv';
-
-                    // overwrite page title too
-                    $this->placeholder()->setPlaceholder('pageTitle', $sectionTitle);
-                }
-                break;
-        }
-
-        return $sectionTitle;
-    }
-
-    /**
      * Get array of step progress data.
      *
      * @param string $currentSection Current section
