@@ -28,7 +28,6 @@ class VariationOperatingCentres extends CommonVariationOperatingCentres
         if ($form->has('table')) {
             $table = $form->get('table')->get('table')->getTable();
             $table->removeColumn('noOfComplaints');
-            $this->alterTableForLgv($table, $params);
         }
 
         if ($form->has('dataTrafficArea')) {
@@ -67,21 +66,6 @@ class VariationOperatingCentres extends CommonVariationOperatingCentres
                 $form->get('data')->get('totCommunityLicencesFieldset')->get('totCommunityLicences'),
                 $translationKey
             );
-        }
-    }
-
-    /**
-     * Alter the table in accordance with lgv requirements
-     *
-     * @param TableBuilder $tableBuilder
-     * @param array $params
-     */
-    private function alterTableForLgv(TableBuilder $tableBuilder, array $params)
-    {
-        if ($params['isEligibleForLgv']) {
-            $columns = $tableBuilder->getColumns();
-            $columns['noOfVehiclesRequired']['title'] = 'application_operating-centres_authorisation.table.hgvs';
-            $tableBuilder->setColumns($columns);
         }
     }
 }

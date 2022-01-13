@@ -69,7 +69,6 @@ class LicenceOperatingCentresTest extends LicenceOperatingCentresTestCase
             'isPsv' => false,
             'licenceType' => ['id' => RefData::LICENCE_TYPE_STANDARD_INTERNATIONAL],
             'vehicleType' => ['id' => RefData::APP_VEHICLE_TYPE_MIXED],
-            'isEligibleForLgv' => true,
             'totAuthLgvVehicles' => 0,
         ];
 
@@ -225,7 +224,7 @@ class LicenceOperatingCentresTest extends LicenceOperatingCentresTestCase
     {
         return [
             'totAuthHgvVehicles' => ['totAuthHgvVehicles', $this->paramsForLicence()],
-            'totAuthLgvVehicles' => ['totAuthLgvVehicles', $this->paramsForLicenceThatIsEligibleForLgvs()],
+            'totAuthLgvVehicles' => ['totAuthLgvVehicles', $this->paramsForMixedLicenceWithLgv()],
             'totAuthTrailers' => ['totAuthTrailers', $this->paramsForLicence()],
         ];
     }

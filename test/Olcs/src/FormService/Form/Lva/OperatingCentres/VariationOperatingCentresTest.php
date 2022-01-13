@@ -84,7 +84,6 @@ class VariationOperatingCentresTest extends MockeryTestCase
             ],
             'licenceType' => ['id' => RefData::LICENCE_TYPE_STANDARD_INTERNATIONAL],
             'vehicleType' => ['id' => RefData::APP_VEHICLE_TYPE_MIXED],
-            'isEligibleForLgv' => true,
             'totAuthLgvVehicles' => 0,
         ];
 
