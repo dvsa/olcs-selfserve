@@ -9,6 +9,7 @@ use Olcs\FormService\Form\Lva\TypeOfLicence\VariationTypeOfLicence;
 use Laminas\Form\Form;
 use Common\FormService\FormServiceManager;
 use Laminas\Form\Element;
+use Laminas\Form\Element\Radio;
 use Laminas\Form\Fieldset;
 use Common\RefData;
 use Common\Form\Elements\InputFilters\Lva\BackToVariationActionLink;
@@ -77,17 +78,32 @@ class VariationTypeOfLicenceTest extends MockeryTestCase
     {
         return [
             [
-                ['canUpdateLicenceType' => true, 'canBecomeSpecialRestricted' => true, 'currentLicenceType' => 'foo'],
+                [
+                    'canUpdateLicenceType' => true,
+                    'canBecomeSpecialRestricted' => true,
+                    'canBecomeStandardInternational' => true,
+                    'currentLicenceType' => 'foo'
+                ],
                 'form-actions->cancel',
                 2
             ],
             [
-                ['canUpdateLicenceType' => true, 'canBecomeSpecialRestricted' => false, 'currentLicenceType' => 'foo'],
+                [
+                    'canUpdateLicenceType' => true,
+                    'canBecomeSpecialRestricted' => false,
+                    'canBecomeStandardInternational' => false,
+                    'currentLicenceType' => 'foo'
+                ],
                 'form-actions->cancel',
-                3
+                4
             ],
             [
-                ['canUpdateLicenceType' => false, 'canBecomeSpecialRestricted' => true, 'currentLicenceType' => 'foo'],
+                [
+                    'canUpdateLicenceType' => false,
+                    'canBecomeSpecialRestricted' => true,
+                    'canBecomeStandardInternational' => true,
+                    'currentLicenceType' => 'foo'
+                ],
                 'form-actions',
                 3
             ],
@@ -108,7 +124,7 @@ class VariationTypeOfLicenceTest extends MockeryTestCase
             ->once()
             ->getMock();
 
-        $mockLicenceType = m::mock(Element::class);
+        $mockLicenceType = m::mock(Radio::class);
 
         $ltFieldset = m::mock(Fieldset::class);
         $ltFieldset->shouldReceive('get')
@@ -135,7 +151,7 @@ class VariationTypeOfLicenceTest extends MockeryTestCase
 
         $mockForm->shouldReceive('get')
             ->with('type-of-licence')
-            ->twice()
+            ->times(3)
             ->andReturn($mockTolFieldset)
             ->getMock();
 
@@ -159,6 +175,13 @@ class VariationTypeOfLicenceTest extends MockeryTestCase
         if (!$params['canBecomeSpecialRestricted']) {
             $this->fh->shouldReceive('removeOption')
                 ->with($mockLicenceType, RefData::LICENCE_TYPE_SPECIAL_RESTRICTED)
+                ->once()
+                ->getMock();
+        }
+
+        if (!$params['canBecomeStandardInternational']) {
+            $this->fh->shouldReceive('disableOption')
+                ->with($mockLicenceType, RefData::LICENCE_TYPE_STANDARD_INTERNATIONAL)
                 ->once()
                 ->getMock();
         }
