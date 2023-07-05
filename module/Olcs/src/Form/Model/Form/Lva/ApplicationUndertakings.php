@@ -17,10 +17,14 @@ class ApplicationUndertakings
      * @Form\ComposedObject("Common\Form\Model\Form\Lva\Fieldset\ApplicationDeclarationsAndUndertakings")
      */
     public $declarationsAndUndertakings = null;
+//Inserted for/type as radio buttons
 
     /**
      * @Form\Name("interim")
+     * @Form\Type("\Common\Form\Elements\Types\Radio")
      * @Form\ComposedObject("Common\Form\Model\Form\Lva\Fieldset\Interim")
+     * @Form\Options({
+     *     "label": "interim.application.undertakings.form.checkbox.label"})
      */
     public $interim = null;
 

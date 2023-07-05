@@ -210,7 +210,7 @@ class UndertakingsController extends AbstractUndertakingsController
         if (!$form->has('interim')) {
             return;
         }
-        $form->get('interim')->get('interimFee')->setValue(
+        $form->get('interim')->get('YContent')->get('interimFee')->setValue(
             $translator->translateReplace('selfserve.declaration.interim_fee', [$applicationData['interimFee']])
         );
         if (!$applicationData['interimFee']) {
@@ -257,6 +257,12 @@ class UndertakingsController extends AbstractUndertakingsController
         } else {
             $formHelper->remove($form, 'declarationsAndUndertakings->disabledReview');
             $data = (array) $this->getRequest()->getPost();
+            if ($form->get('interim')->get('goodsApplicationInterim') === 'Y')
+            {
+                echo "HELLO";
+                file_put_contents('php://stdout', print_r($form->get('interim')->get('goodsApplicationInterim')->getValue(), TRUE). PHP_EOL);
+                die();
+            }
             if (isset($data['declarationsAndUndertakings']['signatureOptions'])
                 && $data['declarationsAndUndertakings']['signatureOptions'] === 'N'
             ) {
