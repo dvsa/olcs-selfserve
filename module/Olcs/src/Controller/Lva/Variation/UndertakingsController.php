@@ -55,7 +55,7 @@ class UndertakingsController extends AbstractUndertakingsController
 
         $fieldset->get('summaryDownload')->setAttribute('value', $summaryDownload);
 
-        $form->get('interim')->get('interimFee')->setValue(
+        $form->get('interim')->get('YContent')->get('interimFee')->setValue(
             $translator->translateReplace('selfserve.declaration.interim_fee', [$applicationData['interimFee']])
         );
 

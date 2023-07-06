@@ -181,7 +181,7 @@ abstract class AbstractUndertakingsController extends AbstractController
             'interimRequested' => isset($formData['interim']) ?
                 $formData['interim']['goodsApplicationInterim'] : null,
             'interimReason' => isset($formData['interim']) ?
-                $formData['interim']['goodsApplicationInterimReason'] : null
+                $formData['interim']['YContent']['goodsApplicationInterimReason'] : null
         ];
         if ($signatureType) {
             $data['signatureType'] = $signatureType;
@@ -235,7 +235,7 @@ abstract class AbstractUndertakingsController extends AbstractController
             $interim = array();
             if (!is_null($applicationData['interimReason'])) {
                 $interim['goodsApplicationInterim'] = "Y";
-                $interim['goodsApplicationInterimReason'] = $applicationData['interimReason'];
+                $interim['YContent']['goodsApplicationInterimReason'] = $applicationData['interimReason'];
             }
 
             $output['interim'] = $interim;
