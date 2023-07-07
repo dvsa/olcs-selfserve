@@ -17,7 +17,6 @@ class ApplicationUndertakings
      * @Form\ComposedObject("Common\Form\Model\Form\Lva\Fieldset\ApplicationDeclarationsAndUndertakings")
      */
     public $declarationsAndUndertakings = null;
-//Inserted for/type as radio buttons
 
     /**
      * @Form\Name("interim")

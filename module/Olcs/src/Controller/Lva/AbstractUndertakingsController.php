@@ -230,7 +230,7 @@ abstract class AbstractUndertakingsController extends AbstractController
                 'id' => $applicationData['id'],
             )
         );
-//
+
         if ($goodsOrPsv === RefData::LICENCE_CATEGORY_GOODS_VEHICLE) {
             $interim = array();
             if (!is_null($applicationData['interimReason'])) {
