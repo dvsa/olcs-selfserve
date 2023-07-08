@@ -60,7 +60,7 @@ class VariationUndertakingsTest extends AbstractFormValidationTestCase
 
     public function testGoodsApplicationInterimReason()
     {
-        $element = ['interim', 'goodsApplicationInterimReason'];
+        $element = ['interim','YContent','goodsApplicationInterimReason'];
         $this->assertFormElementRequired($element, false);
         $this->assertFormElementAllowEmpty($element, true);
         $this->assertFormElementText($element);
