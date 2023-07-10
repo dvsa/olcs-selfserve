@@ -50,7 +50,7 @@ class UndertakingsController extends AbstractUndertakingsController
         // If form submitted then go to payment page
         if ($this->getRequest()->isPost()) {
             return $this->redirect()->toRoute(
-                'lva-'.$this->lva . '/pay-and-submit',
+                'lva-' . $this->lva . '/pay-and-submit',
                 [$this->getIdentifierIndex() => $this->getIdentifier(), 'redirect-back' => 'undertakings'],
                 [],
                 true
@@ -258,7 +258,8 @@ class UndertakingsController extends AbstractUndertakingsController
             $formHelper->remove($form, 'declarationsAndUndertakings->disabledReview');
             $data = (array) $this->getRequest()->getPost();
 
-            if (isset($data['declarationsAndUndertakings']['signatureOptions'])
+            if (
+                isset($data['declarationsAndUndertakings']['signatureOptions'])
                 && $data['declarationsAndUndertakings']['signatureOptions'] === 'N'
             ) {
                 $formHelper->remove($form, 'declarationsAndUndertakings->declarationForVerify');
