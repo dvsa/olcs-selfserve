@@ -572,7 +572,8 @@ abstract class AbstractTransportManagersController extends CommonAbstractTmContr
                     'town' => $data['address']['town'],
                     'postcode' => $data['address']['postcode'],
                     'countryCode' => $data['address']['countryCode'],
-                ]
+                ],
+                'availabilityAgreement' => $data['tm-employment-details']['understoodAvailabilityAgreementConfirmation'],
             ]
         );
 
