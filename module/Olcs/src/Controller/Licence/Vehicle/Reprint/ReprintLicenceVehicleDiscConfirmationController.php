@@ -4,15 +4,20 @@ namespace Olcs\Controller\Licence\Vehicle\Reprint;
 
 use Common\Service\Cqrs\Exception\AccessDeniedException;
 use Common\Service\Cqrs\Exception\NotFoundException;
+use Common\Service\Helper\FlashMessengerHelperService;
+use Common\Service\Helper\FormHelperService;
+use Common\Service\Helper\TranslationHelperService;
+use Common\Service\Table\TableFactory;
 use Dvsa\Olcs\Transfer\Command\Vehicle\ReprintDisc;
 use Dvsa\Olcs\Transfer\Query\LicenceVehicle\LicenceVehiclesById;
+use Exception;
+use Laminas\Http\Response;
 use Olcs\Controller\Licence\Vehicle\AbstractVehicleController;
 use Olcs\Controller\Licence\Vehicle\SwitchBoardController;
 use Olcs\DTO\Licence\Vehicle\LicenceVehicleDTO;
 use Olcs\Exception\Licence\Vehicle\VehiclesNotFoundWithIdsException;
 use Olcs\Form\Model\Form\Vehicle\VehicleConfirmationForm;
-use Exception;
-use Laminas\Http\Response;
+use Permits\Data\Mapper\MapperManager;
 
 class ReprintLicenceVehicleDiscConfirmationController extends AbstractVehicleController
 {
@@ -26,6 +31,23 @@ class ReprintLicenceVehicleDiscConfirmationController extends AbstractVehicleCon
             ]
         ]
     ];
+
+    /**
+     * @param TranslationHelperService $translationHelper
+     * @param FormHelperService $formHelper
+     * @param TableFactory $tableBuilder
+     * @param MapperManager $mapperManager
+     * @param FlashMessengerHelperService $flashMessenger
+     */
+    public function __construct(
+        TranslationHelperService $translationHelper,
+        FormHelperService $formHelper,
+        TableFactory $tableBuilder,
+        MapperManager $mapperManager,
+        FlashMessengerHelperService $flashMessenger
+    ) {
+        parent::__construct($translationHelper, $formHelper, $tableBuilder, $mapperManager, $flashMessenger);
+    }
 
     /**
      * Handles a request from a user to view a page from which they can confirm the reprint of one or more licences
@@ -124,7 +146,7 @@ class ReprintLicenceVehicleDiscConfirmationController extends AbstractVehicleCon
         $query = LicenceVehiclesById::create(['ids' => $vehicleIds]);
         try {
             $queryResult = $this->handleQuery($query);
-        } catch (NotFoundException|AccessDeniedException $exception) {
+        } catch (NotFoundException | AccessDeniedException $exception) {
             throw new VehiclesNotFoundWithIdsException($vehicleIds);
         }
         $licenceVehicles = $queryResult->getResult()['results'] ?? [];

@@ -2,13 +2,18 @@
 
 namespace Olcs\Controller\Licence\Vehicle\Reprint;
 
+use Common\Form\Form;
+use Common\Service\Helper\FlashMessengerHelperService;
+use Common\Service\Helper\FormHelperService;
+use Common\Service\Helper\TranslationHelperService;
+use Common\Service\Table\TableFactory;
+use Laminas\Http\Request;
+use Laminas\Http\Response;
+use Laminas\View\Model\ViewModel;
 use Olcs\Controller\Licence\Vehicle\AbstractVehicleController;
 use Olcs\Form\Model\Form\Vehicle\ListVehicleSearch;
 use Olcs\Form\Model\Form\Vehicle\Vehicles as VehiclesForm;
-use Common\Form\Form;
-use Laminas\Http\Request;
-use Laminas\View\Model\ViewModel;
-use Laminas\Http\Response;
+use Permits\Data\Mapper\MapperManager;
 
 /**
  * @see ReprintVehicleLicenceControllerFactory
@@ -30,6 +35,23 @@ class ReprintLicenceVehicleDiscController extends AbstractVehicleController
             ]
         ]
     ];
+
+    /**
+     * @param TranslationHelperService $translationHelper
+     * @param FormHelperService $formHelper
+     * @param TableFactory $tableBuilder
+     * @param MapperManager $mapperManager
+     * @param FlashMessengerHelperService $flashMessenger
+     */
+    public function __construct(
+        TranslationHelperService $translationHelper,
+        FormHelperService $formHelper,
+        TableFactory $tableBuilder,
+        MapperManager $mapperManager,
+        FlashMessengerHelperService $flashMessenger
+    ) {
+        parent::__construct($translationHelper, $formHelper, $tableBuilder, $mapperManager, $flashMessenger);
+    }
 
     /**
      * Handles a request from a user to show the form to reprint one or more of the licences that they have access to.

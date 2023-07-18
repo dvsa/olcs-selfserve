@@ -4,14 +4,18 @@ namespace Olcs\Controller\Licence\Surrender;
 
 use Common\Form\Form;
 use Common\RefData;
+use Common\Service\Helper\FlashMessengerHelperService;
+use Common\Service\Helper\FormHelperService;
+use Common\Service\Helper\TranslationHelperService;
+use Common\Service\Table\TableFactory;
 use Dvsa\Olcs\Transfer\Command\Surrender\Create;
 use Dvsa\Olcs\Transfer\Command\Surrender\Delete;
 use Olcs\Form\Model\Form\Surrender\InformationChanged;
 use Olcs\Service\Surrender\SurrenderStateService;
+use Permits\Data\Mapper\MapperManager;
 
 class InformationChangedController extends AbstractSurrenderController
 {
-
     protected $formConfig = [
         'index' => [
             'continueForm' => [
@@ -34,9 +38,22 @@ class InformationChangedController extends AbstractSurrenderController
      */
     private $surrenderState;
 
-    public function __construct()
-    {
+    /**
+     * @param TranslationHelperService $translationHelper
+     * @param FormHelperService $formHelper
+     * @param TableFactory $tableBuilder
+     * @param MapperManager $mapperManager
+     * @param FlashMessengerHelperService $hlpFlashMsgr
+     */
+    public function __construct(
+        TranslationHelperService $translationHelper,
+        FormHelperService $formHelper,
+        TableFactory $tableBuilder,
+        MapperManager $mapperManager,
+        FlashMessengerHelperService $hlpFlashMsgr
+    ) {
         $this->surrenderStateService = new SurrenderStateService();
+        parent::__construct($translationHelper, $formHelper, $tableBuilder, $mapperManager, $hlpFlashMsgr);
     }
 
     public function indexAction()

@@ -5,24 +5,29 @@ namespace Olcs\Controller\Licence\Vehicle;
 use Common\Exception\BadRequestException;
 use Common\Service\Cqrs\Exception\AccessDeniedException;
 use Common\Service\Cqrs\Exception\NotFoundException;
+use Common\Service\Helper\FlashMessengerHelperService;
+use Common\Service\Helper\FormHelperService;
+use Common\Service\Helper\TranslationHelperService;
+use Common\Service\Table\TableFactory;
 use Dvsa\Olcs\Transfer\Command\Licence\TransferVehicles;
 use Dvsa\Olcs\Transfer\Query\Licence\Licence;
 use Dvsa\Olcs\Transfer\Query\LicenceVehicle\LicenceVehiclesById;
+use Exception;
+use Laminas\Http\Response;
+use Laminas\Mvc\MvcEvent;
+use Laminas\View\Model\ViewModel;
 use Olcs\DTO\Licence\LicenceDTO;
 use Olcs\DTO\Licence\Vehicle\LicenceVehicleDTO;
 use Olcs\Exception\Licence\LicenceNotFoundWithIdException;
 use Olcs\Exception\Licence\LicenceVehicleLimitReachedException;
+use Olcs\Exception\Licence\Vehicle\DestinationLicenceNotFoundWithIdException;
+use Olcs\Exception\Licence\Vehicle\DestinationLicenceNotSetException;
 use Olcs\Exception\Licence\Vehicle\LicenceAlreadyAssignedVehicleException;
+use Olcs\Exception\Licence\Vehicle\VehicleSelectionEmptyException;
+use Olcs\Exception\Licence\Vehicle\VehiclesNotFoundWithIdsException;
 use Olcs\Form\Model\Form\Vehicle\Fieldset\YesNo;
 use Olcs\Form\Model\Form\Vehicle\VehicleConfirmationForm;
-use Laminas\Mvc\MvcEvent;
-use Olcs\Exception\Licence\Vehicle\VehicleSelectionEmptyException;
-use Laminas\View\Model\ViewModel;
-use Laminas\Http\Response;
-use Exception;
-use Olcs\Exception\Licence\Vehicle\DestinationLicenceNotSetException;
-use Olcs\Exception\Licence\Vehicle\DestinationLicenceNotFoundWithIdException;
-use Olcs\Exception\Licence\Vehicle\VehiclesNotFoundWithIdsException;
+use Permits\Data\Mapper\MapperManager;
 
 class TransferVehicleConfirmationController extends AbstractVehicleController
 {
@@ -38,6 +43,23 @@ class TransferVehicleConfirmationController extends AbstractVehicleController
             ]
         ]
     ];
+
+    /**
+     * @param TranslationHelperService $translationHelper
+     * @param FormHelperService $formHelper
+     * @param TableFactory $tableBuilder
+     * @param MapperManager $mapperManager
+     * @param FlashMessengerHelperService $flashMessenger
+     */
+    public function __construct(
+        TranslationHelperService $translationHelper,
+        FormHelperService $formHelper,
+        TableFactory $tableBuilder,
+        MapperManager $mapperManager,
+        FlashMessengerHelperService $flashMessenger
+    ) {
+        parent::__construct($translationHelper, $formHelper, $tableBuilder, $mapperManager, $flashMessenger);
+    }
 
     /**
      * @inheritDoc
@@ -105,7 +127,7 @@ class TransferVehicleConfirmationController extends AbstractVehicleController
             'form' => $this->form,
             'backLink' => $this->getLink(static::ROUTE_TRANSFER_INDEX),
             'destinationLicenceId' => $destinationLicence->getId(),
-            'vrmList' => array_map(function (LicenceVehicleDTO  $licenceVehicle) {
+            'vrmList' => array_map(function (LicenceVehicleDTO $licenceVehicle) {
                 return $licenceVehicle->getVehicle()->getVrm();
             }, $licenceVehicles),
         ];
@@ -286,7 +308,7 @@ class TransferVehicleConfirmationController extends AbstractVehicleController
         $query = Licence::create(['id' => $licenceId]);
         try {
             $queryResult = $this->handleQuery($query);
-        } catch (NotFoundException|AccessDeniedException $exception) {
+        } catch (NotFoundException | AccessDeniedException $exception) {
             throw new LicenceNotFoundWithIdException($licenceId);
         }
         return new LicenceDTO($queryResult->getResult());
@@ -305,7 +327,7 @@ class TransferVehicleConfirmationController extends AbstractVehicleController
         $query = LicenceVehiclesById::create(['ids' => $vehicleIds]);
         try {
             $queryResult = $this->handleQuery($query);
-        } catch (NotFoundException|AccessDeniedException $exception) {
+        } catch (NotFoundException | AccessDeniedException $exception) {
             throw new VehiclesNotFoundWithIdsException($vehicleIds);
         }
         $licenceVehicles = $queryResult->getResult()['results'] ?? [];

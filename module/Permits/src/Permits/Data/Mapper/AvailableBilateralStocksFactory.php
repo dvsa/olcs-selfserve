@@ -28,8 +28,11 @@ class AvailableBilateralStocksFactory implements FactoryInterface
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null) : AvailableBilateralStocks
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null): AvailableBilateralStocks
     {
+        if (method_exists($container, 'getServiceLocator') && $container->getServiceLocator()) {
+            $container = $container->getServiceLocator();
+        }
         return new AvailableBilateralStocks(
             $container->get('Helper\Translation')
         );

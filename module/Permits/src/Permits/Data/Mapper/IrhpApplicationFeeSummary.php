@@ -2,6 +2,7 @@
 
 namespace Permits\Data\Mapper;
 
+use Common\Data\Mapper\MapperInterface;
 use Common\RefData;
 use Common\Service\Helper\TranslationHelperService;
 use Common\Service\Helper\UrlHelperService;
@@ -14,29 +15,29 @@ use RuntimeException;
 /**
  * Mapper for the IRHP application fee summary page
  */
-class IrhpApplicationFeeSummary
+class IrhpApplicationFeeSummary implements MapperInterface
 {
-    const APP_REFERENCE_HEADING = 'permits.page.fee.application.reference';
-    const APP_DATE_HEADING = 'permits.page.fee.application.date';
-    const FEE_PER_PERMIT_HEADING = 'permits.irhp.fee-breakdown.fee-per-permit';
-    const APP_FEE_PER_PERMIT_HEADING = 'permits.page.fee.application.fee.per.permit';
-    const ISSUE_FEE_PER_PERMIT_HEADING = 'permits.page.fee.issue.fee.per.permit';
-    const PERMIT_STATUS_HEADING = 'permits.page.fee.permit.status';
-    const PERMIT_TYPE_HEADING = 'permits.page.fee.permit.type';
-    const PERMIT_YEAR_HEADING = 'permits.page.fee.permit.year';
-    const PERMIT_PERIOD_HEADING = 'permits.page.fee.permit.period';
-    const NUM_PERMITS_HEADING = 'permits.page.fee.number.permits';
-    const FEE_TOTAL_HEADING = 'permits.page.irhp-fee.permit.fee.total';
-    const TOTAL_ISSUE_FEE_HEADING = 'permits.page.fee.permit.fee.issue.total';
-    const TOTAL_APPLICATION_FEE_HEADING = 'permits.page.fee.permit.fee.total';
-    const TOTAL_APPLICATION_FEE_PAID_HEADING = 'permits.page.fee.permit.fee.paid.total';
-    const PAYMENT_DUE_DATE_HEADING = 'permits.page.fee.payment.due.date';
-    const FEE_NON_REFUNDABLE_HEADING = 'permits.page.fee.permit.fee.non-refundable';
-    const AMOUNT_PAID_HEADING = 'permits.page.fee.permit.fee.amount-paid';
-    const AMOUNT_REMAINING_HEADING = 'permits.page.fee.permit.fee.amount-remaining';
+    public const APP_REFERENCE_HEADING = 'permits.page.fee.application.reference';
+    public const APP_DATE_HEADING = 'permits.page.fee.application.date';
+    public const FEE_PER_PERMIT_HEADING = 'permits.irhp.fee-breakdown.fee-per-permit';
+    public const APP_FEE_PER_PERMIT_HEADING = 'permits.page.fee.application.fee.per.permit';
+    public const ISSUE_FEE_PER_PERMIT_HEADING = 'permits.page.fee.issue.fee.per.permit';
+    public const PERMIT_STATUS_HEADING = 'permits.page.fee.permit.status';
+    public const PERMIT_TYPE_HEADING = 'permits.page.fee.permit.type';
+    public const PERMIT_YEAR_HEADING = 'permits.page.fee.permit.year';
+    public const PERMIT_PERIOD_HEADING = 'permits.page.fee.permit.period';
+    public const NUM_PERMITS_HEADING = 'permits.page.fee.number.permits';
+    public const FEE_TOTAL_HEADING = 'permits.page.irhp-fee.permit.fee.total';
+    public const TOTAL_ISSUE_FEE_HEADING = 'permits.page.fee.permit.fee.issue.total';
+    public const TOTAL_APPLICATION_FEE_HEADING = 'permits.page.fee.permit.fee.total';
+    public const TOTAL_APPLICATION_FEE_PAID_HEADING = 'permits.page.fee.permit.fee.paid.total';
+    public const PAYMENT_DUE_DATE_HEADING = 'permits.page.fee.payment.due.date';
+    public const FEE_NON_REFUNDABLE_HEADING = 'permits.page.fee.permit.fee.non-refundable';
+    public const AMOUNT_PAID_HEADING = 'permits.page.fee.permit.fee.amount-paid';
+    public const AMOUNT_REMAINING_HEADING = 'permits.page.fee.permit.fee.amount-remaining';
 
-    const ALREADY_PAID_STATUS = 'permits.page.fee.permit.fee.already-paid';
-    const TO_BE_PAID_STATUS = 'permits.page.fee.permit.fee.to-be-paid';
+    public const ALREADY_PAID_STATUS = 'permits.page.fee.permit.fee.already-paid';
+    public const TO_BE_PAID_STATUS = 'permits.page.fee.permit.fee.to-be-paid';
 
     /** @var TranslationHelperService */
     private $translator;
@@ -710,5 +711,17 @@ class IrhpApplicationFeeSummary
         }
 
         return $total;
+    }
+
+    /**
+     * Should map data from a result array into an array suitable for a form
+     *
+     * @param array $data Data from command
+     *
+     * @return array
+     */
+    public static function mapFromResult(array $data): array
+    {
+        return ['fields' => $data];
     }
 }

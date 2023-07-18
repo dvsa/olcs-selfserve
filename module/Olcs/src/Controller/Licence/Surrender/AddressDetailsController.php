@@ -3,8 +3,12 @@
 namespace Olcs\Controller\Licence\Surrender;
 
 use Common\Data\Mapper;
+use Common\Service\Helper\FlashMessengerHelperService;
+use Common\Service\Helper\FormHelperService;
+use Common\Service\Helper\TranslationHelperService;
+use Common\Service\Table\TableFactory;
 use Dvsa\Olcs\Transfer\Command\Licence\UpdateAddresses;
-use Dvsa\Olcs\Transfer\Query\Licence\Addresses;
+use Permits\Data\Mapper\MapperManager;
 
 /**
  * Class AddressDetailsController
@@ -14,6 +18,23 @@ use Dvsa\Olcs\Transfer\Query\Licence\Addresses;
 class AddressDetailsController extends AbstractSurrenderController
 {
     protected $form;
+
+    /**
+     * @param TranslationHelperService $translationHelper
+     * @param FormHelperService $formHelper
+     * @param TableFactory $tableBuilder
+     * @param MapperManager $mapperManager
+     * @param FlashMessengerHelperService $hlpFlashMsgr
+     */
+    public function __construct(
+        TranslationHelperService $translationHelper,
+        FormHelperService $formHelper,
+        TableFactory $tableBuilder,
+        MapperManager $mapperManager,
+        FlashMessengerHelperService $hlpFlashMsgr
+    ) {
+        parent::__construct($translationHelper, $formHelper, $tableBuilder, $mapperManager, $hlpFlashMsgr);
+    }
 
     public function indexAction()
     {
@@ -29,7 +50,7 @@ class AddressDetailsController extends AbstractSurrenderController
         $this->form = $this->getForm('Licence\Surrender\Addresses')
             ->setData($formData);
 
-        $hasProcessed = $this->hlpForm->processAddressLookupForm($this->form, $request);
+        $hasProcessed = $this->formHelper->processAddressLookupForm($this->form, $request);
 
         if (!$hasProcessed && $request->isPost()) {
             if ($this->form->isValid()) {
@@ -68,7 +89,6 @@ class AddressDetailsController extends AbstractSurrenderController
                 'partial' => false,
             ] +
             Mapper\Lva\Addresses::mapFromForm($formData);
-
 
         $response = $this->handleCommand(UpdateAddresses::create($dtoData));
 

@@ -1,17 +1,23 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Olcs\Controller\Licence\Vehicle;
 
 use Common\Form\Form;
+use Common\Service\Helper\FlashMessengerHelperService;
+use Common\Service\Helper\FormHelperService;
+use Common\Service\Helper\TranslationHelperService;
+use Common\Service\Table\TableFactory;
 use Dvsa\Olcs\Transfer\Query\Licence\OtherActiveLicences;
+use Laminas\Http\Response;
+use Laminas\View\Model\ViewModel;
 use Olcs\DTO\Licence\OtherActiveLicenceListDTO;
+use Olcs\Exception\Licence\NoOtherLicencesFoundException;
 use Olcs\Form\Model\Form\Vehicle\Fieldset\VehicleTransferFormActions;
 use Olcs\Form\Model\Form\Vehicle\ListVehicleSearch;
 use Olcs\Form\Model\Form\Vehicle\VehicleTransferForm;
-use Laminas\View\Model\ViewModel;
-use Olcs\Exception\Licence\NoOtherLicencesFoundException;
-use Laminas\Http\Response;
+use Permits\Data\Mapper\MapperManager;
 
 class TransferVehicleController extends AbstractVehicleController
 {
@@ -32,6 +38,23 @@ class TransferVehicleController extends AbstractVehicleController
             ]
         ]
     ];
+
+    /**
+     * @param TranslationHelperService $translationHelper
+     * @param FormHelperService $formHelper
+     * @param TableFactory $tableBuilder
+     * @param MapperManager $mapperManager
+     * @param FlashMessengerHelperService $flashMessenger
+     */
+    public function __construct(
+        TranslationHelperService $translationHelper,
+        FormHelperService $formHelper,
+        TableFactory $tableBuilder,
+        MapperManager $mapperManager,
+        FlashMessengerHelperService $flashMessenger
+    ) {
+        parent::__construct($translationHelper, $formHelper, $tableBuilder, $mapperManager, $flashMessenger);
+    }
 
     /**
      * Handles a request from a user to show the transfer vehicles page.
