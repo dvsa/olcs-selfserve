@@ -3992,12 +3992,12 @@
         },
         {
             "name": "olcs/olcs-common",
-            "version": "4.206.487",
+            "version": "4.206.489",
             "dist": {
                 "type": "zip",
-                "url": "https://nexus.olcs.dev-dvsacloud.uk/repository/OLCS/olcs/olcs-common/4.206.487/olcs-olcs-common-4.206.487.zip",
-                "reference": "5db9c45b48fe249a778a252c7417dec499fa4c97",
-                "shasum": "5db9c45b48fe249a778a252c7417dec499fa4c97"
+                "url": "https://nexus.olcs.dev-dvsacloud.uk/repository/OLCS/olcs/olcs-common/4.206.489/olcs-olcs-common-4.206.489.zip",
+                "reference": "ce540057258243857a1dd0d08202285a5d031206",
+                "shasum": "ce540057258243857a1dd0d08202285a5d031206"
             },
             "require": {
                 "elendev/composer-push": "^1.0.3",
@@ -4058,7 +4058,7 @@
                 ]
             },
             "description": "Common library for the OLCS Project",
-            "time": "2023-07-14T15:39:02+00:00"
+            "time": "2023-07-18T15:12:17+00:00"
         },
         {
             "name": "olcs/olcs-frontend-deps",
