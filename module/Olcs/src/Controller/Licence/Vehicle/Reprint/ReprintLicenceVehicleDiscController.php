@@ -80,7 +80,7 @@ class ReprintLicenceVehicleDiscController extends AbstractVehicleController
         ]);
 
         if ($vehicleTable->getTotal() > static::DEFAULT_TABLE_ROW_LIMIT) {
-            $view->setVariable('note', $this->translator->translateReplace('licence.vehicle.reprint.note', [static::MAX_ACTION_BATCH_SIZE]));
+            $view->setVariable('note', $this->translationHelper->translateReplace('licence.vehicle.reprint.note', [static::MAX_ACTION_BATCH_SIZE]));
         }
 
         if ($vehicleTable->getTotal() > static::DEFAULT_TABLE_ROW_LIMIT || $this->isSearchResultsPage()) {
@@ -113,7 +113,7 @@ class ReprintLicenceVehicleDiscController extends AbstractVehicleController
         }
 
         if (count($selectedVehicles) > static::MAX_ACTION_BATCH_SIZE) {
-            $message = $this->translator->translateReplace('licence.vehicle.reprint.error.too-many-selected', [static::MAX_ACTION_BATCH_SIZE]);
+            $message = $this->translationHelper->translateReplace('licence.vehicle.reprint.error.too-many-selected', [static::MAX_ACTION_BATCH_SIZE]);
             $this->form->get('formActions')->get('action')->setMessages([$message]);
             return $this->indexAction();
         }

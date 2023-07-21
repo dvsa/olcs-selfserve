@@ -79,7 +79,7 @@ class TransferVehicleController extends AbstractVehicleController
         $view->setVariables($this->getViewVariables());
 
         if ($vehicleTable->getTotal() > static::VEHICLE_WARNING_LIMIT) {
-            $view->setVariable('note', $this->translator->translate('licence.vehicle.transfer.note.more-then-20-vehicles'));
+            $view->setVariable('note', $this->translationHelper->translate('licence.vehicle.transfer.note.more-then-20-vehicles'));
         }
 
         if ($vehicleTable->getTotal() > $vehicleTable->getLimit() || $this->isSearchResultsPage()) {
@@ -181,7 +181,7 @@ class TransferVehicleController extends AbstractVehicleController
             $otherActiveLicence = array_values($otherActiveLicences)[0];
             $selectFormElementClass = $selectFormElement->getAttribute('class');
             $selectFormElement->setAttribute('class', sprintf('%s govuk-!-display-none', $selectFormElementClass));
-            $selectFormElement->setLabel($this->translator->translateReplace(
+            $selectFormElement->setLabel($this->translationHelper->translateReplace(
                 "licence.vehicle.transfer.select.licence.label.single",
                 [$otherActiveLicence->getLicenceNumber()]
             ));

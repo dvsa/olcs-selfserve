@@ -127,12 +127,12 @@ class RemoveVehicleConfirmationController extends AbstractVehicleController
             $successMessageKey = 'licence.vehicle.remove.confirm.success.plural';
         }
 
-        $panelMessage = $this->translator->translateReplace($successMessageKey, [count($vehicleIds)]);
+        $panelMessage = $this->translationHelper->translateReplace($successMessageKey, [count($vehicleIds)]);
         $this->flashMessenger->addMessage($panelMessage, SwitchBoardController::PANEL_FLASH_MESSENGER_NAMESPACE);
 
         if ($licence->getResult()['activeVehicleCount'] == 0) {
             $this->flashMessenger->addMessage(
-                $this->translator->translate(
+                $this->translationHelper->translate(
                     'licence.vehicle.remove.confirm.success.last-vehicle-removed'
                 ),
                 SwitchBoardController::PANEL_FLASH_MESSENGER_NAMESPACE

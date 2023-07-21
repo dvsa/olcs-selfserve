@@ -139,7 +139,7 @@ class RemoveVehicleController extends AbstractVehicleController
         $view->setVariables($this->getViewVariables());
 
         if ($vehicleTable->getTotal() > static::VEHICLE_WARNING_LIMIT) {
-            $view->setVariable('note', $this->translator->translate('licence.vehicle.remove.note'));
+            $view->setVariable('note', $this->translationHelper->translate('licence.vehicle.remove.note'));
         }
 
         if ($vehicleTable->getTotal() > static::VEHICLE_SEARCH_FORM_THRESHOLD || $this->isSearchResultsPage()) {

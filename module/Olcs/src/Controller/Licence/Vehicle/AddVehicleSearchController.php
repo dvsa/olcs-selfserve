@@ -134,7 +134,7 @@ class AddVehicleSearchController extends AbstractVehicleController
         );
 
         if ($response->isOk()) {
-            $panelMessage = $this->translator->translateReplace('licence.vehicle.add.success', [$vehicleData['registrationNumber']]);
+            $panelMessage = $this->translationHelper->translateReplace('licence.vehicle.add.success', [$vehicleData['registrationNumber']]);
             $this->flashMessenger->addMessage($panelMessage, SwitchBoardController::PANEL_FLASH_MESSENGER_NAMESPACE);
             return $this->nextStep('lva-licence/vehicles');
         }
@@ -206,7 +206,7 @@ class AddVehicleSearchController extends AbstractVehicleController
     {
         $this->form->get('vehicle-search')->setMessages([
             AbstractInputSearch::ELEMENT_INPUT_NAME => [
-                $type => $this->translator->translate($message)
+                $type => $this->translationHelper->translate($message)
             ]
         ]);
     }
@@ -222,7 +222,7 @@ class AddVehicleSearchController extends AbstractVehicleController
         } catch (NotFoundException $exception) {
             $this->setFormErrorMessage('licence.vehicle.add.search.vrm-not-found', 'vrm_not_found');
         } catch (Exception $exception) {
-            $this->flashMessenger->addErrorMessage($this->translator->translate('licence.vehicle.add.search.query-error'));
+            $this->flashMessenger->addErrorMessage($this->translationHelper->translate('licence.vehicle.add.search.query-error'));
         }
         return $vehicleData ?? null;
     }

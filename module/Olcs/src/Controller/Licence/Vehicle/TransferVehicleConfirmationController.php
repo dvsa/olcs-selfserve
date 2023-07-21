@@ -79,7 +79,7 @@ class TransferVehicleConfirmationController extends AbstractVehicleController
         } catch (LicenceNotFoundWithIdException $exception) {
             $this->flashMessenger->addErrorMessage('licence.vehicle.transfer.confirm.error.invalid-licence');
         } catch (LicenceVehicleLimitReachedException $exception) {
-            $this->flashMessenger->addErrorMessage($this->translator->translateReplace(
+            $this->flashMessenger->addErrorMessage($this->translationHelper->translateReplace(
                 'licence.vehicles_transfer.form.message_exceed',
                 [$exception->getLicenceNumber()]
             ));
@@ -92,7 +92,7 @@ class TransferVehicleConfirmationController extends AbstractVehicleController
                 $message = 'licence.vehicles_transfer.form.message_already_on_licence';
                 $data = [implode(', ', $vehicleVrms), $exception->getLicenceNumber()];
             }
-            $this->flashMessenger->addErrorMessage($this->translator->translateReplace($message, $data));
+            $this->flashMessenger->addErrorMessage($this->translationHelper->translateReplace($message, $data));
         }
         return $this->redirectToTransferIndex();
     }
@@ -138,7 +138,7 @@ class TransferVehicleConfirmationController extends AbstractVehicleController
             $confirmHeaderKey = 'licence.vehicle.transfer.confirm.header.singular';
             $viewData['vrmListInfoText'] = 'licence.vehicle.transfer.confirm.list.hint.singular';
         }
-        $viewData['title'] = $this->translator->translateReplace($confirmHeaderKey, [$destinationLicenceNumber]);
+        $viewData['title'] = $this->translationHelper->translateReplace($confirmHeaderKey, [$destinationLicenceNumber]);
         return $this->renderView($viewData);
     }
 
@@ -188,7 +188,7 @@ class TransferVehicleConfirmationController extends AbstractVehicleController
         $licence = $this->getLicenceById($licenceId);
         $activeVehicleCount = $licence->getActiveVehicleCount();
         if (null !== $activeVehicleCount && $activeVehicleCount < 1) {
-            $message = $this->translator->translate('licence.vehicle.transfer.confirm.success.last-vehicle-transferred');
+            $message = $this->translationHelper->translate('licence.vehicle.transfer.confirm.success.last-vehicle-transferred');
             $this->flashMessenger->addMessage($message, SwitchBoardController::PANEL_FLASH_MESSENGER_NAMESPACE);
         }
     }
@@ -203,12 +203,12 @@ class TransferVehicleConfirmationController extends AbstractVehicleController
     protected function flashTransferOfVehiclesCompleted(LicenceDTO $destinationLicence, array $vehicleIds)
     {
         if (count($vehicleIds) === 1) {
-            $message = $this->translator->translateReplace(
+            $message = $this->translationHelper->translateReplace(
                 'licence.vehicle.transfer.confirm.success.singular',
                 [$destinationLicence->getLicenceNumber()]
             );
         } else {
-            $message = $this->translator->translateReplace(
+            $message = $this->translationHelper->translateReplace(
                 'licence.vehicle.transfer.confirm.success.plural',
                 [count($vehicleIds), $destinationLicence->getLicenceNumber()]
             );

@@ -52,7 +52,7 @@ class AddDuplicateVehicleController extends AbstractVehicleController
         }
 
         $params = $this->getViewVariables();
-        $params['note'] = $this->translator->translateReplace(
+        $params['note'] = $this->translationHelper->translateReplace(
             'licence.vehicle.add.duplicate.note',
             [
                 $this->session->getVehicleData()['registrationNumber']
@@ -112,7 +112,7 @@ class AddDuplicateVehicleController extends AbstractVehicleController
         );
 
         if ($response->isOk()) {
-            $panelMessage = $this->translator->translateReplace('licence.vehicle.add.success', [$vehicleData['registrationNumber']]);
+            $panelMessage = $this->translationHelper->translateReplace('licence.vehicle.add.success', [$vehicleData['registrationNumber']]);
             $this->flashMessenger->addMessage($panelMessage, SwitchBoardController::PANEL_FLASH_MESSENGER_NAMESPACE);
             return $this->nextStep('lva-licence/vehicles');
         }

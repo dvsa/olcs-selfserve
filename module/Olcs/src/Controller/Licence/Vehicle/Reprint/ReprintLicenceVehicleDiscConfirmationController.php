@@ -127,7 +127,7 @@ class ReprintLicenceVehicleDiscConfirmationController extends AbstractVehicleCon
             $successMessageKey = 'licence.vehicle.reprint.confirm.success.plural';
         }
 
-        $panelMessage = $this->translator->translateReplace($successMessageKey, [count($vehicleIds)]);
+        $panelMessage = $this->translationHelper->translateReplace($successMessageKey, [count($vehicleIds)]);
         $this->flashMessenger->addMessage($panelMessage, SwitchBoardController::PANEL_FLASH_MESSENGER_NAMESPACE);
 
         return $this->nextStep('lva-licence/vehicles');

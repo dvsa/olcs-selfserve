@@ -170,7 +170,7 @@ class ViewVehicleController extends AbstractVehicleController
             $otherActiveLicence = array_values($licences)[0];
             $selectFormElementClass = $select->getAttribute('class');
             $select->setAttribute('class', sprintf('%s govuk-!-display-none', $selectFormElementClass));
-            $select->setLabel($this->translator->translateReplace(
+            $select->setLabel($this->translationHelper->translateReplace(
                 "licence.vehicle.view.switchboard.option.transfer.select.label.singular",
                 [$otherActiveLicence->getLicenceNumber()]
             ));
