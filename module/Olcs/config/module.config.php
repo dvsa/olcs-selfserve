@@ -1196,9 +1196,6 @@ return array(
             'Search\Result' => 'Olcs\Controller\Search\ResultController',
             Olcs\Controller\Entity\ViewController::class => Olcs\Controller\Entity\ViewController::class,
             Olcs\Controller\GdsVerifyController::class => Olcs\Controller\GdsVerifyController::class,
-
-            // Process Signature from GOV.UK Account
-            \Olcs\Controller\SignatureVerificationController::class => \Olcs\Controller\SignatureVerificationController::class,
         ),
         'factories' => array(
             CookieSettingsController::class => CookieSettingsControllerFactory::class,
@@ -1222,7 +1219,6 @@ return array(
             Olcs\Controller\Licence\Surrender\DestroyController::class => Olcs\Controller\Licence\Surrender\DestroyControllerFactory::class,
             Olcs\Controller\Licence\Surrender\PrintSignReturnController::class => Olcs\Controller\Licence\Surrender\PrintSignReturnControllerFactory::class,
             \Olcs\Controller\Licence\Surrender\InformationChangedController::class => \Olcs\Controller\Licence\Surrender\InformationChangedControllerFactory::class,
-
             // Licence - Vehicles
             \Olcs\Controller\Licence\Vehicle\AddVehicleSearchController::class => \Olcs\Controller\Licence\Vehicle\AddVehicleSearchControllerFactory::class,
             \Olcs\Controller\Licence\Vehicle\AddDuplicateVehicleController::class => \Olcs\Controller\Licence\Vehicle\AddDuplicateVehicleControllerFactory::class,
@@ -1233,8 +1229,9 @@ return array(
             \Olcs\Controller\Licence\Vehicle\TransferVehicleConfirmationController::class => \Olcs\Controller\Licence\Vehicle\TransferVehicleConfirmationControllerFactory::class,
             \Olcs\Controller\Licence\Vehicle\Reprint\ReprintLicenceVehicleDiscController::class => \Olcs\Controller\Licence\Vehicle\Reprint\ReprintLicenceVehicleDiscControllerFactory::class,
             \Olcs\Controller\Licence\Vehicle\Reprint\ReprintLicenceVehicleDiscConfirmationController::class => \Olcs\Controller\Licence\Vehicle\Reprint\ReprintLicenceVehicleDiscConfirmationControllerFactory::class,
-
             PromptController::class => \Olcs\Controller\PromptControllerFactory::class,
+            // Process Signature from GOV.UK Account
+            \Olcs\Controller\SignatureVerificationController::class => \Olcs\Controller\SignatureVerificationControllerFactory::class,
         ),
     ),
     'local_forms_path' => __DIR__ . '/../src/Form/Forms/',
