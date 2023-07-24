@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Permits\Controller;
 
-use Common\Controller\Dispatcher;
+use Common\Service\Helper\FormHelperService;
+use Common\Service\Helper\TranslationHelperService;
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\FactoryInterface;
 use Laminas\ServiceManager\ServiceLocatorInterface;
@@ -24,8 +25,8 @@ class CancelIrhpApplicationControllerFactory implements FactoryInterface
         if (method_exists($container, 'getServiceLocator') && $container->getServiceLocator()) {
             $container = $container->getServiceLocator();
         }
-        $translationHelper = $container->get('Helper\Translation');
-        $formHelper = $container->get('Helper\Form');
+        $translationHelper = $container->get(TranslationHelperService::class);
+        $formHelper = $container->get(FormHelperService::class);
         $tableBuilder = $container->get('Table');
         $mapperManager = $container->get(MapperManager::class);
         return new CancelIrhpApplicationController($translationHelper, $formHelper, $tableBuilder, $mapperManager);

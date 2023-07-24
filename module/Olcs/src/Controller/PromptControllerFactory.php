@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace Olcs\Controller;
 
-use Common\Controller\Dispatcher;
-use Common\Data\Mapper\DefaultMapper;
+use Common\Service\Helper\FormHelperService;
+use Common\Service\Helper\TranslationHelperService;
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\FactoryInterface;
 use Laminas\ServiceManager\ServiceLocatorInterface;
-use Permits\Controller\PermitsController;
 use Permits\Data\Mapper\MapperManager;
 
 class PromptControllerFactory implements FactoryInterface
@@ -26,8 +25,8 @@ class PromptControllerFactory implements FactoryInterface
         if (method_exists($container, 'getServiceLocator') && $container->getServiceLocator()) {
             $container = $container->getServiceLocator();
         }
-        $translationHelper = $container->get('Helper\Translation');
-        $formHelper = $container->get('Helper\Form');
+        $translationHelper = $container->get(TranslationHelperService::class);
+        $formHelper = $container->get(FormHelperService::class);
         $tableBuilder = $container->get('Table');
         $mapperManager = $container->get(MapperManager::class);
         return new PromptController($translationHelper, $formHelper, $tableBuilder, $mapperManager);

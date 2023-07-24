@@ -71,6 +71,12 @@ class CancelIrhpApplicationController extends AbstractSelfserveController
         ],
     ];
 
+    /**
+     * @param TranslationHelperService $translationHelper
+     * @param FormHelperService $formHelper
+     * @param TableFactory $tableBuilder
+     * @param MapperManager $mapperManager
+     */
     public function __construct(
         TranslationHelperService $translationHelper,
         FormHelperService $formHelper,
