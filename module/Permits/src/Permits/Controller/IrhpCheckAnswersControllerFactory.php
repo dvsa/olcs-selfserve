@@ -4,15 +4,12 @@ declare(strict_types=1);
 
 namespace Permits\Controller;
 
-use Common\Controller\Dispatcher;
 use Common\Service\Helper\FormHelperService;
 use Common\Service\Helper\TranslationHelperService;
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\FactoryInterface;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Permits\Data\Mapper\MapperManager;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 
 class IrhpCheckAnswersControllerFactory implements FactoryInterface
 {
