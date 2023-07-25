@@ -631,7 +631,7 @@ return [
       ],
     ]
     ,
-    /** @todo we don't need all of these different link helpers! OLCS-21512 */
+    /** TODO: we don't need all of these different link helpers! OLCS-21512 */
     'view_helpers' => [
         'invokables' => [
             'irhpApplicationSection' => \Permits\View\Helper\IrhpApplicationSection::class,

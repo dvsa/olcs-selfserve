@@ -35,8 +35,8 @@ abstract class AbstractSurrenderController extends AbstractSelfserveController i
 
     protected $pageTemplate = 'pages/licence-surrender';
 
-    /** @var  FlashMessengerHelperService */
-    protected $hlpFlashMsgr;
+    /** @var FlashMessengerHelperService */
+    protected $flashMessengerHelper;
 
     /**
      * @var int $licenceId
@@ -48,16 +48,16 @@ abstract class AbstractSurrenderController extends AbstractSelfserveController i
      * @param FormHelperService $formHelper
      * @param TableFactory $tableBuilder
      * @param MapperManager $mapperManager
-     * @param FlashMessengerHelperService $hlpFlashMsgr
+     * @param FlashMessengerHelperService $flashMessengerHelper
      */
     public function __construct(
         TranslationHelperService $translationHelper,
         FormHelperService $formHelper,
         TableFactory $tableBuilder,
         MapperManager $mapperManager,
-        FlashMessengerHelperService $hlpFlashMsgr
+        FlashMessengerHelperService $flashMessengerHelper
     ) {
-        $this->hlpFlashMsgr = $hlpFlashMsgr;
+        $this->flashMessengerHelper = $flashMessengerHelper;
         parent::__construct($translationHelper, $formHelper, $tableBuilder, $mapperManager);
     }
 

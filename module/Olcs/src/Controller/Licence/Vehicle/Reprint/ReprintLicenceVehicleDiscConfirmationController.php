@@ -32,21 +32,24 @@ class ReprintLicenceVehicleDiscConfirmationController extends AbstractVehicleCon
         ]
     ];
 
+    protected FlashMessengerHelperService $flashMessengerHelper;
+
     /**
      * @param TranslationHelperService $translationHelper
      * @param FormHelperService $formHelper
      * @param TableFactory $tableBuilder
      * @param MapperManager $mapperManager
-     * @param FlashMessengerHelperService $flashMessenger
+     * @param FlashMessengerHelperService $flashMessengerHelper
      */
     public function __construct(
         TranslationHelperService $translationHelper,
         FormHelperService $formHelper,
         TableFactory $tableBuilder,
         MapperManager $mapperManager,
-        FlashMessengerHelperService $flashMessenger
+        FlashMessengerHelperService $flashMessengerHelper
     ) {
-        parent::__construct($translationHelper, $formHelper, $tableBuilder, $mapperManager, $flashMessenger);
+        $this->flashMessengerHelper = $flashMessengerHelper;
+        parent::__construct($translationHelper, $formHelper, $tableBuilder, $mapperManager, $flashMessengerHelper);
     }
 
     /**
@@ -60,7 +63,7 @@ class ReprintLicenceVehicleDiscConfirmationController extends AbstractVehicleCon
     {
         if (!$this->session->hasVrms()) {
             // Redirect to add action if VRMs are not in session.
-            $this->flashMessenger->addErrorMessage('licence.vehicle.reprint.confirm.error.no-vehicles');
+            $this->flashMessengerHelper->addErrorMessage('licence.vehicle.reprint.confirm.error.no-vehicles');
             return $this->nextStep('licence/vehicle/reprint/GET');
         }
         $licenceVehicles = $this->getLicenceVehiclesByVehicleId($this->session->getVrms());
@@ -93,7 +96,7 @@ class ReprintLicenceVehicleDiscConfirmationController extends AbstractVehicleCon
     {
         if (!$this->session->hasVrms()) {
             // Redirect to reprint action if VRMs are not in session.
-            $this->flashMessenger->addErrorMessage('licence.vehicle.reprint.confirm.error.no-vehicles');
+            $this->flashMessengerHelper->addErrorMessage('licence.vehicle.reprint.confirm.error.no-vehicles');
             return $this->nextStep('licence/vehicle/reprint/GET');
         }
 
@@ -128,7 +131,7 @@ class ReprintLicenceVehicleDiscConfirmationController extends AbstractVehicleCon
         }
 
         $panelMessage = $this->translationHelper->translateReplace($successMessageKey, [count($vehicleIds)]);
-        $this->flashMessenger->addMessage($panelMessage, SwitchBoardController::PANEL_FLASH_MESSENGER_NAMESPACE);
+        $this->flashMessengerHelper->addMessage($panelMessage, SwitchBoardController::PANEL_FLASH_MESSENGER_NAMESPACE);
 
         return $this->nextStep('lva-licence/vehicles');
     }

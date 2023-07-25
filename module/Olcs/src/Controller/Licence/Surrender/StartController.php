@@ -40,22 +40,23 @@ class StartController extends AbstractSelfserveController implements ToggleAware
         ]
     ];
 
-    protected FlashMessengerHelperService $flashMessenger;
+    protected FlashMessengerHelperService $flashMessengerHelper;
 
     /**
      * @param TranslationHelperService $translationHelper
      * @param FormHelperService $formHelper
      * @param TableFactory $tableBuilder
      * @param MapperManager $mapperManager
+     * @param FlashMessengerHelperService $flashMessengerHelper
      */
     public function __construct(
         TranslationHelperService $translationHelper,
         FormHelperService $formHelper,
         TableFactory $tableBuilder,
         MapperManager $mapperManager,
-        FlashMessengerHelperService $flashMessenger
+        FlashMessengerHelperService $flashMessengerHelper
     ) {
-        $this->flashMessenger = $flashMessenger;
+        $this->flashMessengerHelper = $flashMessengerHelper;
         parent::__construct($translationHelper, $formHelper, $tableBuilder, $mapperManager);
     }
 
@@ -99,9 +100,9 @@ class StartController extends AbstractSelfserveController implements ToggleAware
             }
         } catch (AccessDeniedException $e) {
             $message = $this->translationHelper->translate('licence.surrender.already.applied');
-            $this->flashMessenger->addInfoMessage($message);
+            $this->flashMessengerHelper->addInfoMessage($message);
         } catch (\Exception $e) {
-            $this->flashMessenger->addUnknownError();
+            $this->flashMessengerHelper->addUnknownError();
         }
 
         $this->redirect()->refresh();

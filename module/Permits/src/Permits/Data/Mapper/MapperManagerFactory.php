@@ -6,8 +6,6 @@ use Laminas\ServiceManager\Config;
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\FactoryInterface;
 use Laminas\ServiceManager\ServiceLocatorInterface;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 
 class MapperManagerFactory implements FactoryInterface
 {

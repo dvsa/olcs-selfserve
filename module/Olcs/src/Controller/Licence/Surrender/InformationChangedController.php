@@ -43,17 +43,17 @@ class InformationChangedController extends AbstractSurrenderController
      * @param FormHelperService $formHelper
      * @param TableFactory $tableBuilder
      * @param MapperManager $mapperManager
-     * @param FlashMessengerHelperService $hlpFlashMsgr
+     * @param FlashMessengerHelperService $flashMessengerHelper
      */
     public function __construct(
         TranslationHelperService $translationHelper,
         FormHelperService $formHelper,
         TableFactory $tableBuilder,
         MapperManager $mapperManager,
-        FlashMessengerHelperService $hlpFlashMsgr
+        FlashMessengerHelperService $flashMessengerHelper
     ) {
         $this->surrenderStateService = new SurrenderStateService();
-        parent::__construct($translationHelper, $formHelper, $tableBuilder, $mapperManager, $hlpFlashMsgr);
+        parent::__construct($translationHelper, $formHelper, $tableBuilder, $mapperManager, $flashMessengerHelper);
     }
 
     public function indexAction()
@@ -73,7 +73,7 @@ class InformationChangedController extends AbstractSurrenderController
     {
         if ($this->surrenderStateService->setSurrenderData($this->data['surrender'])->hasExpired()) {
             if (!$this->deleteSurrender() || !$this->createSurrender()) {
-                $this->hlpFlashMsgr->addUnknownError();
+                $this->flashMessengerHelper->addUnknownError();
                 return $this->redirect()->refresh();
             }
         }

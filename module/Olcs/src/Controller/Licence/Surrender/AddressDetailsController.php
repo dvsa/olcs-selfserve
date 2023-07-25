@@ -24,16 +24,16 @@ class AddressDetailsController extends AbstractSurrenderController
      * @param FormHelperService $formHelper
      * @param TableFactory $tableBuilder
      * @param MapperManager $mapperManager
-     * @param FlashMessengerHelperService $hlpFlashMsgr
+     * @param FlashMessengerHelperService $flashMessengerHelper
      */
     public function __construct(
         TranslationHelperService $translationHelper,
         FormHelperService $formHelper,
         TableFactory $tableBuilder,
         MapperManager $mapperManager,
-        FlashMessengerHelperService $hlpFlashMsgr
+        FlashMessengerHelperService $flashMessengerHelper
     ) {
-        parent::__construct($translationHelper, $formHelper, $tableBuilder, $mapperManager, $hlpFlashMsgr);
+        parent::__construct($translationHelper, $formHelper, $tableBuilder, $mapperManager, $flashMessengerHelper);
     }
 
     public function indexAction()
@@ -93,11 +93,11 @@ class AddressDetailsController extends AbstractSurrenderController
         $response = $this->handleCommand(UpdateAddresses::create($dtoData));
 
         if ($response->isOk()) {
-            $this->hlpFlashMsgr->addSuccessMessage('licence.surrender.contact-details-changed');
+            $this->flashMessengerHelper->addSuccessMessage('licence.surrender.contact-details-changed');
             return true;
         }
 
-        $this->hlpFlashMsgr->addUnknownError();
+        $this->flashMessengerHelper->addUnknownError();
         return false;
     }
 

@@ -48,9 +48,9 @@ class ReprintLicenceVehicleDiscController extends AbstractVehicleController
         FormHelperService $formHelper,
         TableFactory $tableBuilder,
         MapperManager $mapperManager,
-        FlashMessengerHelperService $flashMessenger
+        FlashMessengerHelperService $flashMessengerHelper
     ) {
-        parent::__construct($translationHelper, $formHelper, $tableBuilder, $mapperManager, $flashMessenger);
+        parent::__construct($translationHelper, $formHelper, $tableBuilder, $mapperManager, $flashMessengerHelper);
     }
 
     /**

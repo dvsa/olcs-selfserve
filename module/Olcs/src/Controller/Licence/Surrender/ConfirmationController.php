@@ -20,16 +20,16 @@ class ConfirmationController extends AbstractSurrenderController
      * @param FormHelperService $formHelper
      * @param TableFactory $tableBuilder
      * @param MapperManager $mapperManager
-     * @param FlashMessengerHelperService $hlpFlashMsgr
+     * @param FlashMessengerHelperService $flashMessengerHelper
      */
     public function __construct(
         TranslationHelperService $translationHelper,
         FormHelperService $formHelper,
         TableFactory $tableBuilder,
         MapperManager $mapperManager,
-        FlashMessengerHelperService $hlpFlashMsgr
+        FlashMessengerHelperService $flashMessengerHelper
     ) {
-        parent::__construct($translationHelper, $formHelper, $tableBuilder, $mapperManager, $hlpFlashMsgr);
+        parent::__construct($translationHelper, $formHelper, $tableBuilder, $mapperManager, $flashMessengerHelper);
     }
 
     public function indexAction()

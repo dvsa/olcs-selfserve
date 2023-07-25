@@ -9,7 +9,6 @@ use Common\Service\Helper\UrlHelperService;
 use Common\View\Helper\CurrencyFormatter;
 use Common\View\Helper\Status as StatusFormatter;
 use DateTime;
-use Permits\View\Helper\IrhpApplicationSection;
 use RuntimeException;
 
 /**
@@ -17,6 +16,7 @@ use RuntimeException;
  */
 class IrhpApplicationFeeSummary implements MapperInterface
 {
+    use MapFromResultTrait;
     public const APP_REFERENCE_HEADING = 'permits.page.fee.application.reference';
     public const APP_DATE_HEADING = 'permits.page.fee.application.date';
     public const FEE_PER_PERMIT_HEADING = 'permits.irhp.fee-breakdown.fee-per-permit';
@@ -39,20 +39,20 @@ class IrhpApplicationFeeSummary implements MapperInterface
     public const ALREADY_PAID_STATUS = 'permits.page.fee.permit.fee.already-paid';
     public const TO_BE_PAID_STATUS = 'permits.page.fee.permit.fee.to-be-paid';
 
-    /** @var TranslationHelperService */
-    private $translator;
+
+    private TranslationHelperService $translator;
 
     /** @var EcmtNoOfPermits */
-    private $ecmtNoOfPermits;
+    private EcmtNoOfPermits $ecmtNoOfPermits;
 
     /** @var StatusFormatter */
-    private $statusFormatter;
+    private StatusFormatter $statusFormatter;
 
     /** @var CurrencyFormatter */
-    private $currencyFormatter;
+    private CurrencyFormatter $currencyFormatter;
 
     /** @var UrlHelperService */
-    private $urlHelperService;
+    private UrlHelperService $urlHelperService;
 
     /**
      * Create service instance
@@ -62,8 +62,6 @@ class IrhpApplicationFeeSummary implements MapperInterface
      * @param StatusFormatter $statusFormatter
      * @param CurrencyFormatter $currencyFormatter
      * @param UrlHelperService $urlHelperService
-     *
-     * @return IrhpApplicationFeeSummary
      */
     public function __construct(
         TranslationHelperService $translator,
@@ -88,14 +86,13 @@ class IrhpApplicationFeeSummary implements MapperInterface
      *
      * @throws RuntimeException
      */
-    public function mapForDisplay(array $data)
+    public function mapForDisplay(array $data): array
     {
         $applicationData = $data['application'];
         $irhpPermitTypeId = $applicationData['irhpPermitType']['id'];
 
         switch ($irhpPermitTypeId) {
             case RefData::IRHP_BILATERAL_PERMIT_TYPE_ID:
-                $applicationData = $data['application'];
                 $totalFeeAmount = $this->getTotalFeeAmount($data['feeBreakdown']);
                 $outstandingFeeAmount = $applicationData['outstandingFeeAmount'];
 
@@ -138,7 +135,7 @@ class IrhpApplicationFeeSummary implements MapperInterface
      *
      * @return array
      */
-    private function getGuidanceData(array $data)
+    private function getGuidanceData(array $data): array
     {
         if ($data['businessProcess']['id'] != RefData::BUSINESS_PROCESS_APSG) {
             return [];
@@ -168,7 +165,7 @@ class IrhpApplicationFeeSummary implements MapperInterface
      *
      * @return array
      */
-    private function getBilateralRows(array $applicationData, $totalFeeAmount, $outstandingFeeAmount)
+    private function getBilateralRows(array $applicationData, int $totalFeeAmount, int $outstandingFeeAmount): array
     {
         $rows = [
             $this->getApplicationReferenceRow($applicationData),
@@ -197,7 +194,7 @@ class IrhpApplicationFeeSummary implements MapperInterface
      *
      * @return array
      */
-    private function getMultilateralRows(array $data)
+    private function getMultilateralRows(array $data): array
     {
         return [
             $this->getApplicationReferenceRow($data),
@@ -215,7 +212,7 @@ class IrhpApplicationFeeSummary implements MapperInterface
      *
      * @return array
      */
-    private function getEcmtRemovalRows(array $data)
+    private function getEcmtRemovalRows(array $data): array
     {
         return [
             $this->getApplicationReferenceRow($data),
@@ -238,7 +235,7 @@ class IrhpApplicationFeeSummary implements MapperInterface
      *
      * @return array
      */
-    private function getEcmtShortTermRows(array $data)
+    private function getEcmtShortTermRows(array $data): array
     {
         if ($data['isUnderConsideration']) {
             // under consideration has different content of the table
@@ -295,7 +292,7 @@ class IrhpApplicationFeeSummary implements MapperInterface
      *
      * @return array
      */
-    private function getPermitStatusRow(array $data)
+    private function getPermitStatusRow(array $data): array
     {
         $statusFormatter = $this->statusFormatter;
 
@@ -313,7 +310,7 @@ class IrhpApplicationFeeSummary implements MapperInterface
      *
      * @return array
      */
-    private function getPermitTypeRow(array $data)
+    private function getPermitTypeRow(array $data): array
     {
         return [
             'key' => self::PERMIT_TYPE_HEADING,
@@ -328,7 +325,7 @@ class IrhpApplicationFeeSummary implements MapperInterface
      *
      * @return array
      */
-    private function getStockValidityPeriodRow(array $data)
+    private function getStockValidityPeriodRow(array $data): array
     {
         $stock = $data['irhpPermitApplications'][0]['irhpPermitWindow']['irhpPermitStock'];
 
@@ -352,7 +349,7 @@ class IrhpApplicationFeeSummary implements MapperInterface
      *
      * @return array
      */
-    private function getApplicationReferenceRow(array $data)
+    private function getApplicationReferenceRow(array $data): array
     {
         return [
             'key' => self::APP_REFERENCE_HEADING,
@@ -366,8 +363,9 @@ class IrhpApplicationFeeSummary implements MapperInterface
      * @param array $data input data
      *
      * @return array
+     * @throws \Exception
      */
-    private function getDateReceivedRow(array $data)
+    private function getDateReceivedRow(array $data): array
     {
         $receivedDate = new DateTime($data['dateReceived']);
 
@@ -384,6 +382,7 @@ class IrhpApplicationFeeSummary implements MapperInterface
      * @param string $feeType
      *
      * @return array
+     * @throws \Exception
      */
     private function getPaymentDueDateRow(array $data, $feeType)
     {
@@ -711,17 +710,5 @@ class IrhpApplicationFeeSummary implements MapperInterface
         }
 
         return $total;
-    }
-
-    /**
-     * Should map data from a result array into an array suitable for a form
-     *
-     * @param array $data Data from command
-     *
-     * @return array
-     */
-    public static function mapFromResult(array $data): array
-    {
-        return ['fields' => $data];
     }
 }
