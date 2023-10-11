@@ -6,9 +6,6 @@ use Common\Rbac\User;
 use ZfcRbac\Assertion\AssertionInterface;
 use ZfcRbac\Service\AuthorizationService;
 
-/**
- * Check that the current user can access EBSR list
- */
 class EbsrList implements AssertionInterface
 {
     /**
