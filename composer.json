@@ -18,7 +18,8 @@
         "php": ">=7.4",
         "dvsa/laminas-config-cloud-parameters": "^0.1.0",
         "olcs/olcs-frontend-deps": "~4.206.0",
-        "olcs/olcs-laminas": "~2.5.0"
+        "olcs/olcs-laminas": "~2.5.0",
+        "olcs/olcs-common": "4.206.503"
     },
     "require-dev": {
         "laminas/laminas-developer-tools": "*",
