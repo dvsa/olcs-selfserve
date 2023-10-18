@@ -33,6 +33,10 @@ class DashboardControllerTest extends MockeryTestCase
     protected $mockDashboardTmApplicationsDataMapper;
     protected $mockTableFactory;
 
+    protected function getServiceManager(): void
+    {
+        //not needed other than to implement abstract method
+    }
 
     public function setUp(): void
     {
