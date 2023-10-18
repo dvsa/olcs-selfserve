@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9e69fdbe7ec077167be6f26e1bb2b749",
+    "content-hash": "f6f951002fb211781c6699518d3ded12",
     "packages": [
         {
             "name": "brick/varexporter",
@@ -4197,12 +4197,12 @@
         },
         {
             "name": "olcs/olcs-common",
-            "version": "4.206.501",
+            "version": "4.206.503",
             "dist": {
                 "type": "zip",
-                "url": "https://nexus.olcs.dev-dvsacloud.uk/repository/OLCS/olcs/olcs-common/4.206.501/olcs-olcs-common-4.206.501.zip",
-                "reference": "88e1306fe733ab88d1528594fb05dd216480d018",
-                "shasum": "88e1306fe733ab88d1528594fb05dd216480d018"
+                "url": "https://nexus.olcs.dev-dvsacloud.uk/repository/OLCS/olcs/olcs-common/4.206.503/olcs-olcs-common-4.206.503.zip",
+                "reference": "4e2bdeb10a4ea6d2166e6399e08eb75025ff3066",
+                "shasum": "4e2bdeb10a4ea6d2166e6399e08eb75025ff3066"
             },
             "require": {
                 "elendev/composer-push": "^1.0.3",
@@ -4263,7 +4263,7 @@
                 ]
             },
             "description": "Common library for the OLCS Project",
-            "time": "2023-10-05T14:11:49+00:00"
+            "time": "2023-10-16T15:12:28+00:00"
         },
         {
             "name": "olcs/olcs-frontend-deps",
@@ -6032,11 +6032,11 @@
     "packages-dev": [
         {
             "name": "composer/pcre",
-            "version": "3.1.0",
+            "version": "3.1.1",
             "dist": {
                 "type": "zip",
-                "url": "https://nexus.olcs.dev-dvsacloud.uk/repository/Packagist-Proxy/composer/pcre/3.1.0/composer-pcre-3.1.0.zip",
-                "reference": "4bff79ddd77851fe3cdd11616ed3f92841ba5bd2",
+                "url": "https://nexus.olcs.dev-dvsacloud.uk/repository/Packagist-Proxy/composer/pcre/3.1.1/composer-pcre-3.1.1.zip",
+                "reference": "00104306927c7a0919b4ced2aaa6782c1e61a3c9",
                 "shasum": ""
             },
             "require": {
@@ -6077,7 +6077,7 @@
             ],
             "support": {
                 "issues": "https://github.com/composer/pcre/issues",
-                "source": "https://github.com/composer/pcre/tree/3.1.0"
+                "source": "https://github.com/composer/pcre/tree/3.1.1"
             },
             "funding": [
                 {
@@ -6093,7 +6093,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-11-17T09:50:14+00:00"
+            "time": "2023-10-11T07:11:09+00:00"
         },
         {
             "name": "composer/xdebug-handler",
@@ -8943,5 +8943,5 @@
     "platform-overrides": {
         "php": "7.4.33"
     },
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.3.0"
 }
