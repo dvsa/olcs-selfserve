@@ -6,6 +6,14 @@
             "packagist": false
         },
         {
+            "url": "git@repo.olcs.dev-dvsacloud.uk:olcs/olcs-laminas.git",
+            "type": "vcs"
+        },
+        {
+            "url": "git@repo.olcs.dev-dvsacloud.uk:olcs/olcs-frontend-deps.git",
+            "type": "vcs"
+        },
+        {
             "url": "https://nexus.olcs.dev-dvsacloud.uk/repository/OLCS",
             "type": "composer"
         },
@@ -17,8 +25,8 @@
     "require": {
         "php": ">=7.4",
         "dvsa/laminas-config-cloud-parameters": "^0.1.0",
-        "olcs/olcs-frontend-deps": "~4.206.0",
-        "olcs/olcs-laminas": "~2.5.0"
+        "olcs/olcs-frontend-deps": "dev-project/3.0",
+        "olcs/olcs-laminas": "3.0.3"
     },
     "require-dev": {
         "laminas/laminas-developer-tools": "*",
