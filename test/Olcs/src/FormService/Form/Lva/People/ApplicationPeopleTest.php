@@ -10,7 +10,7 @@ use Common\Service\Helper\FormHelperService;
 use OlcsTest\FormService\Form\Lva\Traits\ButtonsAlterations;
 use Olcs\FormService\Form\Lva\People\ApplicationPeople as Sut;
 use Common\Form\Elements\Validators\TableRequiredValidator;
-use ZfcRbac\Service\AuthorizationService;
+use LmcRbacMvc\Service\AuthorizationService;
 
 /**
  * Application People Test

@@ -14,8 +14,8 @@ use Laminas\Http\Request;
 use Laminas\Http\Response;
 use Laminas\Mvc\Controller\PluginManager;
 use Laminas\Mvc\MvcEvent;
-use Laminas\Mvc\Router\Http\TreeRouteStack;
-use Laminas\Mvc\Router\RouteMatch;
+use Laminas\Router\Http\TreeRouteStack;
+use Laminas\Router\RouteMatch;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\Stdlib\Parameters;
 use Laminas\Uri\Http;
@@ -24,7 +24,7 @@ use Mockery as m;
 use Olcs\Controller\SessionTimeoutController;
 use Olcs\Controller\SessionTimeoutControllerFactory;
 use Olcs\TestHelpers\Service\MocksServicesTrait;
-use ZfcRbac\Identity\IdentityProviderInterface;
+use LmcRbacMvc\Identity\IdentityProviderInterface;
 
 /**
  * @see SessionTimeoutController

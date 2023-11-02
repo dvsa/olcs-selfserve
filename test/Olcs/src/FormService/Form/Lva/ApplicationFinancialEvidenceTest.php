@@ -12,7 +12,7 @@ use Laminas\Form\Form;
 use Laminas\Http\Request;
 use OlcsTest\FormService\Form\Lva\Traits\ButtonsAlterations;
 use OlcsTest\Bootstrap;
-use ZfcRbac\Service\AuthorizationService;
+use LmcRbacMvc\Service\AuthorizationService;
 
 /**
  * Application Financial Evidence Form Test

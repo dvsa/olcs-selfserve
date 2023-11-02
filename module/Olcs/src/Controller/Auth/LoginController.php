@@ -15,7 +15,7 @@ use Laminas\Form\Form;
 use Laminas\Http\Request;
 use Laminas\Http\Response;
 use Laminas\Mvc\Controller\Plugin\FlashMessenger;
-use Laminas\Mvc\Router\Http\RouteMatch;
+use Laminas\Router\Http\RouteMatch;
 use Laminas\Uri\Uri;
 use Laminas\View\Model\ViewModel;
 use Olcs\Form\Model\Form\Auth\Login;

@@ -9,7 +9,7 @@ use Laminas\ServiceManager\FactoryInterface;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Olcs\Controller\Lva\Adapters\VariationPeopleAdapter;
 use Olcs\Controller\Lva\DirectorChange\PeopleController;
-use ZfcRbac\Service\AuthorizationService;
+use LmcRbacMvc\Service\AuthorizationService;
 
 class PeopleControllerFactory implements FactoryInterface
 {

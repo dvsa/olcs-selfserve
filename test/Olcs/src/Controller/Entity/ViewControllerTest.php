@@ -12,7 +12,7 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Olcs\Controller\Entity\ViewController;
 use Olcs\TestHelpers\ControllerPluginManagerHelper;
 use Laminas\View\Model\ViewModel;
-use ZfcRbac\Mvc\Controller\Plugin\IsGranted;
+use LmcRbacMvc\Mvc\Controller\Plugin\IsGranted;
 
 /**
  * Entity View Controller Test
@@ -52,7 +52,7 @@ class ViewControllerTest extends MockeryTestCase
 
         //  instance of tested class
         $this->mockNiUtil = m::mock(NiTextTranslation::class);
-        $this->mockAuth = m::mock(\ZfcRbac\Service\AuthorizationService::class);
+        $this->mockAuth = m::mock(\LmcRbacMvc\Service\AuthorizationService::class);
         $this->mockFlash = m::mock(FlashMessengerHelperService::class);
         $this->mockTable = m::mock(TableFactory::class);
         $this->sut = new ViewController(

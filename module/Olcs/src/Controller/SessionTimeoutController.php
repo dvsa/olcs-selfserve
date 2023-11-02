@@ -10,7 +10,7 @@ use Dvsa\Olcs\Auth\Service\Auth\CookieService;
 use Dvsa\Olcs\Auth\Service\Auth\LogoutService;
 use Laminas\Http\Request;
 use Laminas\View\Model\ViewModel;
-use ZfcRbac\Identity\IdentityProviderInterface;
+use LmcRbacMvc\Identity\IdentityProviderInterface;
 
 /**
  * @See SessionTimeoutControllerFactory

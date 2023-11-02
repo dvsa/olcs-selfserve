@@ -11,7 +11,7 @@ use Laminas\ServiceManager\FactoryInterface;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Olcs\Controller\DashboardController;
 use Olcs\Controller\MyDetailsController;
-use ZfcRbac\Service\AuthorizationService;
+use LmcRbacMvc\Service\AuthorizationService;
 
 class MyDetailsControllerFactory implements FactoryInterface
 {

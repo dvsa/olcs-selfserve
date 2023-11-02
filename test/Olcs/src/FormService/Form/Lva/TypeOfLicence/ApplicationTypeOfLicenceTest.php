@@ -11,7 +11,7 @@ use Laminas\Form\Form;
 use Laminas\Form\Fieldset;
 use Common\FormService\FormServiceManager;
 use Common\Service\Table\TableBuilder;
-use ZfcRbac\Service\AuthorizationService;
+use LmcRbacMvc\Service\AuthorizationService;
 
 /**
  * Application Type of Licence Form Test

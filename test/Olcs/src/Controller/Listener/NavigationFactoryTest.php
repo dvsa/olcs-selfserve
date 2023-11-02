@@ -9,7 +9,7 @@ use Olcs\Controller\Listener\Navigation as NavigationListener;
 use Olcs\Controller\Listener\NavigationFactory;
 use Laminas\Navigation\Navigation as LaminasNavigation;
 use Laminas\ServiceManager\ServiceLocatorInterface;
-use ZfcRbac\Service\AuthorizationService;
+use LmcRbacMvc\Service\AuthorizationService;
 
 /**
  * Class NavigationFactoryTest

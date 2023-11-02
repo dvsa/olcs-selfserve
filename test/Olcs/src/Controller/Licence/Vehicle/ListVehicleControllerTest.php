@@ -28,7 +28,7 @@ use Laminas\Form\Form;
 use Laminas\Http\Request;
 use Laminas\Http\Response;
 use Laminas\Mvc\Controller\Plugin\Url;
-use Laminas\Mvc\Router\Http\RouteMatch;
+use Laminas\Router\Http\RouteMatch;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\Stdlib\Parameters;
 use Laminas\Uri\Http;

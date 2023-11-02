@@ -10,7 +10,7 @@ use Laminas\ServiceManager\FactoryInterface;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Olcs\Controller\Lva\Variation\OverviewController;
 use Olcs\Service\Helper\ApplicationOverviewHelperService;
-use ZfcRbac\Service\AuthorizationService;
+use LmcRbacMvc\Service\AuthorizationService;
 
 class OverviewControllerFactory implements FactoryInterface
 {

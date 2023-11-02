@@ -34,7 +34,7 @@ use Olcs\FormService\Form\Lva\TransportManager\ApplicationTransportManager;
 use Olcs\FormService\Form\Lva\TypeOfLicence\ApplicationTypeOfLicence;
 use Olcs\FormService\Form\Lva\TypeOfLicence\LicenceTypeOfLicence;
 use Olcs\FormService\Form\Lva\TypeOfLicence\VariationTypeOfLicence;
-use ZfcRbac\Service\AuthorizationService;
+use LmcRbacMvc\Service\AuthorizationService;
 
 class AbstractLvaFormServiceFactory implements AbstractFactoryInterface
 {

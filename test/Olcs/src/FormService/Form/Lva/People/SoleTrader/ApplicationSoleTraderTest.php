@@ -12,7 +12,7 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Olcs\FormService\Form\Lva\People\SoleTrader\ApplicationSoleTrader as Sut;
 use OlcsTest\FormService\Form\Lva\Traits\ButtonsAlterations;
 use Laminas\ServiceManager\ServiceLocatorInterface;
-use ZfcRbac\Service\AuthorizationService;
+use LmcRbacMvc\Service\AuthorizationService;
 
 class ApplicationSoleTraderTest extends MockeryTestCase
 {

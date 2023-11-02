@@ -8,7 +8,7 @@ use Common\Service\Table\TableFactory;
 use Laminas\Form\Form;
 use Common\Service\Helper\FormHelperService;
 use Olcs\FormService\Form\Lva\Traits\ButtonsAlterations;
-use ZfcRbac\Service\AuthorizationService;
+use LmcRbacMvc\Service\AuthorizationService;
 
 /**
  * Application Operating Centres

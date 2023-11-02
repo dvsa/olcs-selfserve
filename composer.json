@@ -1,6 +1,8 @@
 {
     "name": "olcs/olcs-selfserve",
     "description": "OLCS Self Service Web Site",
+    "minimum-stability": "dev",
+    "prefer-stable" : true,
     "repositories": [
         {
             "packagist": false
@@ -14,6 +16,26 @@
             "type": "vcs"
         },
         {
+            "url": "git@repo.olcs.dev-dvsacloud.uk:olcs/olcs-common.git",
+            "type": "vcs"
+        },
+        {
+            "url": "git@repo.olcs.dev-dvsacloud.uk:olcs/olcs-transfer.git",
+            "type": "vcs"
+        },
+        {
+            "url": "git@repo.olcs.dev-dvsacloud.uk:olcs/olcs-utils.git",
+            "type": "vcs"
+        },
+        {
+            "url": "git@repo.olcs.dev-dvsacloud.uk:olcs/olcs-logging.git",
+            "type": "vcs"
+        },
+        {
+            "url": "git@repo.olcs.dev-dvsacloud.uk:olcs/olcs-auth.git",
+            "type": "vcs"
+        },
+        {
             "url": "https://nexus.olcs.dev-dvsacloud.uk/repository/OLCS",
             "type": "composer"
         },
@@ -24,6 +46,7 @@
     ],
     "require": {
         "php": ">=7.4",
+        "doctrine/persistence": "^2.1",
         "dvsa/laminas-config-cloud-parameters": "^0.1.0",
         "olcs/olcs-frontend-deps": "dev-project/3.0",
         "olcs/olcs-laminas": "3.0.3"

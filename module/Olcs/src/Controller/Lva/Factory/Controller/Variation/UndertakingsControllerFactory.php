@@ -14,7 +14,7 @@ use Laminas\ServiceManager\FactoryInterface;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Olcs\Controller\Lva\Licence\ConditionsUndertakingsController;
 use Olcs\Controller\Lva\Variation\UndertakingsController;
-use ZfcRbac\Service\AuthorizationService;
+use LmcRbacMvc\Service\AuthorizationService;
 
 class UndertakingsControllerFactory implements FactoryInterface
 {

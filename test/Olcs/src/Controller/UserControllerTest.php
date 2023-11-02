@@ -19,7 +19,7 @@ use Dvsa\Olcs\Transfer\Query as TransferQry;
 use Laminas\Mvc\Controller\Plugin\Redirect;
 use Olcs\Controller\UserController;
 use Olcs\View\Model\User;
-use ZfcRbac\Service\AuthorizationService;
+use LmcRbacMvc\Service\AuthorizationService;
 
 /**
  * Class User Controller Test

@@ -22,7 +22,7 @@ use Laminas\Http\Request;
 use Laminas\Http\Response;
 use Laminas\Mvc\Controller\Plugin\FlashMessenger;
 use Laminas\Mvc\Controller\Plugin\Url;
-use Laminas\Mvc\Router\RouteMatch;
+use Laminas\Router\RouteMatch;
 use Laminas\View\Model\ViewModel;
 
 /**

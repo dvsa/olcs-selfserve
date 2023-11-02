@@ -19,7 +19,7 @@ use Laminas\ServiceManager\FactoryInterface;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Olcs\Controller\Lva\Adapters\VariationTransportManagerAdapter;
 use Olcs\Controller\Lva\Variation\TransportManagersController;
-use ZfcRbac\Service\AuthorizationService;
+use LmcRbacMvc\Service\AuthorizationService;
 
 class TransportManagersControllerFactory implements FactoryInterface
 {

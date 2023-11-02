@@ -12,7 +12,7 @@ use Laminas\Form\Element;
 use Laminas\Form\Fieldset;
 use Common\RefData;
 use Common\Form\Elements\InputFilters\Lva\BackToVariationActionLink;
-use ZfcRbac\Service\AuthorizationService;
+use LmcRbacMvc\Service\AuthorizationService;
 
 /**
  * Variation Type of Licence Form Test
