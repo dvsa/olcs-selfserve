@@ -9,7 +9,7 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Olcs\FormService\Form\Lva\BusinessType\LicenceBusinessType;
 use Laminas\Form\Form;
 use Laminas\Form\Element;
-use ZfcRbac\Service\AuthorizationService;
+use LmcRbacMvc\Service\AuthorizationService;
 
 class LicenceBusinessTypeTest extends MockeryTestCase
 {

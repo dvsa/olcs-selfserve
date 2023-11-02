@@ -3,16 +3,25 @@
 $config = array(
     'modules' => array(
         'Dvsa\LaminasConfigCloudParameters',
+        'Laminas\Cache\Module',
+        'Laminas\Cache\Storage\Adapter\Redis',
+        'Laminas\Log',
+        'Olcs\Logging',
+        'Laminas\I18n',
+        'Laminas\Mvc\Plugin\FlashMessenger',
+        'Laminas\Filter',
+        'Laminas\Validator',
+        'Laminas\Form',
         'Dvsa\Olcs\Auth',
+        'Laminas\Router',
         'Dvsa\Olcs\Utils',
         'Dvsa\Olcs\Transfer',
         // Required for annotation parsing
         'DoctrineModule',
-        'Olcs\Logging',
         'Common',
         'Application',
         'Olcs',
-        'ZfcRbac',
+        'LmcRbacMvc',
         'Permits',
     ),
     'module_listener_options' => array(

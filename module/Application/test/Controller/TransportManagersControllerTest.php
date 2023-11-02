@@ -20,7 +20,7 @@ use Common\Test\MockeryTestCase;
 use Dvsa\Olcs\Transfer\Util\Annotation\AnnotationBuilder;
 use Dvsa\Olcs\Utils\Translation\NiTextTranslation;
 use Common\Service\Helper\TransportManagerHelperService;
-use ZfcRbac\Service\AuthorizationService;
+use LmcRbacMvc\Service\AuthorizationService;
 use Mockery as m;
 
 /**

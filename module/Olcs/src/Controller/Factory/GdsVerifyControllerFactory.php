@@ -11,7 +11,7 @@ use Laminas\Cache\Storage\Adapter\Redis;
 use Laminas\ServiceManager\FactoryInterface;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Olcs\Controller\GdsVerifyController;
-use ZfcRbac\Service\AuthorizationService;
+use LmcRbacMvc\Service\AuthorizationService;
 
 class GdsVerifyControllerFactory implements FactoryInterface
 {

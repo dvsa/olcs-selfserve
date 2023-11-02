@@ -20,7 +20,7 @@ use Laminas\Form\Fieldset;
 use Laminas\Form\Form;
 use Common\Service\Helper\FormHelperService;
 use Common\RefData;
-use ZfcRbac\Service\AuthorizationService;
+use LmcRbacMvc\Service\AuthorizationService;
 
 class VariationOperatingCentresTest extends MockeryTestCase
 {

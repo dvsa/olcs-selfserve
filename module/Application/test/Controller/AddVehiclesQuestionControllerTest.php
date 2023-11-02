@@ -10,7 +10,7 @@ use Common\Controller\Plugin\Redirect;
 use Laminas\Mvc\Controller\Plugin\Url;
 use Laminas\View\Model\ViewModel;
 use Laminas\Http\Request;
-use Laminas\Mvc\Router\Http\RouteMatch;
+use Laminas\Router\Http\RouteMatch;
 use Mockery\MockInterface;
 use Common\Controller\Plugin\HandleQuery;
 use Common\Service\Cqrs\Response;
