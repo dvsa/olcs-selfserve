@@ -1587,7 +1587,7 @@ return array(
             'lva-variation-overview-submission' => LvaFormService\VariationOverviewSubmissionFactory::class,
         ]
     ],
-    'lmc_rbac_mvc' => [
+    'lmc_rbac' => [
         'assertion_map' => [
             'selfserve-ebsr-list' => \Olcs\Assertion\Ebsr\EbsrList::class,
         ],
