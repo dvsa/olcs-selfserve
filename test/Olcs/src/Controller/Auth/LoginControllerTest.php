@@ -15,7 +15,7 @@ use Laminas\Form\Form;
 use Laminas\Http\Request;
 use Laminas\Http\Response;
 use Laminas\Http\Response as HttpResponse;
-use Laminas\Mvc\Controller\Plugin\FlashMessenger;
+use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Laminas\Router\Http\RouteMatch;
 use Laminas\ServiceManager\ServiceManager;
 use Laminas\Stdlib\Parameters;

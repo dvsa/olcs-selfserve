@@ -11,6 +11,7 @@ $config = array(
         'Laminas\Mvc\Plugin\FlashMessenger',
         'Laminas\Filter',
         'Laminas\Validator',
+        'Laminas\Navigation',
         'Laminas\Form',
         'Dvsa\Olcs\Auth',
         'Laminas\Router',

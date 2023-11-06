@@ -15,7 +15,7 @@ use Common\Service\Table\TableFactory;
 use Dvsa\Olcs\Transfer\Command\Variation\GrantDirectorChange;
 use Dvsa\Olcs\Utils\Translation\NiTextTranslation;
 use Laminas\Http\Response;
-use Laminas\Mvc\Controller\Plugin\FlashMessenger;
+use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Olcs\Controller\Lva\Traits\VariationWizardFinalPageControllerTrait;
 use LmcRbacMvc\Service\AuthorizationService;
 
