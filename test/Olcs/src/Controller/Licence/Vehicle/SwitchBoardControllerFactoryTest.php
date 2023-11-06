@@ -12,7 +12,7 @@ use Common\Service\Helper\FormHelperService;
 use Common\Service\Helper\ResponseHelperService;
 use Common\Test\MockeryTestCase;
 use Common\Test\MocksServicesTrait;
-use Laminas\Mvc\Controller\Plugin\FlashMessenger;
+use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Laminas\Mvc\Controller\Plugin\Url;
 use Olcs\Session\LicenceVehicleManagement;
 

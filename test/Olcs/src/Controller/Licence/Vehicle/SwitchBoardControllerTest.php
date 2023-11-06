@@ -19,7 +19,7 @@ use Hamcrest\Core\IsInstanceOf;
 use Laminas\Form\Annotation\AnnotationBuilder;
 use Laminas\Http\Request;
 use Laminas\Http\Response;
-use Laminas\Mvc\Controller\Plugin\FlashMessenger;
+use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Laminas\Mvc\Controller\Plugin\Url;
 use Laminas\Router\Http\RouteMatch;
 use Laminas\ServiceManager\ServiceManager;

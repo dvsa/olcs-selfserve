@@ -13,7 +13,7 @@ use Common\View\Helper\Panel;
 use Dvsa\Olcs\Transfer\Query\Licence\Licence;
 use Laminas\Form\Form;
 use Laminas\Http\Request;
-use Laminas\Mvc\Controller\Plugin\FlashMessenger;
+use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Laminas\Mvc\Controller\Plugin\Url;
 use Laminas\Router\RouteMatch;
 use Laminas\Stdlib\ResponseInterface;

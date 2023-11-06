@@ -14,7 +14,7 @@ use Laminas\Authentication\Result;
 use Laminas\Form\Form;
 use Laminas\Http\Request;
 use Laminas\Http\Response;
-use Laminas\Mvc\Controller\Plugin\FlashMessenger;
+use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Laminas\Router\Http\RouteMatch;
 use Laminas\Uri\Uri;
 use Laminas\View\Model\ViewModel;
