@@ -24,7 +24,7 @@ class Navigation implements InitializerInterface
          */
         if (!$instance instanceof LoginController) {
             $navigationListener = $container->getServiceLocator()->get(NavigationListener::class);
-            $instance->getEventManager()->attach(MvcEvent::EVENT_DISPATCH, [NavigationListener::class, '__invoke']);
+            $instance->getEventManager()->attach(MvcEvent::EVENT_DISPATCH, [$navigationListener, 'onDispatch']);
         }
     }
 
