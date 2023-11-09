@@ -26,9 +26,7 @@ class MapperManagerFactory implements FactoryInterface
             throw new \Exception('Mappers configuration not found');
         }
 
-        $configObject = new Config($config['mappers']);
-
-        return new MapperManager($configObject);
+        return new MapperManager($container, $config['mappers']);
     }
 
     public function createService(ServiceLocatorInterface $serviceLocator)
