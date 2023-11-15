@@ -1,6 +1,20 @@
 {
     "name": "olcs/olcs-selfserve",
     "description": "OLCS Self Service Web Site",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/dvsa/olcs-frontend-deps"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/dvsa/olcs-auth"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/dvsa/olcs-common"
+        }
+    ],
     "require": {
         "php": ">=7.4",
         "dvsa/laminas-config-cloud-parameters": "^0.1.0",
