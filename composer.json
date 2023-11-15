@@ -1,19 +1,6 @@
 {
     "name": "olcs/olcs-selfserve",
     "description": "OLCS Self Service Web Site",
-    "repositories": [
-        {
-            "packagist": false
-        },
-        {
-            "url": "https://nexus.olcs.dev-dvsacloud.uk/repository/OLCS",
-            "type": "composer"
-        },
-        {
-            "url": "https://nexus.olcs.dev-dvsacloud.uk/repository/Packagist-Proxy",
-            "type": "composer"
-        }
-    ],
     "require": {
         "php": ">=7.4",
         "dvsa/laminas-config-cloud-parameters": "^0.1.0",
