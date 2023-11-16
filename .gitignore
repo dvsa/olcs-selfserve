@@ -8,7 +8,6 @@ nbproject
 .settings
 vendor/
 test/coverage-report
-config/autoload/*.php
 .sublime-project
 .sass-cache/
 public/static
