@@ -23,7 +23,11 @@ $config = array(
         ),
         'config_glob_paths' => array(
             'config/autoload/{,*.}{global,local}.php'
-        )
+        
+        ),
+        'config_cache_enabled' => false,
+        'config_cache_key' => 'application.config.cache',
+        'cache_dir' => 'data/cache/',
     )
 );
 
