@@ -2,9 +2,10 @@ name: CI/CD NON PROD SELFSERVE WEB
 run-name: CI/CD NON PROD SELFSERVE WEB
 
 on:
-  push:
-    branches:
-      - master
+  pull_request:
+  # push:
+  #   branches:
+  #     - master
 
 env:
   AWS_REGION : ${{ vars.DVSA_AWS_REGION }}
