@@ -3,10 +3,10 @@ description: Build VOL SSWEB FE
 
 runs:
   using: 'composite'
-  steps: 
+  steps:
     - uses: hashicorp/setup-terraform@v2
       with:
-        terraform_version:  ${{ inputs.terraform_version }}      
+        terraform_version:  ${{ inputs.terraform_version }}
         terraform_wrapper: false
 
     # Create s3 bucket in vol-non-prod tooling & vol-prod tooling to get the composer
