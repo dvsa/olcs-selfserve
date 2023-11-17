@@ -124,7 +124,7 @@ jobs:
 
     - name: Sign SelfServe Web image
       # if: github.ref == 'refs/heads/master'
-      uses: dvsa/.gitub/.github/actions/image-integrity@feature/AddMiscAuxilaryWorkflows
+      uses: dvsa/.github/.github/actions/image-integrity@feature/AddMiscAuxilaryWorkflows
       with:
         aws_signer_profile_arn: ${{ secrets.DVSA_AWS_SSWEB_NONPROD_TOOLING_IMAGE_SIGNING_PROFILE }}
         ecr_tagged_image: ${SSWEB_NONPROD_TOOLING_REPO_URL}:${SSWEB_IMAGE_TAG}
