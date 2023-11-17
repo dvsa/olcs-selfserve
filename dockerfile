@@ -18,6 +18,8 @@ RUN apk -U upgrade && apk add --no-cache \
 
 COPY nginx/conf.d/frontend.conf /etc/nginx/nginx.conf
 
+COPY php-fpm/php-fpm.d/www.conf /usr/local/etc/php-fpm.d/www.conf
+
 # FROM registry.olcs.dev-dvsacloud.uk/k8s/php:7.4.22-fpm-alpine as intermediate
 
 RUN mkdir -p /opt/dvsa/olcs-frontend /var/log/dvsa /tmp/Entity/Proxy && \
@@ -36,10 +38,8 @@ RUN chmod +x /start.sh
     #echo 'session.save_path = "tcp://redis-master"' >> /usr/local/etc/php/conf.d/50-docker-php-ext-redis.ini
 
 RUN rm -f /opt/dvsa/olcs-frontend/config/autoload/local* && \
-    chown -R www-data:www-data /opt/dvsa /tmp/Entity /var/log/dvsa
-
-RUN /opt/dvsa/olcs-frontend/vendor/bin/doctrine-module orm:generate-proxies /tmp/Entity/Proxy
-
+    chown -R nginx:nginx /opt/dvsa /tmp/* /var/log/dvsa && \
+    chmod u=rwx,g=rwx,o=r -R /opt/dvsa /tmp/* /var/log/dvsa
 
 #USER www-data
 
