@@ -115,14 +115,14 @@ jobs:
       uses: aws-actions/amazon-ecr-login@v2.0.1
 
     - name: Push SelfServe Web image
-      if: github.ref == 'refs/heads/master'
+      # if: github.ref == 'refs/heads/master'
       id: push-image
       run: |
         echo "image_tag=${SSWEB_IMAGE_TAG}" >> $GITHUB_OUTPUT
         docker push ${SSWEB_NONPROD_TOOLING_REPO_URL}:${SSWEB_IMAGE_TAG}
 
     - name: Sign SelfServe Web image
-      if: github.ref == 'refs/heads/master'
+      # if: github.ref == 'refs/heads/master'
       uses: dvsa/.gitub/.github/actions/image-integrity@feature/AddMiscAuxilaryWorkflows
       with:
         aws_signer_profile_arn: ${{ secrets.DVSA_AWS_SSWEB_NONPROD_TOOLING_IMAGE_SIGNING_PROFILE }}
@@ -132,104 +132,104 @@ jobs:
     outputs:
       image_tag: ${{ steps.push-image.outputs.image_tag }}
 
-  deploy-on-non-prod-cluster:
+  # deploy-on-non-prod-cluster:
 
-    name: Deploy on Non Prod Cluster
-    if: github.ref == 'refs/heads/master'
+  #   name: Deploy on Non Prod Cluster
+  #   # if: github.ref == 'refs/heads/master'
 
-    needs:
-    - unit-tests
-    # - security
-    # - static-analysis
-    # - tests
-    -  build-test-push-sign-image
+  #   needs:
+  #   - unit-tests
+  #   # - security
+  #   # - static-analysis
+  #   # - tests
+  #   -  build-test-push-sign-image
 
-    runs-on: ubuntu-latest
+  #   runs-on: ubuntu-latest
 
-    steps:
+  #   steps:
 
-    - name: Deploy
-      run: |
-       echo 'Deploy on Non Prod'
+  #   - name: Deploy
+  #     run: |
+  #      echo 'Deploy on Non Prod'
 
-    # uses: ./.github/workflows/trigger-github-workflow.yaml
-    # with:
-    #   branch: 'feature/AWSRESET1-514'
-    #   git_repository: 'dvsa/dvsa-container-registry'
-    #   workflow_name: 'CD NON PROD SELFSERVE WEB'
-    #   input_arguments: 'ssweb_image_tag=${{ needs.build-test-push-sign-image.outputs.image_tag }}'
-    # secrets:
-    #   gh_token: ${{ secrets.DVSA_VOL_TERRAFORM_ACCESS_TOKEN }}
+  #   # uses: ./.github/workflows/trigger-github-workflow.yaml
+  #   # with:
+  #   #   branch: 'feature/AWSRESET1-514'
+  #   #   git_repository: 'dvsa/dvsa-container-registry'
+  #   #   workflow_name: 'CD NON PROD SELFSERVE WEB'
+  #   #   input_arguments: 'ssweb_image_tag=${{ needs.build-test-push-sign-image.outputs.image_tag }}'
+  #   # secrets:
+  #   #   gh_token: ${{ secrets.DVSA_VOL_TERRAFORM_ACCESS_TOKEN }}
 
-  automation-tests:
+  # automation-tests:
 
-    name: Run Automation Tests
-    if: github.ref == 'refs/heads/master'
-    runs-on: ubuntu-latest
+  #   name: Run Automation Tests
+  #   # if: github.ref == 'refs/heads/master'
+  #   runs-on: ubuntu-latest
 
-    needs:
-    - deploy-on-non-prod-cluster
+  #   needs:
+  #   - deploy-on-non-prod-cluster
 
-    steps:
+  #   steps:
 
-    - name: Run automation tests
-      run: |
-       echo 'Run automation tests'
+  #   - name: Run automation tests
+  #     run: |
+  #      echo 'Run automation tests'
 
-  build-nonprod-approved-image:
+  # build-nonprod-approved-image:
 
-    name: Build Non PROD Approved Image
-    if: github.ref == 'refs/heads/master'
-    runs-on: ubuntu-latest
+  #   name: Build Non PROD Approved Image
+  #   # if: github.ref == 'refs/heads/master'
+  #   runs-on: ubuntu-latest
 
-    needs:
-    - build-test-push-sign-image
-    # - deploy-on-non-prod-cluster
-    - automation-tests
+  #   needs:
+  #   - build-test-push-sign-image
+  #   # - deploy-on-non-prod-cluster
+  #   - automation-tests
 
-    steps:
+  #   steps:
 
-    - name: SSWEB_IMAGE_TAG & NONPROD_SSWEB_IMAGE_TAG
-      run: |
-        echo "SSWEB_IMAGE_TAG=${{ needs.build-test-push-sign-image.outputs.image_tag }}" >> $GITHUB_ENV
-        echo "NONPROD_SSWEB_IMAGE_TAG=nonprod-${{ needs.build-test-push-sign-image.outputs.image_tag }}" >> $GITHUB_ENV
+  #   - name: SSWEB_IMAGE_TAG & NONPROD_SSWEB_IMAGE_TAG
+  #     run: |
+  #       echo "SSWEB_IMAGE_TAG=${{ needs.build-test-push-sign-image.outputs.image_tag }}" >> $GITHUB_ENV
+  #       echo "NONPROD_SSWEB_IMAGE_TAG=nonprod-${{ needs.build-test-push-sign-image.outputs.image_tag }}" >> $GITHUB_ENV
 
-    - name: Configure AWS credentials on Non Production SSWEB ECR
-      uses: aws-actions/configure-aws-credentials@v4.0.1
-      with:
-        role-to-assume: ${{ secrets.VOL_AWS_ROLE_TOOLING_NONPROD }}
-        role-session-name: GitHub_to_AWS_via_FederatedOIDC
-        aws-region: ${{ env.AWS_REGION }}
+  #   - name: Configure AWS credentials on Non Production SSWEB ECR
+  #     uses: aws-actions/configure-aws-credentials@v4.0.1
+  #     with:
+  #       role-to-assume: ${{ secrets.VOL_AWS_ROLE_TOOLING_NONPROD }}
+  #       role-session-name: GitHub_to_AWS_via_FederatedOIDC
+  #       aws-region: ${{ env.AWS_REGION }}
 
-    - name: Login to Non Production SSWEB ECR
-      id: login-ecr-ssweb-tooling-non-prod
-      uses: aws-actions/amazon-ecr-login@v2.0.1
+  #   - name: Login to Non Production SSWEB ECR
+  #     id: login-ecr-ssweb-tooling-non-prod
+  #     uses: aws-actions/amazon-ecr-login@v2.0.1
 
-    - name: Push SelfServe Web image
-      if: github.ref == 'refs/heads/master'
-      id: push-approved-image
-      run: |
-        echo "approved_image_tag=${NONPROD_SSWEB_IMAGE_TAG}" >> $GITHUB_OUTPUT
-        docker pull ${SSWEB_NONPROD_TOOLING_REPO_URL}:${SSWEB_IMAGE_TAG}
-        docker tag ${SSWEB_NONPROD_TOOLING_REPO_URL}:${SSWEB_IMAGE_TAG} ${SSWEB_NONPROD_TOOLING_REPO_URL}:${NONPROD_SSWEB_IMAGE_TAG}
-        docker push ${SSWEB_NONPROD_TOOLING_REPO_URL}:${NONPROD_SSWEB_IMAGE_TAG}
+  #   - name: Push SelfServe Web image
+  #     # if: github.ref == 'refs/heads/master'
+  #     id: push-approved-image
+  #     run: |
+  #       echo "approved_image_tag=${NONPROD_SSWEB_IMAGE_TAG}" >> $GITHUB_OUTPUT
+  #       docker pull ${SSWEB_NONPROD_TOOLING_REPO_URL}:${SSWEB_IMAGE_TAG}
+  #       docker tag ${SSWEB_NONPROD_TOOLING_REPO_URL}:${SSWEB_IMAGE_TAG} ${SSWEB_NONPROD_TOOLING_REPO_URL}:${NONPROD_SSWEB_IMAGE_TAG}
+  #       docker push ${SSWEB_NONPROD_TOOLING_REPO_URL}:${NONPROD_SSWEB_IMAGE_TAG}
 
-    outputs:
-      approved_image_tag: ${{ steps.push-approved-image.outputs.approved_image_tag }}
+  #   outputs:
+  #     approved_image_tag: ${{ steps.push-approved-image.outputs.approved_image_tag }}
 
-  qa-approval:
+  # qa-approval:
 
-    name: QA SelfServe Web Image Approval
-    if: github.ref == 'refs/heads/master'
+  #   name: QA SelfServe Web Image Approval
+  #   # if: github.ref == 'refs/heads/master'
 
-    needs:
-    -  build-nonprod-approved-image
+  #   needs:
+  #   -  build-nonprod-approved-image
 
-    uses: dvsa/.github/.github/workflows/trigger-github-workflow.yaml@feature/AddMiscAuxilaryWorkflows
-    with:
-      branch: 'feature/AddWorkflows'
-      git_repository: 'dvsa/olcs-selfserve'
-      workflow_name: 'qa-selfserve-web-approval.yaml'
-      input_arguments: 'ssweb_image_tag=${{ needs.build-nonprod-approved-image.outputs.approved_image_tag }}'
-    secrets:
-      gh_token: ${{ secrets.DVSA_VOL_TERRAFORM_ACCESS_TOKEN }}
+  #   uses: dvsa/.github/.github/workflows/trigger-github-workflow.yaml@feature/AddMiscAuxilaryWorkflows
+  #   with:
+  #     branch: 'feature/AddWorkflows'
+  #     git_repository: 'dvsa/olcs-selfserve'
+  #     workflow_name: 'qa-selfserve-web-approval.yaml'
+  #     input_arguments: 'ssweb_image_tag=${{ needs.build-nonprod-approved-image.outputs.approved_image_tag }}'
+  #   secrets:
+  #     gh_token: ${{ secrets.DVSA_VOL_TERRAFORM_ACCESS_TOKEN }}

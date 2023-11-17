@@ -38,7 +38,7 @@ RUN chmod +x /start.sh
 RUN rm -f /opt/dvsa/olcs-frontend/config/autoload/local* && \
     chown -R www-data:www-data /opt/dvsa /tmp/Entity /var/log/dvsa
 
-RUN /opt/dvsa/olcs-frontend/vendor/bin/doctrine-module orm:generate-proxies /tmp/Entity/Proxy
+RUN /opt/dvsa/olcs-frontend/vendor/bin/doctrine-module
 
 
 #USER www-data
