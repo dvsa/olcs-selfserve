@@ -1472,9 +1472,11 @@ return array(
         'factories' => [
             \Olcs\View\Helper\SessionTimeoutWarning\SessionTimeoutWarning::class => \Olcs\View\Helper\SessionTimeoutWarning\SessionTimeoutWarningFactory::class,
             'cookieManager' => \Olcs\View\Helper\CookieManagerFactory::class,
+            \Common\View\Helper\EscapeHtml::class => \Common\View\Factory\Helper\EscapeHtmlFactory::class
         ],
         'aliases' => array(
             'sessionTimeoutWarning' => \Olcs\View\Helper\SessionTimeoutWarning\SessionTimeoutWarning::class,
+            'escapeHtml' => \Common\View\Helper\EscapeHtml::class
         ),
         'invokables' => array(
             'generatePeopleList' => \Olcs\View\Helper\GeneratePeopleList::class,
