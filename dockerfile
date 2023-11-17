@@ -36,7 +36,7 @@ RUN chmod +x /start.sh
     #echo 'session.save_path = "tcp://redis-master"' >> /usr/local/etc/php/conf.d/50-docker-php-ext-redis.ini
 
 RUN rm -f /opt/dvsa/olcs-frontend/config/autoload/local* && \
-    chown -R www-data:www-data /opt/dvsa /tmp/Entity /var/log/dvsa
+    chown -R www-data:www-data /opt/dvsa /tmp/Entity /var/log/dvsa && \
     ls -al /opt/dvsa/olcs-frontend/vendor/bin/doctrine-*
 
 RUN /opt/dvsa/olcs-frontend/vendor/bin/doctrine-module
