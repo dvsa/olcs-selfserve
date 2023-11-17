@@ -61,7 +61,7 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Build SelfServe Web artifact
-      uses: dvsa/olcs-selfserve/.github/actions/build-ssweb@feature/AddWorkflows
+      uses: dvsa/olcs-selfserve/.github/actions/build-ssweb@feat/awsreset-container
 
     - name: Set BASE_IMAGE & SSWEB_IMAGE_TAG
       run: |
@@ -235,7 +235,7 @@ jobs:
 
   #   uses: dvsa/.github/.github/workflows/trigger-github-workflow.yaml@feature/AddMiscAuxilaryWorkflows
   #   with:
-  #     branch: 'feature/AddWorkflows'
+  #     branch: 'feat/awsreset-container'
   #     git_repository: 'dvsa/olcs-selfserve'
   #     workflow_name: 'qa-selfserve-web-approval.yaml'
   #     input_arguments: 'ssweb_image_tag=${{ needs.build-nonprod-approved-image.outputs.approved_image_tag }}'
