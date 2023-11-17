@@ -1,23 +1,10 @@
 {
     "name": "olcs/olcs-selfserve",
     "description": "OLCS Self Service Web Site",
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/dvsa/olcs-frontend-deps"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/dvsa/olcs-auth"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/dvsa/olcs-common"
-        }
-    ],
     "require": {
         "php": ">=7.4",
-        "dvsa/laminas-config-cloud-parameters": "^0.1.0",
+        "aws/aws-sdk-php": "^3.286",
+        "dvsa/laminas-config-cloud-parameters": "dev-add-support-for-parameter-casts",
         "olcs/olcs-frontend-deps": "~4.206.0",
         "olcs/olcs-laminas": "~2.5.0"
     },
@@ -37,6 +24,8 @@
             "Common\\": "vendor/olcs/olcs-common/Common/src/Common"
         }
     },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "config": {
         "preferred-install": "dist",
         "secure-http": false,
