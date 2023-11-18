@@ -42,7 +42,7 @@ jobs:
     - name: Validate SelfServe Web Image
       uses: dvsa/.github/.github/actions/image-integrity@feature/AddMiscAuxilaryWorkflows
       with:
-        ecr_tagged_image:  ${{ secrets.SSWEB_NONPROD_TOOLING_ECR_REPO_URL }}:${{ github.event.inputs.SSWEB_image_tag }}
+        ecr_tagged_image:  ${{ secrets.SSWEB_NONPROD_TOOLING_ECR_REPO_URL }}:${{ github.event.inputs.ssweb_image_tag }}
         image_sign_inspect: 'true'  
 
     - name: Deploy on QA
@@ -57,7 +57,6 @@ jobs:
     #   input_arguments: 'ssweb_image_tag=${{ github.event.inputs.ssweb_image_tag }}'
     # secrets:
     #   gh_token: ${{ secrets.DVSA_VOL_TERRAFORM_ACCESS_TOKEN }}
-
 
   qa-automation-tests:
 
@@ -96,13 +95,14 @@ jobs:
       with:
         role-to-assume: ${{ secrets.VOL_AWS_ROLE_TOOLING_NONPROD }}
         role-session-name: GitHub_to_AWS_via_FederatedOIDC
-        aws-region: ${{ vars.DVSA_AWS_REGION}}
+        aws-region: ${{ env.AWS_REGION }}
 
     - name: Login to ECR
       id: login-ecr-ssweb-tooling-non-prod
       uses: aws-actions/amazon-ecr-login@v2.0.1
 
     - name: Tag & Push PROD Approved SelfServe Web image
+      if: github.ref == 'refs/heads/master'
       id: push-image
       run: |
         docker pull ${SSWEB_NONPROD_TOOLING_REPO_URL}:${NONPROD_SSWEB_IMAGE_TAG}
@@ -110,6 +110,7 @@ jobs:
         docker push ${SSWEB_PROD_TOOLING_REPO_URL}:${PROD_SSWEB_IMAGE_TAG}
 
     - name: Sign PROD SelfServe Web image
+      if: github.ref == 'refs/heads/master'
       uses: dvsa/.github/.github/actions/image-integrity@feature/AddMiscAuxilaryWorkflows
       with:
         aws_signer_profile_arn: ${{ secrets.DVSA_AWS_SSWEB_NONPROD_TOOLING_IMAGE_SIGNING_PROFILE }}

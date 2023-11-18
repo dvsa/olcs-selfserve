@@ -1,5 +1,5 @@
 # Build SelfServe Web Artifact
-Action to buildSelfServe Web artifact
+Action to build SelfServe Web artifact
 
 ####  Prerequisites
 Git checkout
@@ -12,6 +12,6 @@ VOL_API_Artifact
 
 ####  Usage
 ```yaml
-- name: Build VOL API artifact
-  uses: dvsa/olcs-backend/.github/actions/build-ssweb@main
+- name: Build SelfServe artifact
+  uses: dvsa/olcs-selfserve/.github/actions/build-ssweb@main
 ```
