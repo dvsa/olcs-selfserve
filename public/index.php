@@ -1,4 +1,7 @@
 <?php
+
+die('Hello World!');
+
 $startTime = microtime(true);
 
 $profile = getenv("XHPROF_ENABLE") == 1;
