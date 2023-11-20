@@ -39,7 +39,7 @@ RUN chmod +x /start.sh
 
 RUN rm -f /opt/dvsa/olcs-frontend/config/autoload/local* && \
     chown -R nginx:nginx /opt/dvsa /tmp/* /var/log/dvsa && \
-    chmod u=rwx,g=rwx,o=r -R /opt/dvsa /tmp/* /var/log/dvsa
+    chmod u=rwx,g=rwx,o=r -R /opt/dvsa /tmp/* /var/log/dvsa /var/nginx/*
 
 #USER www-data
 
