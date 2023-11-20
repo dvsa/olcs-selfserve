@@ -4,6 +4,9 @@ use Dvsa\LaminasConfigCloudParameters\Cast\Boolean;
 use Dvsa\LaminasConfigCloudParameters\ParameterProvider\Aws\SecretsManager;
 use Dvsa\LaminasConfigCloudParameters\ParameterProvider\Aws\ParameterStore;
 
+var_dump(\Aws\Credentials\CredentialProvider::defaultProvider());
+var_dump(phpinfo());
+
 return [
     'aws' => [
         'global' => [
