@@ -5,6 +5,14 @@ use Dvsa\LaminasConfigCloudParameters\ParameterProvider\Aws\SecretsManager;
 use Dvsa\LaminasConfigCloudParameters\ParameterProvider\Aws\ParameterStore;
 
 return [
+    'aws' => [
+        'global' => [
+            'http'    => [
+                'connect_timeout' => 5,
+                'timeout'         => 5,
+            ],
+        ],
+    ],
     'config_parameters' => [
         'providers' => [
             SecretsManager::class => [
