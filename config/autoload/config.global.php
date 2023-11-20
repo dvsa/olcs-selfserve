@@ -1,4 +1,3 @@
-
 <?php
 
 $environment = $_ENV['APP_ENV'] ?? 'development';

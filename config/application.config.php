@@ -21,10 +21,9 @@ $config = array(
             __DIR__ . '/../vendor',
             __DIR__ . '/../vendor/olcs/olcs-common'
         ),
-        'config_glob_paths' => array(
-            'config/autoload/{,*.}{global,local}.php'
-        
-        ),
+        'config_glob_paths' => [
+            realpath(__DIR__) . '/autoload/{{,*.}global,{,*.}local}.php',
+        ],
         'config_cache_enabled' => false,
         'config_cache_key' => 'application.config.cache',
         'cache_dir' => 'data/cache/',

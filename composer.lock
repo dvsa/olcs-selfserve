@@ -4955,16 +4955,16 @@
         },
         {
             "name": "olcs/olcs-utils",
-            "version": "4.206.19",
+            "version": "4.206.20",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dvsa/olcs-utils.git",
-                "reference": "339a65536b79efea06d4ef8adef67b7caf87d31d"
+                "reference": "b2c0d4360f6b35c80f6a25be6a5ca7b43b86d4cd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dvsa/olcs-utils/zipball/339a65536b79efea06d4ef8adef67b7caf87d31d",
-                "reference": "339a65536b79efea06d4ef8adef67b7caf87d31d",
+                "url": "https://api.github.com/repos/dvsa/olcs-utils/zipball/b2c0d4360f6b35c80f6a25be6a5ca7b43b86d4cd",
+                "reference": "b2c0d4360f6b35c80f6a25be6a5ca7b43b86d4cd",
                 "shasum": ""
             },
             "require": {
@@ -4994,9 +4994,9 @@
             "description": "OLCS Utils",
             "support": {
                 "issues": "https://github.com/dvsa/olcs-utils/issues",
-                "source": "https://github.com/dvsa/olcs-utils/tree/4.206.19"
+                "source": "https://github.com/dvsa/olcs-utils/tree/4.206.20"
             },
-            "time": "2023-07-10T08:42:13+00:00"
+            "time": "2023-10-18T11:31:34+00:00"
         },
         {
             "name": "psr/cache",
