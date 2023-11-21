@@ -84,13 +84,6 @@ jobs:
     - name: Build SelfServe Web artifact
       uses: dvsa/olcs-selfserve/.github/actions/build-ssweb@feat/awsreset-container
 
-    - name: build olcs static container
-      uses: dvsa/olcs-selfserve/.github/actions/build-static@feat/awsreset-container
-      with:
-          checkout-repo: 'dvsa/olcs-static'
-          npm-version: '6'
-          python-version: '2.7'
-          node-version: '14'
 
     - name: Set BASE_IMAGE & SSWEB_IMAGE_TAG
       run: |
@@ -99,6 +92,15 @@ jobs:
         BASE_IMAGE=$(head -n1 dockerfile)
         echo "BASE_IMAGE=${BASE_IMAGE#* }" >> $GITHUB_ENV
         echo "SSWEB_IMAGE_TAG=approved-ssweb-${BASE_IMAGE#*:}-$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
+    - name: build olcs static container
+      uses: dvsa/olcs-selfserve/.github/actions/build-static@feat/awsreset-container
+      with:
+          checkout-repo: 'dvsa/olcs-static'
+          npm-version: '6'
+          python-version: '2.7'
+          node-version: '14'
+
 
     - name: Configure AWS credentials on Shared Core ECR
       uses: aws-actions/configure-aws-credentials@v4.0.1
