@@ -81,6 +81,9 @@ jobs:
         tools: composer:v2
         coverage: none
 
+    - name: Build SelfServe Web artifact
+      uses: dvsa/olcs-selfserve/.github/actions/build-ssweb@feat/awsreset-container
+
     - name: build olcs static container
       uses: dvsa/olcs-selfserve/.github/actions/build-static@feat/awsreset-container
       with:
@@ -88,9 +91,6 @@ jobs:
           npm-version: '6'
           python-version: '2.7'
           node-version: '14'
-
-    - name: Build SelfServe Web artifact
-      uses: dvsa/olcs-selfserve/.github/actions/build-ssweb@feat/awsreset-container
 
     - name: Set BASE_IMAGE & SSWEB_IMAGE_TAG
       run: |

@@ -45,3 +45,9 @@ runs:
           npm install
         shell: bash
 
+      - name: Build olcs static
+        run: |
+          tar -czf static.tar.gz \
+          public --exclude="public/styleguides"
+        shell: bash
+
