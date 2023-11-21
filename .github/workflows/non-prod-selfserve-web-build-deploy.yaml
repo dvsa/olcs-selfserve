@@ -82,6 +82,11 @@ jobs:
     - name: Checkout the repository to this runner
       uses: actions/checkout@v3
 
+    - uses: actions/download-artifact@v3
+      with:
+        name: olcs static Artifact
+        path: static.tar.gz
+
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
