@@ -50,6 +50,16 @@ jobs:
        echo 'Run unit tests'
        ls -la ./
 
+  # build-olcs-static:
+  #   uses: ./.github/actions/build-ssweb/build-static-asset.yaml
+  #   strategy:
+  #     matrix:
+  #       node-version: [14]
+  #       npm-version: [6]
+  #       python-version: [2.7]
+  #       checkout-repo: 'dvsa/olcs-static'
+
+
   build-test-push-sign-image:
 
     name: Build, Push & Sign Image
@@ -70,6 +80,14 @@ jobs:
         php-version: ${{ matrix.php }}
         tools: composer:v2
         coverage: none
+
+    - name: build olcs static container
+      uses: ./.github/actions/build-static/action.yaml
+      with:
+          checkout-repo: 'dvsa/olcs-static'
+          npm-version: '6'
+          python-version: '2.7'
+          node-version: '14'
 
     - name: Build SelfServe Web artifact
       uses: dvsa/olcs-selfserve/.github/actions/build-ssweb@feat/awsreset-container

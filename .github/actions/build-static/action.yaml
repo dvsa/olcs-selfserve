@@ -1,0 +1,41 @@
+
+name: Build olcs static asset
+description: Build olcs static asset
+# on:
+#   workflow_call:
+
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+
+#     strategy:
+#       matrix:
+#         node-version: #${{ matrix.node-version }}
+#         npm-version: #${{ matrix.npm-version }}
+#         python-version: #${{ matrix.python-version }}
+
+runs:
+    using: 'composite'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          repository: ${{ inputs.checkout-repo }}
+
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ inputs.python-version }}
+
+      - name: Install dependencies
+        run: |
+          npm install -g npm@${{ inputs.npm-version }}
+          npm install
+        shell: bash
+
