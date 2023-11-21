@@ -82,7 +82,7 @@ jobs:
         coverage: none
 
     - name: build olcs static container
-      uses: ./.github/actions/build-static/action.yaml
+      uses: dvsa/olcs-selfserve/.github/actions/build-static@feat/awsreset-container
       with:
           checkout-repo: 'dvsa/olcs-static'
           npm-version: '6'
