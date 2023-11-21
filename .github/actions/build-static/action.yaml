@@ -53,7 +53,7 @@ runs:
       - name: upload staic artifact
         uses: actions/upload-artifact@v3
         with:
-          name: static artifact
+          name: olcs-static-artifact
           path: ./static.tar.gz
           retention-days: 1
 

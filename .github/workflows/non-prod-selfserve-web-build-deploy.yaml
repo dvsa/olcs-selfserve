@@ -84,7 +84,7 @@ jobs:
 
     - uses: actions/download-artifact@v3
       with:
-        name: olcs static Artifact
+        name: olcs-static-artifact
         path: static.tar.gz
 
     - name: Setup PHP
