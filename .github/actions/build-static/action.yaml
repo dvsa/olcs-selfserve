@@ -47,7 +47,7 @@ runs:
 
       - name: Build olcs static
         run: |
-          tar -czf static.tar.gz \
-          public --exclude="public/styleguides"
+          ls
+          tar -cvzf static.tar.gz public
         shell: bash
 
