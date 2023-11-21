@@ -1,6 +1,8 @@
 
 name: Build olcs static asset
 description: Build olcs static asset
+
+
 # on:
 #   workflow_call:
 
@@ -28,10 +30,14 @@ runs:
         with:
           node-version: ${{ inputs.node-version }}
 
-      - name: Setup Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ inputs.python-version }}
+      # - name: Setup Python
+      #   uses: actions/setup-python@v2
+      #   with:
+      #     python-version: ${{ inputs.python-version }}
+
+      - name: python alias
+        run: alias python=python3
+        shell: bash
 
       - name: Install dependencies
         run: |
