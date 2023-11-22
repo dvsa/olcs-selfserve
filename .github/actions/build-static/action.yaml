@@ -63,5 +63,5 @@ runs:
         uses: actions/upload-artifact@v3
         with:
           name: olcs-static-artifact
-          path: ./static
+          path: static
           retention-days: 1
