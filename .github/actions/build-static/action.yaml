@@ -45,9 +45,15 @@ runs:
           npm install
         shell: bash
 
+      - name: build static content
+        run: |
+          npm run build:container
+        shell: bash
+
       - name: Build olcs static
         run: |
-         mv public static
+         mkdir static
+         cp ./public ./static/ -r
         shell: bash
 
       - name: upload staic artifact
