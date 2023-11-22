@@ -85,7 +85,7 @@ jobs:
     - uses: actions/download-artifact@v3
       with:
         name: olcs-static-artifact
-        path: static.tar.gz
+        path: static
 
     - name: Setup PHP
       uses: shivammathur/setup-php@v2

@@ -22,12 +22,12 @@ COPY php-fpm/php-fpm.d/www.conf /usr/local/etc/php-fpm.d/www.conf
 
 # FROM registry.olcs.dev-dvsacloud.uk/k8s/php:7.4.22-fpm-alpine as intermediate
 
-RUN mkdir -p /opt/dvsa/olcs-frontend /var/log/dvsa /tmp/Entity/Proxy && \
+RUN mkdir -p /opt/dvsa/olcs-frontend/public/static /var/log/dvsa /tmp/Entity/Proxy && \
     touch /var/log/dvsa/frontend.log
     
 ADD selfserve.tar.gz /opt/dvsa/olcs-frontend
 
-ADD static.tar.gz /opt/dvsa/olcs-frontend/public/static
+COPY static /opt/dvsa/olcs-frontend/public/static
 
 COPY start.sh /start.sh
 RUN chmod +x /start.sh

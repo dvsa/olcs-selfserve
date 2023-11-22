@@ -47,13 +47,12 @@ runs:
 
       - name: Build olcs static
         run: |
-          tar -cvzf static.tar.gz public
+         mv public static
         shell: bash
 
       - name: upload staic artifact
         uses: actions/upload-artifact@v3
         with:
           name: olcs-static-artifact
-          path: ./static.tar.gz
+          path: ./static
           retention-days: 1
-
