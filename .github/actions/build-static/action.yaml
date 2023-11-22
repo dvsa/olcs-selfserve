@@ -53,7 +53,8 @@ runs:
       - name: Build olcs static
         run: |
          mkdir static
-         cp ./public ./static/ -r
+         cp -r public static
+         ls -la static
         shell: bash
 
       - name: upload staic artifact
