@@ -55,7 +55,7 @@ runs:
           pwd
           mkdir -p static
           ls -al public
-          cp -r public static
+          mv public static
           ls -al static
         shell: bash
 
