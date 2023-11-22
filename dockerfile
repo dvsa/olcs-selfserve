@@ -27,7 +27,7 @@ RUN mkdir -p /opt/dvsa/olcs-frontend/public/static /var/log/dvsa /tmp/Entity/Pro
     
 ADD selfserve.tar.gz /opt/dvsa/olcs-frontend
 
-COPY static /opt/dvsa/olcs-frontend/public
+COPY static /opt/dvsa/olcs-frontend/public/static
 
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
