@@ -22,7 +22,7 @@ COPY nginx/conf.d/frontend.conf /etc/nginx/nginx.conf
 
 COPY php-fpm/php-fpm.d/www.conf /usr/local/etc/php-fpm.d/www.conf
 
-COPY config/php.ini /usr/local/etc/php/php.ini
+# COPY config/php.ini /usr/local/etc/php/php.ini
 
 # FROM registry.olcs.dev-dvsacloud.uk/k8s/php:7.4.22-fpm-alpine as intermediate
 
@@ -53,6 +53,6 @@ RUN rm -f /opt/dvsa/olcs-frontend/config/autoload/local* && \
     chown -R nginx:nginx /opt/dvsa /tmp/* /var/log/dvsa /var/nginx && \
     chmod u=rwx,g=rwx,o=r -R /opt/dvsa /tmp/* /var/log/dvsa /var/nginx && \
     chown -R clamav:clamav /run/clamav && \
-    chmod u=rwx,g=rwx,o=r -R /run/clamav
+    chmod u=rwx,g=rwx,o=rwx -R /run/clamav
 
 CMD ["/start.sh"]
