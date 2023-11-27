@@ -4,8 +4,9 @@ namespace Olcs\Controller\Lva\Factory\Controller\Licence;
 
 use Common\Controller\Lva\Adapters\LicenceLvaAdapter;
 use Common\FormService\FormServiceManager;
+use Common\Service\Cqrs\Query\QuerySender;
 use Common\Service\Cqrs\Query\QueryService;
-use Common\Service\Helper\DataHelperService;
+use Common\Service\Helper\DateHelperService;
 use Common\Service\Helper\FlashMessengerHelperService;
 use Common\Service\Helper\FormHelperService;
 use Common\Service\Script\ScriptFactory;
@@ -36,8 +37,8 @@ class TrailersControllerFactory implements FactoryInterface
         $flashMessengerHelper = $container->get(FlashMessengerHelperService::class);
         $tableFactory = $container->get(TableFactory::class);
         $scriptFactory = $container->get(ScriptFactory::class);
-        $dataHelper = $container->get(DataHelperService::class);
-        $queryService = $container->get(QueryService::class);
+        $dateHelper = $container->get(DateHelperService::class);
+        $querySender = $container->get(QuerySender::class);
         $lvaAdapter = $container->get(LicenceLvaAdapter::class);
 
         return new TrailersController(
@@ -48,8 +49,8 @@ class TrailersControllerFactory implements FactoryInterface
             $flashMessengerHelper,
             $tableFactory,
             $scriptFactory,
-            $dataHelper,
-            $queryService,
+            $dateHelper,
+            $querySender,
             $lvaAdapter
         );
     }
