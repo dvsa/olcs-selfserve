@@ -52,7 +52,8 @@ RUN rm -f /opt/dvsa/olcs-frontend/config/autoload/local* && \
     mkdir /run/clamav && touch /run/clamav/clamd.sock && \
     chown -R nginx:nginx /opt/dvsa /tmp/* /var/log/dvsa /var/nginx && \
     chmod u=rwx,g=rwx,o=r -R /opt/dvsa /tmp/* /var/log/dvsa /var/nginx && \
-    chown -R clamav:clamav /run/clamav && \
-    chmod u=rwx,g=rwx,o=rwx -R /run/clamav
+    chmod 1777 /run/clamav/ && \
+    chown -R clamav:clamav /run/clamav/
+    
 
 CMD ["/start.sh"]
