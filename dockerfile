@@ -11,7 +11,9 @@ EXPOSE 80
 
 RUN apk -U upgrade && apk add --no-cache \
     curl \
-    nginx 
+    nginx \
+    clamav
+
     
     
 #RUN rm /etc/nginx/conf.d/default.conf
@@ -19,6 +21,8 @@ RUN apk -U upgrade && apk add --no-cache \
 COPY nginx/conf.d/frontend.conf /etc/nginx/nginx.conf
 
 COPY php-fpm/php-fpm.d/www.conf /usr/local/etc/php-fpm.d/www.conf
+
+COPY config/php.ini /usr/local/etc/php/php.ini
 
 # FROM registry.olcs.dev-dvsacloud.uk/k8s/php:7.4.22-fpm-alpine as intermediate
 
@@ -39,10 +43,16 @@ RUN chmod +x /start.sh
 #RUN echo 'session.save_handler = redis' >> /usr/local/etc/php/conf.d/50-docker-php-ext-redis.ini && \
     #echo 'session.save_path = "tcp://redis-master"' >> /usr/local/etc/php/conf.d/50-docker-php-ext-redis.ini
 
+# update clamav database/library
+RUN freshclam
+ 
 RUN rm -f /opt/dvsa/olcs-frontend/config/autoload/local* && \
     mkdir /var/nginx && \
+    mkdir /var/tmp/nginx && \
+    mkdir /run/clamav && touch /run/clamav/clamd.sock && \
     chown -R nginx:nginx /opt/dvsa /tmp/* /var/log/dvsa /var/nginx && \
-    chmod u=rwx,g=rwx,o=r -R /opt/dvsa /tmp/* /var/log/dvsa /var/nginx
-
+    chmod u=rwx,g=rwx,o=r -R /opt/dvsa /tmp/* /var/log/dvsa /var/nginx && \
+    chown -R clamav:clamav /run/clamav && \
+    chmod u=rwx,g=rwx,o=r -R /run/clamav
 
 CMD ["/start.sh"]
