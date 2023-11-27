@@ -49,11 +49,10 @@ RUN freshclam
 RUN rm -f /opt/dvsa/olcs-frontend/config/autoload/local* && \
     mkdir /var/nginx && \
     mkdir /var/tmp/nginx && \
-    mkdir /run/clamav && touch /run/clamav/clamd.sock && touch /run/clamav/clamd.pid && \
+    mkdir /run/clamav && chown clamav:clamav /run/clamav && chmod 1777 /run/clamav && \
     chown -R nginx:nginx /opt/dvsa /tmp/* /var/log/dvsa /var/nginx && \
     chmod u=rwx,g=rwx,o=r -R /opt/dvsa /tmp/* /var/log/dvsa /var/nginx && \
-    chmod 1777 /run/clamav/ && \
-    chown -R clamav:clamav /run/clamav/
+    touch /run/clamav/clamd.sock && touch /run/clamav/clamd.pid 
     
 
 CMD ["/start.sh"]
