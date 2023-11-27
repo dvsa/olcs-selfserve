@@ -41,7 +41,7 @@ class NewTmUserDetails
      *     "label": "tm-add-user-birthDate",
      *     "short-label":"tm-add-user-birthDate",
      *     "create_empty_option": true,
-     *     "render_delimiters": "d m y"
+     *     "render_delimiters": true
      * })
      * @Form\Type("Common\Form\Elements\Custom\DateSelect")
      * @Form\Filter({"name": "DateSelectNullifier"})
