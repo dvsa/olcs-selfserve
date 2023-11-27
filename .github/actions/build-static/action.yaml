@@ -52,11 +52,8 @@ runs:
 
       - name: Build olcs static
         run: |
-          pwd
           mkdir -p static
-          ls -al public
           mv public static
-          ls -al static
         shell: bash
 
       - name: upload staic artifact
