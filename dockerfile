@@ -45,7 +45,7 @@ RUN chmod +x /start.sh
 
 # update clamav database/library
 RUN freshclam
-RUN usermod -a -G nginx clamav
+RUN addgroup clamav nginx 
 RUN rm -f /opt/dvsa/olcs-frontend/config/autoload/local* && \
     mkdir /var/nginx && \
     mkdir /var/tmp/nginx && \
