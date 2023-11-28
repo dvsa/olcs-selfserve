@@ -45,15 +45,15 @@ RUN chmod +x /start.sh
 
 # update clamav database/library
 RUN freshclam
- 
+RUN usermod -a -G nginx clamav
 RUN rm -f /opt/dvsa/olcs-frontend/config/autoload/local* && \
     mkdir /var/nginx && \
     mkdir /var/tmp/nginx && \
     mkdir /run/clamav && chown clamav:clamav /run/clamav && chmod 1777 /run/clamav && \
-    chown -R nginx:nginx /opt/dvsa /tmp/* /var/log/dvsa /var/nginx && \
-    chmod u=rwx,g=rwx,o=r -R /opt/dvsa /tmp/* /var/log/dvsa /var/nginx && \
+    chown -R nginx:nginx /opt/dvsa /tmp/* /var/log/dvsa /var/nginx /var/tmp/nginx && \
+    chmod u=rwx,g=rwx,o=r -R /opt/dvsa /tmp/* /var/log/dvsa /var/nginx /var/tmp/nginx && \
     touch /run/clamav/clamd.sock && touch /run/clamav/clamd.pid && \
-    chmod 1777 /run/clamav/clamd.pid  
+    chmod 1777 /run/clamav/clamd.pid  /run/clamav/clamd.sock
     
 
 CMD ["/start.sh"]
