@@ -1197,7 +1197,7 @@ return array(
             'LvaDirectorChange/People' => \Olcs\Controller\Lva\DirectorChange\PeopleController::class,
             'LvaDirectorChange/FinancialHistory' => Olcs\Controller\Lva\DirectorChange\FinancialHistoryController::class,
             'LvaDirectorChange/LicenceHistory' => \Olcs\Controller\Lva\DirectorChange\LicenceHistoryController::class,
-            'LvaDirectorChange/ConvictionsPenalties' => \Olcs\Controller\Lva\DirectorChange\ConvictionsPenaltiesControllerFactory::class,
+            'LvaDirectorChange/ConvictionsPenalties' => \Olcs\Controller\Lva\DirectorChange\ConvictionsPenaltiesController::class,
             'LvaTransportManager/CheckAnswers' => \Olcs\Controller\Lva\TransportManager\CheckAnswersController::class,
             'LvaTransportManager/Confirmation' => \Olcs\Controller\Lva\TransportManager\ConfirmationController::class,
             'LvaTransportManager/OperatorDeclaration' => \Olcs\Controller\Lva\TransportManager\OperatorDeclarationController::class,
