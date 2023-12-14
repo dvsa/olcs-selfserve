@@ -9,6 +9,7 @@
     "require-dev": {
         "laminas/laminas-developer-tools": "*",
         "phpstan/phpstan": "^0.12.100",
+        "phpunit/phpunit": "^9.6",
         "san/san-session-toolbar": "*"
     },
     "autoload": {
@@ -24,35 +25,33 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "config": {
-        "preferred-install": "dist",
-        "secure-http": false,
-        "platform": {
-            "php": "7.4.33"
-        },
         "sort-packages": true,
         "allow-plugins": {
-            "laminas/laminas-component-installer": true,
+            "bamarni/composer-bin-plugin": true,
             "laminas/laminas-dependency-plugin": true,
-            "elendev/composer-push": true,
-            "phpstan/extension-installer": true
+            "elendev/composer-push": true
         }
     },
-    "scripts": {
-        "ut": "vendor/bin/phpunit -c test/phpunit.xml --stop-on-failure",
-        "review": "vendor/bin/review",
-        "cs": "vendor/bin/phpcs --severity=1 --standard=vendor/dvsa/coding-standards/src/Profiles/DVSA/CS/ruleset.xml",
-        "coverage": "vendor/bin/phpunit -c test/phpunit.xml --coverage-html ./test/coverage/html",
-        "sonar": "vendor/bin/phpunit -c test/phpunit.xml --coverage-clover ./test/coverage/coverage-report.clover --log-junit ./test/coverage/log.junit",
-        "update-syms": "vendor/bin/composer-update-syms"
-    },
+  "scripts": {
+    "bin": "echo 'bin not installed'",
+    "post-install-cmd": [
+      "@composer bin all install"
+    ],
+    "test": "phpunit",
+    "phpcs": "phpcs",
+    "psalm": "psalm",
+    "phpstan": "phpstan",
+    "all": [
+      "@test",
+      "@phpcs",
+      "@psalm",
+      "@phpstan"
+    ]
+  },
     "extra": {
-        "nexus-push": {
-            "url": "https://nexus.olcs.dev-dvsacloud.uk/repository/olcs-selfserve",
-            "ignore": [
-                "test/",
-                "config/autoload/local.php",
-                "node_modules/"
-            ]
-        }
+      "bamarni-bin": {
+        "bin-links": true,
+        "forward-command": true
+      }
     }
 }
