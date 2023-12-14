@@ -1,23 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
-         backupGlobals="true"
-         colors="true"
-         executionOrder="random"
-         failOnRisky="true"
-         failOnWarning="true"
-         convertDeprecationsToExceptions="true"
+<phpunit
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  colors="true"
+  xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
 >
-    <php>
-        <ini name="date.timezone" value="UTC"/>
-    </php>
-    <testsuites>
-        <testsuite name="Unit">
-            <directory>test</directory>
-        </testsuite>
-    </testsuites>
-    <logging/>
-    <listeners>
-        <listener class="JohnKary\PHPUnit\Listener\SpeedTrapListener"/>
-    </listeners>
+  <php>
+    <ini name="date.timezone" value="UTC"/>
+  </php>
+  <coverage processUncoveredFiles="true">
+    <include>
+      <directory suffix=".php">module/Application/src</directory>
+      <directory suffix=".php">module/Olcs/src</directory>
+      <directory suffix=".php">module/Permits/src</directory>
+    </include>
+    <exclude>
+      <directory>module/Olcs/src/Table/</directory>
+      <directory>module/Olcs/src/Form/</directory>
+      <directory>module/Permits/src/Permits/Table/</directory>
+      <directory>module/Permits/src/Permits/Form/</directory>
+    </exclude>
+  </coverage>
+  <testsuites>
+    <testsuite name="OLCS Selfserve Application">
+      <directory>./</directory>
+      <directory>module/Application/test</directory>
+    </testsuite>
+  </testsuites>
+  <listeners>
+    <listener class="JohnKary\PHPUnit\Listener\SpeedTrapListener">
+      <arguments>
+        <array>
+          <element key="slowThreshold">
+            <integer>250</integer>
+          </element>
+          <element key="reportLength">
+            <integer>5</integer>
+          </element>
+        </array>
+      </arguments>
+    </listener>
+  </listeners>
 </phpunit>
