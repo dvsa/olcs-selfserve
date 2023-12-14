@@ -6,7 +6,7 @@ nbproject
 .idea
 .project
 .settings
-vendor/
+vendor
 test/coverage-report
 config/autoload/*.php
 .sublime-project
