@@ -8,6 +8,7 @@
     },
     "require-dev": {
         "laminas/laminas-developer-tools": "*",
+        "mockery/mockery": "^1.6",
         "phpstan/phpstan": "^0.12.100",
         "phpunit/phpunit": "^9.6",
         "san/san-session-toolbar": "*"
@@ -22,6 +23,12 @@
             "Common\\": "vendor/olcs/olcs-common/Common/src/Common"
         }
     },
+  "autoload-dev": {
+    "psr-4": {
+      "OlcsTest\\": "test/Olcs/src",
+      "Permits\\": "test/Permits/src"
+    }
+  },
     "minimum-stability": "dev",
     "prefer-stable": true,
     "config": {
