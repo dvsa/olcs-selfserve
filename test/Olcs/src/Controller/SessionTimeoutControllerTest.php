@@ -7,7 +7,8 @@ use Common\Controller\Plugin\Redirect;
 use Common\Rbac\JWTIdentityProvider;
 use Common\Rbac\PidIdentityProvider;
 use Common\Rbac\User;
-use Common\Test\MockeryTestCase;
+use Common\Test\MocksServicesTrait;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Dvsa\Olcs\Auth\Service\Auth\CookieService;
 use Dvsa\Olcs\Auth\Service\Auth\LogoutService;
 use Laminas\Http\Request;
@@ -23,7 +24,6 @@ use Laminas\View\Model\ViewModel;
 use Mockery as m;
 use Olcs\Controller\SessionTimeoutController;
 use Olcs\Controller\SessionTimeoutControllerFactory;
-use Olcs\TestHelpers\Service\MocksServicesTrait;
 use ZfcRbac\Identity\IdentityProviderInterface;
 
 /**
