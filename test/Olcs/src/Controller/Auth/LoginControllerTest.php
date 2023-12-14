@@ -25,8 +25,8 @@ use Mockery\MockInterface;
 use Olcs\Auth\Adapter\SelfserveCommandAdapter;
 use Olcs\Controller\Auth\LoginController;
 use Olcs\Form\Model\Form\Auth\Login;
-use Olcs\TestHelpers\MockeryTestCase;
-use Olcs\TestHelpers\Service\MocksServicesTrait;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
+use Common\Test\MocksServicesTrait;
 
 class LoginControllerTest extends MockeryTestCase
 {
