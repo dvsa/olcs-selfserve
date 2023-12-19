@@ -4,8 +4,8 @@ namespace OlcsTest\Controller;
 
 use Common\RefData;
 use Common\Service\Helper\FlashMessengerHelperService;
+use Common\Service\Table\TableBuilder;
 use Common\Service\Table\TableFactory;
-use Doctrine\DBAL\Schema\View;
 use Dvsa\Olcs\Utils\Translation\NiTextTranslation;
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
@@ -41,7 +41,7 @@ class ViewControllerTest extends MockeryTestCase
             ]
         );
 
-        $urlPlugin = $this->mockPluginManager->get('url', '');
+        $urlPlugin = $this->mockPluginManager->get('url');
         $urlPlugin->shouldReceive('fromRoute')->andReturn('foo');
 
         $this->mockIsGrantedPlgn = m::mock(IsGranted::class);
@@ -93,14 +93,14 @@ class ViewControllerTest extends MockeryTestCase
         ];
 
         //  mock plugins
-        $mockQueryHandler = $this->mockPluginManager->get('handleQuery', '');
+        $mockQueryHandler = $this->mockPluginManager->get('handleQuery');
         $mockQueryHandler->shouldReceive('isNotFound')->andReturn(false);
         $mockQueryHandler->shouldReceive('isClientError')->andReturn(false);
         $mockQueryHandler->shouldReceive('isServerError')->andReturn(false);
         $mockQueryHandler->shouldReceive('isOk')->andReturn(true);
         $mockQueryHandler->shouldReceive('getResult')->andReturn($mockResult);
 
-        $mockParams = $this->mockPluginManager->get('params', '');
+        $mockParams = $this->mockPluginManager->get('params');
         $mockParams->shouldReceive('fromRoute')->with('entity')->andReturn($entity);
         $mockParams->shouldReceive('fromRoute')->with('entityId')->andReturn($entityId);
 
@@ -129,7 +129,7 @@ class ViewControllerTest extends MockeryTestCase
             ]
         ];
 
-        $mockOperatingCentresTableBuilder = m::mock(\Common\Service\Table\TableBuilder::class);
+        $mockOperatingCentresTableBuilder = m::mock(TableBuilder::class);
         $mockOperatingCentresTableBuilder->shouldReceive('getColumns')
             ->withNoArgs()
             ->andReturn($operatingCentresColumns);
@@ -191,14 +191,14 @@ class ViewControllerTest extends MockeryTestCase
         ];
 
         //  mock plugins
-        $mockQueryHandler = $this->mockPluginManager->get('handleQuery', '');
+        $mockQueryHandler = $this->mockPluginManager->get('handleQuery');
         $mockQueryHandler->shouldReceive('isNotFound')->andReturn(false);
         $mockQueryHandler->shouldReceive('isClientError')->andReturn(false);
         $mockQueryHandler->shouldReceive('isServerError')->andReturn(false);
         $mockQueryHandler->shouldReceive('isOk')->andReturn(true);
         $mockQueryHandler->shouldReceive('getResult')->andReturn($mockResult);
 
-        $mockParams = $this->mockPluginManager->get('params', '');
+        $mockParams = $this->mockPluginManager->get('params');
         $mockParams->shouldReceive('fromRoute')->with('entity')->andReturn($entity);
         $mockParams->shouldReceive('fromRoute')->with('entityId')->andReturn($entityId);
 
@@ -212,7 +212,7 @@ class ViewControllerTest extends MockeryTestCase
             ->with('entity-view-transport-managers', $mockResult['transportManagers'])
             ->andReturn('transportManagersTableResult');
 
-        $mockOperatingCentresTableBuilder = m::mock(\Common\Service\Table\TableBuilder::class);
+        $mockOperatingCentresTableBuilder = m::mock(TableBuilder::class);
 
         $this->mockTable->shouldReceive('buildTable')
             ->with('entity-view-operating-centres-anonymous', $mockResult['operatingCentres'], [], false)
@@ -272,14 +272,14 @@ class ViewControllerTest extends MockeryTestCase
         ];
 
         //  mock plugins
-        $mockQueryHandler = $this->mockPluginManager->get('handleQuery', '');
+        $mockQueryHandler = $this->mockPluginManager->get('handleQuery');
         $mockQueryHandler->shouldReceive('isNotFound')->andReturn(false);
         $mockQueryHandler->shouldReceive('isClientError')->andReturn(false);
         $mockQueryHandler->shouldReceive('isServerError')->andReturn(false);
         $mockQueryHandler->shouldReceive('isOk')->andReturn(true);
         $mockQueryHandler->shouldReceive('getResult')->andReturn($mockResult);
 
-        $mockParams = $this->mockPluginManager->get('params', '');
+        $mockParams = $this->mockPluginManager->get('params');
         $mockParams->shouldReceive('fromRoute')->with('entity')->andReturn($entity);
         $mockParams->shouldReceive('fromRoute')->with('entityId')->andReturn($entityId);
 
@@ -307,7 +307,7 @@ class ViewControllerTest extends MockeryTestCase
             ]
         ];
 
-        $mockOperatingCentresTableBuilder = m::mock(\Common\Service\Table\TableBuilder::class);
+        $mockOperatingCentresTableBuilder = m::mock(TableBuilder::class);
         $mockOperatingCentresTableBuilder->shouldReceive('getColumns')
             ->withNoArgs()
             ->andReturn($operatingCentresColumns);
@@ -388,14 +388,14 @@ class ViewControllerTest extends MockeryTestCase
         ];
 
         //  mock plugins
-        $mockQueryHandler = $this->mockPluginManager->get('handleQuery', '');
+        $mockQueryHandler = $this->mockPluginManager->get('handleQuery');
         $mockQueryHandler->shouldReceive('isNotFound')->andReturn(false);
         $mockQueryHandler->shouldReceive('isClientError')->andReturn(false);
         $mockQueryHandler->shouldReceive('isServerError')->andReturn(false);
         $mockQueryHandler->shouldReceive('isOk')->andReturn(true);
         $mockQueryHandler->shouldReceive('getResult')->andReturn($mockResult);
 
-        $mockParams = $this->mockPluginManager->get('params', '');
+        $mockParams = $this->mockPluginManager->get('params');
         $mockParams->shouldReceive('fromRoute')->with('entity')->andReturn($entity);
         $mockParams->shouldReceive('fromRoute')->with('entityId')->andReturn($entityId);
 
@@ -408,7 +408,7 @@ class ViewControllerTest extends MockeryTestCase
             ->with('entity-view-transport-managers', $mockResult['transportManagers'])
             ->andReturn('transportManagersTableResult');
 
-        $mockOperatingCentresTableBuilder = m::mock(\Common\Service\Table\TableBuilder::class);
+        $mockOperatingCentresTableBuilder = m::mock(TableBuilder::class);
 
         $this->mockTable->shouldReceive('buildTable')
             ->with('entity-view-operating-centres-partner', $mockResult['operatingCentres'], [], false)

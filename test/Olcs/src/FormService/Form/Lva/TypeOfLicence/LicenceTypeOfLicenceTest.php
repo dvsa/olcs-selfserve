@@ -3,6 +3,7 @@
 namespace OlcsTest\FormService\Form\Lva\TypeOfLicence;
 
 use Common\Service\Helper\FormHelperService;
+use Laminas\Form\ElementInterface;
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Olcs\FormService\Form\Lva\TypeOfLicence\LicenceTypeOfLicence;
@@ -14,11 +15,6 @@ use Common\RefData;
 use Common\Form\Elements\InputFilters\Lva\BackToLicenceActionLink;
 use LmcRbacMvc\Service\AuthorizationService;
 
-/**
- * Licence Type of Licence Form Test
- *
- * @author Alex Peshkov <alex.peshkov@valtech.co.uk>
- */
 class LicenceTypeOfLicenceTest extends MockeryTestCase
 {
     /**
@@ -57,7 +53,7 @@ class LicenceTypeOfLicenceTest extends MockeryTestCase
             ->with('lva-licence')
             ->once()
             ->andReturn(
-                m::mock()
+                m::mock(ElementInterface::class)
                 ->shouldReceive('alterForm')
                 ->with($mockForm)
                 ->once()
@@ -112,7 +108,7 @@ class LicenceTypeOfLicenceTest extends MockeryTestCase
             ->with('licence-type')
             ->once();
 
-        $mockTolFieldset = m::mock()
+        $mockTolFieldset = m::mock(ElementInterface::class)
             ->shouldReceive('get')
             ->with('operator-location')
             ->andReturn($mockOperatorLocation)
@@ -178,7 +174,7 @@ class LicenceTypeOfLicenceTest extends MockeryTestCase
             ->shouldReceive('get')
             ->with('form-actions')
             ->andReturn(
-                m::mock()
+                m::mock(ElementInterface::class)
                 ->shouldReceive('has')
                 ->with('save')
                 ->once()
@@ -208,7 +204,7 @@ class LicenceTypeOfLicenceTest extends MockeryTestCase
         $mockForm->shouldReceive('get')
             ->with('form-actions')
             ->andReturn(
-                m::mock()
+                m::mock(ElementInterface::class)
                 ->shouldReceive('add')
                 ->with(m::type(BackToLicenceActionLink::class))
                 ->once()

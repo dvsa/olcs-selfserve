@@ -3,18 +3,16 @@
 namespace OlcsTest\FormService\Form\Lva\OperatingCentres;
 
 use Common\Service\Table\TableFactory;
+use Laminas\Form\ElementInterface;
 use Olcs\FormService\Form\Lva\OperatingCentres\ApplicationOperatingCentres;
 use Common\Form\Elements\Types\Table;
 use Common\FormService\FormServiceInterface;
 use Common\FormService\FormServiceManager;
 use Common\Service\Table\TableBuilder;
-use OlcsTest\Bootstrap;
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Laminas\Form\Element;
 use Laminas\Form\Fieldset;
 use Laminas\Form\Form;
-use Laminas\Http\Request;
 use Common\Service\Helper\FormHelperService;
 use OlcsTest\FormService\Form\Lva\Traits\ButtonsAlterations;
 use Common\RefData;
@@ -92,15 +90,15 @@ class ApplicationOperatingCentresTest extends MockeryTestCase
         $tableElement->shouldReceive('get->getTable->removeColumn')
             ->with('noOfComplaints');
 
-        $totCommunityLicences = m::mock();
+        $totCommunityLicences = m::mock(ElementInterface::class);
 
-        $data = m::mock();
+        $data = m::mock(ElementInterface::class);
         $data->shouldReceive('has')
             ->with('totCommunityLicencesFieldset')
             ->andReturn(true)
             ->shouldReceive('get')
             ->with('totCommunityLicencesFieldset')
-            ->andReturn(m::mock()->shouldReceive('get')->with('totCommunityLicences')->andReturn($totCommunityLicences)->getMock());
+            ->andReturn(m::mock(ElementInterface::class)->shouldReceive('get')->with('totCommunityLicences')->andReturn($totCommunityLicences)->getMock());
 
         $this->form->shouldReceive('get')
             ->with('data')
@@ -117,7 +115,7 @@ class ApplicationOperatingCentresTest extends MockeryTestCase
         $this->form->shouldReceive('get')
             ->with('dataTrafficArea')
             ->andReturn(
-                m::mock()
+                m::mock(ElementInterface::class)
                 ->shouldReceive('remove')
                 ->with('enforcementArea')
                 ->getMock()

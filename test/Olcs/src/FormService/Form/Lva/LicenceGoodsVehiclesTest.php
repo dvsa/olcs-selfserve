@@ -3,6 +3,7 @@
 namespace OlcsTest\FormService\Form\Lva;
 
 use Common\Service\Helper\FormHelperService;
+use Laminas\Form\ElementInterface;
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Olcs\FormService\Form\Lva\LicenceGoodsVehicles;
@@ -40,7 +41,7 @@ class LicenceGoodsVehiclesTest extends MockeryTestCase
         $mockFieldset = m::mock(Fieldset::class);
         $mockTable = m::mock(TableBuilder::class);
 
-        $mockFormActions = m::mock()
+        $mockFormActions = m::mock(ElementInterface::class)
             ->shouldReceive('has')
             ->with('cancel')
             ->andReturn(true)

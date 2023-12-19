@@ -2,21 +2,16 @@
 
 namespace OlcsTest\FormService\Form\Lva\OperatingCentre;
 
-use Common\FormService\FormServiceManager;
 use Common\Service\Helper\TranslationHelperService;
 use Common\Service\Helper\UrlHelperService;
+use Laminas\Form\ElementInterface;
+use Laminas\InputFilter\InputFilterInterface;
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Laminas\Form\Form;
 use Olcs\FormService\Form\Lva\OperatingCentre\LvaOperatingCentre;
-use Laminas\ServiceManager\ServiceManager;
 use Common\Service\Helper\FormHelperService;
 
-/**
- * Lva Operating Centre Test
- *
- * @author Rob Caiger <rob@clocal.co.uk>
- */
 class LvaOperatingCentreTest extends MockeryTestCase
 {
     protected const TEMPLATE_FILE_NI_VAR = 'advertising-your-operating-centre-ni-var';
@@ -76,11 +71,11 @@ class LvaOperatingCentreTest extends MockeryTestCase
             ->shouldReceive('get')
             ->with('address')
             ->andReturn(
-                m::mock()
+                m::mock(ElementInterface::class)
                     ->shouldReceive('get')
                     ->with('postcode')
                     ->andReturn(
-                        m::mock()
+                        m::mock(ElementInterface::class)
                             ->shouldReceive('setOption')
                             ->with('shouldEscapeMessages', false)
                             ->once()
@@ -94,15 +89,15 @@ class LvaOperatingCentreTest extends MockeryTestCase
 
         $form->shouldReceive('getInputFilter')
             ->andReturn(
-                m::mock()
+                m::mock(InputFilterInterface::class)
                     ->shouldReceive('get')
                     ->with('address')
                     ->andReturn(
-                        m::mock()
+                        m::mock(ElementInterface::class)
                             ->shouldReceive('get')
                             ->with('postcode')
                             ->andReturn(
-                                m::mock()
+                                m::mock(ElementInterface::class)
                                     ->shouldReceive('setRequired')
                                     ->with(false)
                                     ->once()
@@ -118,11 +113,11 @@ class LvaOperatingCentreTest extends MockeryTestCase
         $form->shouldReceive('get')
             ->with('data')
             ->andReturn(
-                m::mock()
+                m::mock(ElementInterface::class)
                     ->shouldReceive('get')
                     ->with('guidance')
                     ->andReturn(
-                        m::mock()
+                        m::mock(ElementInterface::class)
                             ->shouldReceive('setValue')
                             ->with(
                                 'translated-markup-lva-oc-ad-placed-label-selfserve'
@@ -140,7 +135,7 @@ class LvaOperatingCentreTest extends MockeryTestCase
             ->once()
             ->getMock();
 
-        $adSendByPost = m::mock();
+        $adSendByPost = m::mock(ElementInterface::class);
         $adSendByPost->shouldReceive('setValue')
             ->once()
             ->with(
@@ -151,7 +146,7 @@ class LvaOperatingCentreTest extends MockeryTestCase
             )
             ->getMock();
 
-        $radio = m::mock()
+        $radio = m::mock(ElementInterface::class)
             ->shouldReceive('getValueOptions')
             ->andReturn([])
             ->once()
@@ -160,7 +155,7 @@ class LvaOperatingCentreTest extends MockeryTestCase
             ->once()
             ->getMock();
 
-        $advertisements = m::mock()
+        $advertisements = m::mock(ElementInterface::class)
             ->shouldReceive('get')
             ->with('adSendByPostContent')
             ->andReturn($adSendByPost)
@@ -172,7 +167,7 @@ class LvaOperatingCentreTest extends MockeryTestCase
             ->shouldReceive('get')
             ->with('adPlacedLaterContent')
             ->andReturn(
-                m::mock()
+                m::mock(ElementInterface::class)
                     ->shouldReceive('setValue')
                     ->with('markup-lva-oc-ad-upload-later-text')
                     ->once()
@@ -203,11 +198,11 @@ class LvaOperatingCentreTest extends MockeryTestCase
             ->shouldReceive('get')
             ->with('address')
             ->andReturn(
-                m::mock()
+                m::mock(ElementInterface::class)
                     ->shouldReceive('get')
                     ->with('postcode')
                     ->andReturn(
-                        m::mock()
+                        m::mock(ElementInterface::class)
                             ->shouldReceive('setOption')
                             ->with('shouldEscapeMessages', false)
                             ->once()
@@ -222,11 +217,11 @@ class LvaOperatingCentreTest extends MockeryTestCase
         $form->shouldReceive('get')
             ->with('data')
             ->andReturn(
-                m::mock()
+                m::mock(ElementInterface::class)
                     ->shouldReceive('get')
                     ->with('guidance')
                     ->andReturn(
-                        m::mock()
+                        m::mock(ElementInterface::class)
                             ->shouldReceive('setValue')
                             ->with(
                                 'translated-markup-lva-oc-ad-placed-label-selfserve'
@@ -246,15 +241,15 @@ class LvaOperatingCentreTest extends MockeryTestCase
 
         $form->shouldReceive('getInputFilter')
             ->andReturn(
-                m::mock()
+                m::mock(InputFilterInterface::class)
                     ->shouldReceive('get')
                     ->with('address')
                     ->andReturn(
-                        m::mock()
+                        m::mock(ElementInterface::class)
                             ->shouldReceive('get')
                             ->with('postcode')
                             ->andReturn(
-                                m::mock()
+                                m::mock(ElementInterface::class)
                                     ->shouldReceive('setRequired')
                                     ->with(false)
                                     ->once()
@@ -267,7 +262,7 @@ class LvaOperatingCentreTest extends MockeryTestCase
             )
             ->once();
 
-        $adSendByPost = m::mock();
+        $adSendByPost = m::mock(ElementInterface::class);
         $adSendByPost->shouldReceive('setValue')
             ->once()
             ->with(
@@ -277,7 +272,7 @@ class LvaOperatingCentreTest extends MockeryTestCase
                 . '-: <b>AB12345/111</b>'
             );
 
-        $radio = m::mock()
+        $radio = m::mock(ElementInterface::class)
             ->shouldReceive('getValueOptions')
             ->andReturn([])
             ->once()
@@ -286,7 +281,7 @@ class LvaOperatingCentreTest extends MockeryTestCase
             ->once()
             ->getMock();
 
-        $advertisements = m::mock()
+        $advertisements = m::mock(ElementInterface::class)
             ->shouldReceive('get')
             ->with('adSendByPostContent')
             ->andReturn($adSendByPost)
@@ -298,7 +293,7 @@ class LvaOperatingCentreTest extends MockeryTestCase
             ->shouldReceive('get')
             ->with('adPlacedLaterContent')
             ->andReturn(
-                m::mock()
+                m::mock(ElementInterface::class)
                     ->shouldReceive('setValue')
                     ->with('markup-lva-oc-ad-upload-later-text')
                     ->once()
