@@ -4172,16 +4172,16 @@
         },
         {
             "name": "olcs/olcs-common",
-            "version": "4.206.514",
+            "version": "4.206.516",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dvsa/olcs-common.git",
-                "reference": "3de6e57bfac648414e68477f01c080bdabf069b4"
+                "reference": "3ef40d9ad3a61a7531e3d2de02f933131abdad05"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dvsa/olcs-common/zipball/3de6e57bfac648414e68477f01c080bdabf069b4",
-                "reference": "3de6e57bfac648414e68477f01c080bdabf069b4",
+                "url": "https://api.github.com/repos/dvsa/olcs-common/zipball/3ef40d9ad3a61a7531e3d2de02f933131abdad05",
+                "reference": "3ef40d9ad3a61a7531e3d2de02f933131abdad05",
                 "shasum": ""
             },
             "require": {
@@ -4192,7 +4192,7 @@
                 "doctrine/annotations": "^1.14.2",
                 "olcs/olcs-devtools": "~4.206.0",
                 "olcs/olcs-logging": "^5.0.0",
-                "olcs/olcs-transfer": "~4.206.0",
+                "olcs/olcs-transfer": "^5.0.0",
                 "olcs/olcs-utils": "^5.0.0",
                 "phpstan/phpstan": "^0.12.100",
                 "soflomo/purifier": "^1.0",
@@ -4220,9 +4220,9 @@
             "notification-url": "https://packagist.org/downloads/",
             "description": "Common library for the OLCS Project",
             "support": {
-                "source": "https://github.com/dvsa/olcs-common/tree/4.206.514"
+                "source": "https://github.com/dvsa/olcs-common/tree/4.206.516"
             },
-            "time": "2023-11-30T11:57:35+00:00"
+            "time": "2023-12-15T11:17:44+00:00"
         },
         {
             "name": "olcs/olcs-frontend-deps",
@@ -4439,16 +4439,16 @@
         },
         {
             "name": "olcs/olcs-utils",
-            "version": "5.0.0.alpha1",
+            "version": "5.0.0-alpha.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dvsa/olcs-utils.git",
-                "reference": "82b2c2986397dfc8b5e615b48259747fb28ca1a8"
+                "reference": "032a00a8e5dad25d771864acfe170ae9facbb626"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dvsa/olcs-utils/zipball/82b2c2986397dfc8b5e615b48259747fb28ca1a8",
-                "reference": "82b2c2986397dfc8b5e615b48259747fb28ca1a8",
+                "url": "https://api.github.com/repos/dvsa/olcs-utils/zipball/032a00a8e5dad25d771864acfe170ae9facbb626",
+                "reference": "032a00a8e5dad25d771864acfe170ae9facbb626",
                 "shasum": ""
             },
             "require": {
@@ -4484,9 +4484,9 @@
             "notification-url": "https://packagist.org/downloads/",
             "description": "OLCS Utils",
             "support": {
-                "source": "https://github.com/dvsa/olcs-utils/tree/5.0.0.alpha1"
+                "source": "https://github.com/dvsa/olcs-utils/tree/5.0.0-alpha.2"
             },
-            "time": "2023-11-27T14:10:02+00:00"
+            "time": "2023-12-19T15:10:07+00:00"
         },
         {
             "name": "psr/cache",

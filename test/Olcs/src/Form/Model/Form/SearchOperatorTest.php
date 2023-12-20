@@ -2,7 +2,7 @@
 
 namespace OlcsTest\Form\Model\Form;
 
-use Olcs\TestHelpers\FormTester\AbstractFormValidationTestCase;
+use OlcsTest\Controller\AbstractFormValidationTestCase;
 
 /**
  * Class SearchOperatorTest
