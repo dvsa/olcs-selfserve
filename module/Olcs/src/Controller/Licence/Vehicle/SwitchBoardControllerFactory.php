@@ -13,8 +13,7 @@ use Common\Service\Helper\ResponseHelperService;
 use Interop\Container\ContainerInterface;
 use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Laminas\Mvc\Controller\Plugin\Url;
-use Laminas\ServiceManager\FactoryInterface;
-use Laminas\ServiceManager\ServiceLocatorInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use Olcs\Session\LicenceVehicleManagement;
 
 /**
@@ -23,16 +22,6 @@ use Olcs\Session\LicenceVehicleManagement;
 class SwitchBoardControllerFactory implements FactoryInterface
 {
     /**
-     * @deprecated See https://docs.laminas.dev/laminas-servicemanager/migration/#factories
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return Dispatcher
-     */
-    public function createService(ServiceLocatorInterface $serviceLocator): Dispatcher
-    {
-        return $this($serviceLocator, SwitchBoardController::class);
-    }
-
-    /**
      * @param ContainerInterface $container
      * @param mixed $requestedName
      * @param array|null $options
@@ -40,9 +29,6 @@ class SwitchBoardControllerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null): Dispatcher
     {
-        if (method_exists($container, 'getServiceLocator') && $container->getServiceLocator()) {
-            $container = $container->getServiceLocator();
-        }
         $controllerPluginManager = $container->get('ControllerPluginManager');
 
         $controller = new SwitchBoardController(

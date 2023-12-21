@@ -7,8 +7,7 @@ use Common\Service\Helper\TranslationHelperService;
 use Common\Service\Script\ScriptFactory;
 use Dvsa\Olcs\Utils\Translation\NiTextTranslation;
 use Interop\Container\ContainerInterface;
-use Laminas\ServiceManager\FactoryInterface;
-use Laminas\ServiceManager\ServiceLocatorInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use Olcs\Controller\Search\SearchController;
 use LmcRbacMvc\Service\AuthorizationService;
 
@@ -22,8 +21,6 @@ class SearchControllerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null): SearchController
     {
-        $container = method_exists($container, 'getServiceLocator') ? $container->getServiceLocator() : $container;
-
         $niTextTranslationUtil = $container->get(NiTextTranslation::class);
         $authService = $container->get(AuthorizationService::class);
         $scriptFactory = $container->get(ScriptFactory::class);
@@ -45,17 +42,5 @@ class SearchControllerFactory implements FactoryInterface
             $dataServiceManager,
             $translationHelper
         );
-    }
-
-    /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     *
-     * @return SearchController
-     */
-    public function createService(ServiceLocatorInterface $serviceLocator): SearchController
-    {
-        return $this->__invoke($serviceLocator, SearchController::class);
     }
 }

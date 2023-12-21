@@ -36,18 +36,6 @@ class TransportManagersControllerTest extends MockeryTestCase
     /**
      * @test
      */
-    public function createService_IsCallable()
-    {
-        // Setup
-        $this->setUpSut();
-
-        // Assert
-        $this->assertIsCallable([$this->sut, 'createService']);
-    }
-
-    /**
-     * @test
-     */
     public function isInitialized_IsCallable()
     {
         // Setup
@@ -72,7 +60,6 @@ class TransportManagersControllerTest extends MockeryTestCase
         // Assert
         $this->assertFalse($result);
     }
-
 
     protected function setUpSut()
     {

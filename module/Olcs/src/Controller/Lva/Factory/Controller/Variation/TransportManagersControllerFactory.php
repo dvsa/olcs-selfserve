@@ -15,8 +15,7 @@ use Common\Service\Table\TableFactory;
 use Dvsa\Olcs\Transfer\Util\Annotation\AnnotationBuilder;
 use Dvsa\Olcs\Utils\Translation\NiTextTranslation;
 use Interop\Container\ContainerInterface;
-use Laminas\ServiceManager\FactoryInterface;
-use Laminas\ServiceManager\ServiceLocatorInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use Olcs\Controller\Lva\Adapters\VariationTransportManagerAdapter;
 use Olcs\Controller\Lva\Variation\TransportManagersController;
 use LmcRbacMvc\Service\AuthorizationService;
@@ -31,8 +30,6 @@ class TransportManagersControllerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null): TransportManagersController
     {
-        $container = method_exists($container, 'getServiceLocator') ? $container->getServiceLocator() : $container;
-
         $niTextTranslationUtil = $container->get(NiTextTranslation::class);
         $authService = $container->get(AuthorizationService::class);
         $formHelper = $container->get(FormHelperService::class);
@@ -64,17 +61,5 @@ class TransportManagersControllerFactory implements FactoryInterface
             $tableFactory,
             $uploadHelper
         );
-    }
-
-    /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     *
-     * @return TransportManagersController
-     */
-    public function createService(ServiceLocatorInterface $serviceLocator): TransportManagersController
-    {
-        return $this->__invoke($serviceLocator, TransportManagersController::class);
     }
 }

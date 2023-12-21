@@ -5,23 +5,10 @@ namespace Permits\Data\Mapper;
 use Common\Service\Helper\TranslationHelperService;
 use Common\Service\Helper\UrlHelperService;
 use Psr\Container\ContainerInterface;
-use Laminas\ServiceManager\FactoryInterface;
-use Laminas\ServiceManager\ServiceLocatorInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 
 class IrhpApplicationFeeSummaryFactory implements FactoryInterface
 {
-    /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     *
-     * @return IrhpApplicationFeeSummary
-     */
-    public function createService(ServiceLocatorInterface $serviceLocator): IrhpApplicationFeeSummary
-    {
-        return $this->__invoke($serviceLocator, IrhpApplicationFeeSummary::class);
-    }
-
     /**
      * @param ContainerInterface $container
      * @param $requestedName

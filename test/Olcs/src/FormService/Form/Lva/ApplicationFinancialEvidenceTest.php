@@ -142,8 +142,6 @@ class ApplicationFinancialEvidenceTest extends MockeryTestCase
         $sm->setService('Helper\Url', $this->urlHelper);
         $sm->setService('Helper\Translation', $this->translator);
 
-        $this->fsm->shouldReceive('getServiceLocator')->andReturn($sm);
-
         $this->sut = new ApplicationFinancialEvidence($this->fh, m::mock(AuthorizationService::class), $this->translator, $this->urlHelper);
     }
 

@@ -12,8 +12,7 @@ use Common\Service\Helper\FormHelperService;
 use Dvsa\Olcs\Auth\Container\AuthChallengeContainer;
 use Interop\Container\ContainerInterface;
 use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
-use Laminas\ServiceManager\FactoryInterface;
-use Laminas\ServiceManager\ServiceLocatorInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use Olcs\Auth\Adapter\SelfserveCommandAdapter;
 
 class LoginControllerFactory implements FactoryInterface
@@ -28,9 +27,6 @@ class LoginControllerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null): Dispatcher
     {
-        if (method_exists($container, 'getServiceLocator') && $container->getServiceLocator()) {
-            $container = $container->getServiceLocator();
-        }
         $controllerPluginManager = $container->get('ControllerPluginManager');
 
         $controller = new LoginController(
@@ -50,15 +46,5 @@ class LoginControllerFactory implements FactoryInterface
         $redirectHelper->setController($instance);
 
         return $instance;
-    }
-
-    /**
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return Dispatcher
-     * @deprecated
-     */
-    public function createService(ServiceLocatorInterface $serviceLocator): Dispatcher
-    {
-        return $this->__invoke($serviceLocator, Dispatcher::class);
     }
 }

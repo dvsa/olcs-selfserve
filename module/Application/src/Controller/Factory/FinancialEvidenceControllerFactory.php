@@ -15,8 +15,7 @@ use Dvsa\Olcs\Application\Controller\FinancialEvidenceController;
 use Dvsa\Olcs\Transfer\Util\Annotation\AnnotationBuilder;
 use Dvsa\Olcs\Utils\Translation\NiTextTranslation;
 use Interop\Container\ContainerInterface;
-use Laminas\ServiceManager\FactoryInterface;
-use Laminas\ServiceManager\ServiceLocatorInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use LmcRbacMvc\Service\AuthorizationService;
 
 class FinancialEvidenceControllerFactory implements FactoryInterface
@@ -29,8 +28,6 @@ class FinancialEvidenceControllerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null): FinancialEvidenceController
     {
-        $container = method_exists($container, 'getServiceLocator') ? $container->getServiceLocator() : $container;
-
         $niTextTranslationUtil = $container->get(NiTextTranslation::class);
         $authService = $container->get(AuthorizationService::class);
         $tableFactory = $container->get(TableFactory::class);
@@ -58,17 +55,5 @@ class FinancialEvidenceControllerFactory implements FactoryInterface
             $lvaAdapter,
             $uploadHelper
         );
-    }
-
-    /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     *
-     * @return FinancialEvidenceController
-     */
-    public function createService(ServiceLocatorInterface $serviceLocator): FinancialEvidenceController
-    {
-        return $this->__invoke($serviceLocator, FinancialEvidenceController::class);
     }
 }

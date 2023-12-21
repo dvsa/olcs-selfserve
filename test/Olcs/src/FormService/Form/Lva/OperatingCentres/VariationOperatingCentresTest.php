@@ -136,8 +136,6 @@ class VariationOperatingCentresTest extends MockeryTestCase
         $sm->setService('Helper\Translation', $this->translator);
 
         $fsm = m::mock(FormServiceManager::class)->makePartial();
-        $fsm->shouldReceive('getServiceLocator')
-            ->andReturn($sm);
 
         $this->form = m::mock(Form::class);
 

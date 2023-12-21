@@ -26,36 +26,6 @@ class SwitchBoardControllerFactoryTest extends MockeryTestCase
     /**
      * @test
      */
-    public function createService_IsCallable()
-    {
-        // Setup
-        $sut = $this->setUpSut();
-
-        // Assert
-        $this->assertIsCallable([$sut, 'createService']);
-    }
-
-    /**
-     * @test
-     * @depends createService_IsCallable
-     */
-    public function createService_ReturnsInstanceOfDispatcherWithSwitchBoardController()
-    {
-        // Setup
-        $serviceLocator = $this->setUpServiceLocator();
-        $sut = $this->setUpSut();
-
-        // Execute
-        $result = $sut->createService($serviceLocator);
-
-        // Assert
-        $this->assertInstanceOf(Dispatcher::class, $result);
-        $this->assertInstanceOf(SwitchBoardController::class, $result->getDelegate());
-    }
-
-    /**
-     * @test
-     */
     public function __invoke_IsCallable()
     {
         // Setup
@@ -91,9 +61,6 @@ class SwitchBoardControllerFactoryTest extends MockeryTestCase
         return new SwitchBoardControllerFactory();
     }
 
-    /**
-     *
-     */
     protected function setUpDefaultServices()
     {
         return [

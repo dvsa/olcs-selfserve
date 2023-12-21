@@ -5,7 +5,6 @@ namespace Olcs\Controller\Lva\Factory\Controller\Licence;
 use Common\Controller\Lva\Adapters\LicenceLvaAdapter;
 use Common\FormService\FormServiceManager;
 use Common\Service\Cqrs\Query\QuerySender;
-use Common\Service\Cqrs\Query\QueryService;
 use Common\Service\Helper\DateHelperService;
 use Common\Service\Helper\FlashMessengerHelperService;
 use Common\Service\Helper\FormHelperService;
@@ -13,8 +12,7 @@ use Common\Service\Script\ScriptFactory;
 use Common\Service\Table\TableFactory;
 use Dvsa\Olcs\Utils\Translation\NiTextTranslation;
 use Interop\Container\ContainerInterface;
-use Laminas\ServiceManager\FactoryInterface;
-use Laminas\ServiceManager\ServiceLocatorInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use Olcs\Controller\Lva\Licence\TrailersController;
 use LmcRbacMvc\Service\AuthorizationService;
 
@@ -28,8 +26,6 @@ class TrailersControllerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null): TrailersController
     {
-        $container = method_exists($container, 'getServiceLocator') ? $container->getServiceLocator() : $container;
-
         $niTextTranslationUtil = $container->get(NiTextTranslation::class);
         $authService = $container->get(AuthorizationService::class);
         $formHelper = $container->get(FormHelperService::class);
@@ -53,17 +49,5 @@ class TrailersControllerFactory implements FactoryInterface
             $querySender,
             $lvaAdapter
         );
-    }
-
-    /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     *
-     * @return TrailersController
-     */
-    public function createService(ServiceLocatorInterface $serviceLocator): TrailersController
-    {
-        return $this->__invoke($serviceLocator, TrailersController::class);
     }
 }
