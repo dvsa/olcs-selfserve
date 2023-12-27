@@ -69,7 +69,7 @@ abstract class AbstractFormValidationTestCase extends TestCase
      *
      * @return \Laminas\ServiceManager\ServiceLocatorInterface
      */
-    protected function getServiceManager()
+    public function getServiceManager()
     {
         if ($this->serviceManager === null) {
             $this->serviceManager =  self::getRealServiceManager();
