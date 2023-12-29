@@ -2,6 +2,7 @@
 
 namespace Olcs\FormService\Form\Lva\OperatingCentres;
 
+use Common\Form\Elements\Validators\TableRequiredValidator;
 use Common\FormService\Form\Lva\OperatingCentres\AbstractOperatingCentres;
 use Common\FormService\FormServiceManager;
 use Common\Service\Table\TableFactory;
@@ -46,6 +47,12 @@ class ApplicationOperatingCentres extends AbstractOperatingCentres
      */
     protected function alterForm(Form $form, array $params)
     {
+        $inputFilter = $form->getInputFilter();
+        $tableInputFilter = $inputFilter->get('table');
+        $rowsInput = $tableInputFilter->get('rows');
+        $tableRequiredValidator = new TableRequiredValidator();
+        $rowsInput->getValidatorChain()->attach($tableRequiredValidator);
+
         $this->formServiceLocator->get('lva-application')->alterForm($form);
 
         parent::alterForm($form, $params);

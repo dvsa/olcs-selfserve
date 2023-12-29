@@ -11,6 +11,7 @@ use Common\Service\Script\ScriptFactory;
 use Common\Service\Table\TableFactory;
 use Dvsa\Olcs\Transfer\Util\Annotation\AnnotationBuilder;
 use Dvsa\Olcs\Utils\Translation\NiTextTranslation;
+use Laminas\Validator\ValidatorPluginManager;
 use Olcs\Controller\Lva\Traits\VariationControllerTrait;
 use LmcRbacMvc\Service\AuthorizationService;
 
@@ -48,7 +49,8 @@ class FinancialEvidenceController extends Lva\AbstractFinancialEvidenceControlle
         AnnotationBuilder $transferAnnotationBuilder,
         CommandService $commandService,
         Lva\Adapters\VariationFinancialEvidenceAdapter $lvaAdapter,
-        FileUploadHelperService $uploadHelper
+        FileUploadHelperService $uploadHelper,
+        ValidatorPluginManager $validatorPluginManager
     ) {
         parent::__construct(
             $niTextTranslationUtil,

@@ -2,9 +2,9 @@
 
 namespace Olcs\Service\Qa;
 
-use Common\Form\Annotation\CustomAnnotationBuilder;
 use Common\Service\Qa\FieldsetPopulator;
 use Common\Service\Qa\UsageContext;
+use Laminas\Form\Annotation\AnnotationBuilder;
 use Laminas\Form\Factory as LaminasFormFactory;
 use Laminas\Form\InputFilterProviderFieldset;
 use RuntimeException;
@@ -20,7 +20,7 @@ class FormProvider
     /** @var LaminasFormFactory */
     private $laminasFormFactory;
 
-    /** @var CustomAnnotationBuilder */
+    /** @var AnnotationBuilder */
     private $customAnnotationBuilder;
 
     /** @var array */
@@ -32,7 +32,7 @@ class FormProvider
      * @param FormFactory $formFactory
      * @param FieldsetPopulator $fieldsetPopulator
      * @param LaminasFormFactory $laminasFormFactory
-     * @param CustomAnnotationBuilder $customAnnotationBuilder
+     * @param AnnotationBuilder $customAnnotationBuilder
      * @param array $submitOptionsMappings
      *
      * @return FormProvider
@@ -41,7 +41,7 @@ class FormProvider
         FormFactory $formFactory,
         FieldsetPopulator $fieldsetPopulator,
         LaminasFormFactory $laminasFormFactory,
-        CustomAnnotationBuilder $customAnnotationBuilder,
+        AnnotationBuilder $customAnnotationBuilder,
         array $submitOptionsMappings
     ) {
         $this->formFactory = $formFactory;

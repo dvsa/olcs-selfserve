@@ -255,7 +255,8 @@ class AbstractLvaFormServiceFactory implements AbstractFactoryInterface
                 $authService = $serviceLocator->get(AuthorizationService::class);
                 $translator = $serviceLocator->get(TranslationHelperService::class);
                 $urlHelper = $serviceLocator->get(UrlHelperService::class);
-                return new ApplicationFinancialEvidence($formHelper, $authService, $translator, $urlHelper);
+                $validatorPluginManager = $serviceLocator->get('ValidatorManager');
+                return new ApplicationFinancialEvidence($formHelper, $authService, $translator, $urlHelper, $validatorPluginManager);
             case self::FORM_SERVICE_CLASS_ALIASES['lva-application-vehicles_declarations']:
                 return new ApplicationVehiclesDeclarations($formHelper);
             case self::FORM_SERVICE_CLASS_ALIASES['lva-application-safety']:
