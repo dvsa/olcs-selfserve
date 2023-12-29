@@ -27,6 +27,7 @@ use Olcs\Controller\Auth\LoginController;
 use Olcs\Form\Model\Form\Auth\Login;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Common\Test\MocksServicesTrait;
+use Olcs\Logging\Log\Logger;
 
 class LoginControllerTest extends MockeryTestCase
 {
@@ -75,6 +76,7 @@ class LoginControllerTest extends MockeryTestCase
     protected function setUp(): void
     {
         $this->setUpServiceManager();
+        self::setupLogger();
     }
 
     /**
@@ -650,5 +652,14 @@ class LoginControllerTest extends MockeryTestCase
         $request->setQuery(new Parameters($query ?? []));
         $request->setUri('https://localhost');
         return $request;
+    }
+
+    private static function setupLogger()
+    {
+        $logWriter = new \Laminas\Log\Writer\Mock();
+        $logger = new \Laminas\Log\Logger();
+        $logger->addWriter($logWriter);
+
+        Logger::setLogger($logger);
     }
 }
