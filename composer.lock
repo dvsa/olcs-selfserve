@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e22538fa81e7c182b5622eecced4cb02",
+    "content-hash": "f26aff6a20bef95c7412582ae436a3c6",
     "packages": [
         {
             "name": "brick/varexporter",
@@ -8218,15 +8218,11 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "olcs/olcs-auth": 15,
-        "olcs/olcs-logging": 15,
-        "olcs/olcs-transfer": 15
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=7.4"
+        "php": "^7.4"
     },
     "platform-dev": [],
     "plugin-api-version": "2.6.0"
