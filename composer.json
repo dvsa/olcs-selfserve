@@ -13,7 +13,7 @@
         "laminas/laminas-session": "^2.8",
         "laminas/laminas-view": "^2.11",
         "olcs/olcs-auth": "^5.0@alpha",
-        "olcs/olcs-common": "^4.206",
+        "olcs/olcs-common": "^4.206.516",
         "olcs/olcs-frontend-deps": "~4.206.0",
         "olcs/olcs-logging": "^5.0@alpha",
         "olcs/olcs-transfer": "^5.0@alpha"
