@@ -1,5 +1,5 @@
 <?php
-namespace OlcsTest\Controller;
+namespace OlcsTest\TestHelpers;
 
 use Common\Form\Element\DynamicMultiCheckbox;
 use Common\Form\Element\DynamicRadio;
@@ -69,10 +69,14 @@ abstract class AbstractFormValidationTestCase extends TestCase
      *
      * @return \Laminas\ServiceManager\ServiceLocatorInterface
      */
-    public function getServiceManager()
+    protected function getServiceManager()
     {
         if ($this->serviceManager === null) {
-            $this->serviceManager =  self::getRealServiceManager();
+
+            $this->serviceManager = self::getRealServiceManager();
+
+            // inject a real string helper
+
             $this->serviceManager->setAllowOverride(true);
 
             $this->serviceManager->get('FormElementManager')->setFactory(
@@ -122,6 +126,30 @@ abstract class AbstractFormValidationTestCase extends TestCase
         }
 
         return $this->serviceManager;
+    }
+
+    public static function getRealServiceManager()
+    {
+        $serviceManager = new ServiceManager(new ServiceManagerConfig());
+        $serviceManager->setService('ApplicationConfig', include __DIR__. '/../../../../config/application.config.php');
+        $serviceManager->get('ModuleManager')->loadModules();
+        $serviceManager->setAllowOverride(true);
+
+        $mockTranslationLoader = m::mock(TranslationLoader::class);
+        $mockTranslationLoader->shouldReceive('load')->andReturn(['default' => ['en_GB' => []]]);
+        $mockTranslationLoader->shouldReceive('loadReplacements')->andReturn([]);
+        $serviceManager->setService(TranslationLoader::class, $mockTranslationLoader);
+
+        $pluginManager = new LoaderPluginManager($serviceManager);
+        $pluginManager->setService(TranslationLoader::class, $mockTranslationLoader);
+        $serviceManager->setService('TranslatorPluginManager', $pluginManager);
+
+        // Mess up the backend, so any real rest calls will fail
+        $config = $serviceManager->get('Config');
+        $config['service_api_mapping']['endpoints']['backend'] = 'http://some-fake-backend/';
+        $serviceManager->setService('Config', $config);
+
+        return $serviceManager;
     }
 
     /**
@@ -1275,36 +1303,5 @@ abstract class AbstractFormValidationTestCase extends TestCase
             $elementOrFieldSet = $elementOrFieldSet->get($name);
         }
         return $elementOrFieldSet;
-    }
-
-    /**
-     * Added this method for backwards compatibility
-     *
-     * @return \Laminas\ServiceManager\ServiceManager
-     */
-    public static function getRealServiceManager()
-    {
-
-        $config = include 'config/application.config.php';
-        $serviceManager = new ServiceManager(new ServiceManagerConfig());
-        $serviceManager->setService('ApplicationConfig', $config);
-        $serviceManager->get('ModuleManager')->loadModules();
-        $serviceManager->setAllowOverride(true);
-
-        $mockTranslationLoader = m::mock(TranslationLoader::class);
-        $mockTranslationLoader->shouldReceive('load')->andReturn(['default' => ['en_GB' => []]]);
-        $mockTranslationLoader->shouldReceive('loadReplacements')->andReturn([]);
-        $serviceManager->setService(TranslationLoader::class, $mockTranslationLoader);
-
-        $pluginManager = new LoaderPluginManager($serviceManager);
-        $pluginManager->setService(TranslationLoader::class, $mockTranslationLoader);
-        $serviceManager->setService('TranslatorPluginManager', $pluginManager);
-
-        // Mess up the backend, so any real rest calls will fail
-        $config = $serviceManager->get('Config');
-        $config['service_api_mapping']['endpoints']['backend'] = 'http://some-fake-backend/';
-        $serviceManager->setService('Config', $config);
-
-        return $serviceManager;
     }
 }

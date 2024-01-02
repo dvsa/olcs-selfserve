@@ -2,7 +2,7 @@
 
 namespace OlcsTest\Form\Model\Form\Lva;
 
-use OlcsTest\Controller\AbstractFormValidationTestCase;
+use OlcsTest\TestHelpers\AbstractFormValidationTestCase;
 
 /**
  * Class ApplicationUndertakingsTest

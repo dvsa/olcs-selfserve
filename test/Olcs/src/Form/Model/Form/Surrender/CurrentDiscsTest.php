@@ -4,7 +4,7 @@ namespace OlcsTest\Form\Model\Form\Surrender\CurrentDiscs;
 
 use Common\Form\Elements\Custom\OlcsCheckbox;
 use Common\Form\Elements\Types\HtmlTranslated;
-use OlcsTest\Controller\AbstractFormValidationTestCase;
+use OlcsTest\TestHelpers\AbstractFormValidationTestCase;
 use Olcs\Form\Model\Form\Surrender\CurrentDiscs\CurrentDiscs;
 use Laminas\Form\Element\Button;
 use Laminas\Form\Element\Checkbox;
