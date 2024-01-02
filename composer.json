@@ -15,7 +15,8 @@
         "olcs/olcs-auth": "^5.0@alpha",
         "olcs/olcs-common": "^4.206",
         "olcs/olcs-frontend-deps": "~4.206.0",
-        "olcs/olcs-logging": "^5.0@alpha"
+        "olcs/olcs-logging": "^5.0@alpha",
+        "olcs/olcs-transfer": "^5.0@alpha"
     },
     "require-dev": {
         "bamarni/composer-bin-plugin": "^1.8",
