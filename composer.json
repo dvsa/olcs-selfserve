@@ -61,7 +61,7 @@
     "post-install-cmd": [
       "@composer bin all install"
     ],
-    "test": "phpunit --stop-on-error",
+    "test": "phpunit",
     "phpcs": "phpcs",
     "psalm": "psalm",
     "phpstan": "phpstan",
