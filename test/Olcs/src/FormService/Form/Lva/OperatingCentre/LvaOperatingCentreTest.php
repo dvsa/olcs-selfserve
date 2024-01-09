@@ -306,8 +306,6 @@ class LvaOperatingCentreTest extends MockeryTestCase
         $inputFilter = m::mock(InputFilterInterface::class);
         $inputFilter->shouldReceive('get')->with('address')->andReturn($addressInputFilter);
 
-        $form = m::mock(Form::class);
-
         $form->shouldReceive('getInputFilter')->andReturn($inputFilter);
 
         // ... existing mocks ...
