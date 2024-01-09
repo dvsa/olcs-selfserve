@@ -38,7 +38,7 @@ class FormProviderTest extends MockeryTestCase
     private $customAnnotationBuilder;
 
     private $formProvider;
-        
+
     public function setUp(): void
     {
         $this->formFactory = m::mock(FormFactory::class);

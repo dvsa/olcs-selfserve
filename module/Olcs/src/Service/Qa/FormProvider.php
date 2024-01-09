@@ -21,7 +21,7 @@ class FormProvider
     private $laminasFormFactory;
 
     /** @var AnnotationBuilder */
-    private $customAnnotationBuilder;
+    private $annotationBuilder;
 
     /** @var array */
     private $submitOptionsMappings;
@@ -32,7 +32,7 @@ class FormProvider
      * @param FormFactory $formFactory
      * @param FieldsetPopulator $fieldsetPopulator
      * @param LaminasFormFactory $laminasFormFactory
-     * @param AnnotationBuilder $customAnnotationBuilder
+     * @param AnnotationBuilder $annotationBuilder
      * @param array $submitOptionsMappings
      *
      * @return FormProvider
@@ -41,13 +41,13 @@ class FormProvider
         FormFactory $formFactory,
         FieldsetPopulator $fieldsetPopulator,
         LaminasFormFactory $laminasFormFactory,
-        AnnotationBuilder $customAnnotationBuilder,
+        AnnotationBuilder $annotationBuilder,
         array $submitOptionsMappings
     ) {
         $this->formFactory = $formFactory;
         $this->fieldsetPopulator = $fieldsetPopulator;
         $this->laminasFormFactory = $laminasFormFactory;
-        $this->customAnnotationBuilder = $customAnnotationBuilder;
+        $this->annotationBuilder = $annotationBuilder;
         $this->submitOptionsMappings = $submitOptionsMappings;
     }
 
@@ -68,7 +68,7 @@ class FormProvider
         $form = $this->formFactory->create('QaForm');
         $form->setApplicationStep($options);
 
-        $submitFieldsetSpec = $this->customAnnotationBuilder->getFormSpecification(
+        $submitFieldsetSpec = $this->annotationBuilder->getFormSpecification(
             $this->submitOptionsMappings[$submitOptionsName]
         );
 

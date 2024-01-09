@@ -43,93 +43,6 @@ class ApplicationFinancialEvidenceTest extends MockeryTestCase
     /** @var  m\MockInterface */
     protected $translator;
 
-    /**
-     * We can access service manager if we need to add a mock for certain applications
-     *
-     * @return \Laminas\ServiceManager\ServiceLocatorInterface
-     */
-    public function getServiceManager()
-    {
-            $serviceManager =  self::getRealServiceManager();
-            $serviceManager->setAllowOverride(true);
-
-            $serviceManager->get('FormElementManager')->setFactory(
-                'DynamicSelect',
-                function ($serviceLocator, $name, $requestedName) {
-                    $element = new DynamicSelect();
-                    $element->setValueOptions(
-                        [
-                            '1' => 'one',
-                            '2' => 'two',
-                            '3' => 'three'
-                        ]
-                    );
-                    return $element;
-                }
-            );
-
-            $serviceManager->get('FormElementManager')->setFactory(
-                'DynamicRadio',
-                function ($serviceLocator, $name, $requestedName) {
-                    $element = new DynamicRadio();
-                    $element->setValueOptions(
-                        [
-                            '1' => 'one',
-                            '2' => 'two',
-                            '3' => 'three'
-                        ]
-                    );
-                    return $element;
-                }
-            );
-
-            $serviceManager->get('FormElementManager')->setFactory(
-                'Common\Form\Element\DynamicMultiCheckbox',
-                function ($serviceLocator, $name, $requestedName) {
-                    $element = new DynamicMultiCheckbox();
-                    $element->setValueOptions(
-                        [
-                            '1' => 'one',
-                            '2' => 'two',
-                            '3' => 'three'
-                        ]
-                    );
-                    return $element;
-                }
-            );
-
-        return $serviceManager;
-    }
-
-    /**
-     * Added this method for backwards compatibility
-     *
-     * @return \Laminas\ServiceManager\ServiceManager
-     */
-    public static function getRealServiceManager()
-    {
-        $serviceManager = new ServiceManager(new ServiceManagerConfig());
-        $config = include 'config/application.config.php';
-        $serviceManager->setService('ApplicationConfig', $config);
-        $serviceManager->get('ModuleManager')->loadModules();
-        $serviceManager->setAllowOverride(true);
-
-        $mockTranslationLoader = m::mock(TranslationLoader::class);
-        $mockTranslationLoader->shouldReceive('load')->andReturn(['default' => ['en_GB' => []]]);
-        $mockTranslationLoader->shouldReceive('loadReplacements')->andReturn([]);
-        $serviceManager->setService(TranslationLoader::class, $mockTranslationLoader);
-
-        $pluginManager = new LoaderPluginManager($serviceManager);
-        $pluginManager->setService(TranslationLoader::class, $mockTranslationLoader);
-        $serviceManager->setService('TranslatorPluginManager', $pluginManager);
-
-        // Mess up the backend, so any real rest calls will fail
-        $config = $serviceManager->get('Config');
-        $config['service_api_mapping']['endpoints']['backend'] = 'http://some-fake-backend/';
-        $serviceManager->setService('Config', $config);
-
-        return $serviceManager;
-    }
 
     public function setUp(): void
     {
@@ -137,10 +50,6 @@ class ApplicationFinancialEvidenceTest extends MockeryTestCase
         $this->fsm = m::mock(\Common\FormService\FormServiceManager::class)->makePartial();
         $this->urlHelper = m::mock(UrlHelperService::class);
         $this->translator = m::mock(TranslationHelperService::class);
-
-        $sm = $this->getServiceManager();
-        $sm->setService('Helper\Url', $this->urlHelper);
-        $sm->setService('Helper\Translation', $this->translator);
 
         $this->sut = new ApplicationFinancialEvidence($this->fh, m::mock(AuthorizationService::class), $this->translator, $this->urlHelper);
     }
