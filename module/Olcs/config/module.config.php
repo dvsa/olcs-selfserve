@@ -1,6 +1,6 @@
 <?php
 
-use Laminas\Mvc\Router\Http\Segment;
+use Laminas\Router\Http\Segment;
 use Laminas\Router\Http\HttpRouterFactory;
 use Olcs\Auth\Adapter\CommandAdapter;
 use Olcs\Auth\Adapter\CommandAdapterFactory;
@@ -522,7 +522,7 @@ $routes = [
         ]
     ],
     'govuk-account' => [
-        'type' => \Laminas\Mvc\Router\Http\Literal::class,
+        'type' => \Laminas\Router\Http\Literal::class,
         'options' => [
             'route' => '/govuk-account',
             'defaults' => [
@@ -532,7 +532,7 @@ $routes = [
         'may_terminate' => false,
         'child_routes' => [
             'process' => [
-                'type' => \Laminas\Mvc\Router\Http\Literal::class,
+                'type' => \Laminas\Router\Http\Literal::class,
                 'options' => [
                     'route' => '/process',
                     'defaults' => [
@@ -543,7 +543,7 @@ $routes = [
         ],
     ],
     'verify' => [
-        'type' => \Laminas\Mvc\Router\Http\Literal::class,
+        'type' => \Laminas\Router\Http\Literal::class,
         'options' => [
             'route' => '/verify',
             'defaults' => [
