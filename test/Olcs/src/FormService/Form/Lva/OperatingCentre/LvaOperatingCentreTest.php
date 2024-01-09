@@ -135,6 +135,27 @@ class LvaOperatingCentreTest extends MockeryTestCase
             ->once()
             ->getMock();
 
+        $postcodeInput = m::mock(InputInterface::class);
+        $postcodeInput->shouldReceive('setRequired')->with(false)->once();
+
+        // Mock for searchPostcode input and its setRequired and setAllowEmpty methods
+        $searchPostcodeInput = m::mock(InputInterface::class);
+        $searchPostcodeInput->shouldReceive('setRequired')->with(false)->once();
+        $searchPostcodeInput->shouldReceive('setAllowEmpty')->with(true)->once();
+
+        // Mock the collection of inputs for searchPostcode
+        $inputsCollection = m::mock(CollectionInputFilter::class);
+        $inputsCollection->shouldReceive('getInputs')->andReturn([$searchPostcodeInput]);
+
+        // Mock the InputFilter for address
+        $addressInputFilter = m::mock(InputFilterInterface::class);
+        $addressInputFilter->shouldReceive('get')->with('postcode')->andReturn($postcodeInput);
+        $addressInputFilter->shouldReceive('get')->with('searchPostcode')->andReturn($inputsCollection);
+
+        // Mock the main InputFilter
+        $inputFilter = m::mock(InputFilterInterface::class);
+        $inputFilter->shouldReceive('get')->with('address')->andReturn($addressInputFilter);
+
         $adSendByPost = m::mock(ElementInterface::class);
         $adSendByPost->shouldReceive('setValue')
             ->once()
@@ -145,6 +166,8 @@ class LvaOperatingCentreTest extends MockeryTestCase
                 . '-: <b>AB12345/111</b>'
             )
             ->getMock();
+
+        $form->shouldReceive('getInputFilter')->andReturn($inputFilter);
 
         $radio = m::mock(ElementInterface::class)
             ->shouldReceive('getValueOptions')
@@ -261,6 +284,34 @@ class LvaOperatingCentreTest extends MockeryTestCase
                     ->getMock()
             )
             ->once();
+
+        $postcodeInput = m::mock(InputInterface::class);
+        $postcodeInput->shouldReceive('setRequired')->with(false)->once();
+
+        // Mock for searchPostcode input and its setRequired and setAllowEmpty methods
+        $searchPostcodeInput = m::mock(InputInterface::class);
+        $searchPostcodeInput->shouldReceive('setRequired')->with(false)->once();
+        $searchPostcodeInput->shouldReceive('setAllowEmpty')->with(true)->once();
+
+        // Mock the collection of inputs for searchPostcode
+        $inputsCollection = m::mock(CollectionInputFilter::class);
+        $inputsCollection->shouldReceive('getInputs')->andReturn([$searchPostcodeInput]);
+
+        // Mock the InputFilter for address
+        $addressInputFilter = m::mock(InputFilterInterface::class);
+        $addressInputFilter->shouldReceive('get')->with('postcode')->andReturn($postcodeInput);
+        $addressInputFilter->shouldReceive('get')->with('searchPostcode')->andReturn($inputsCollection);
+
+        // Mock the main InputFilter
+        $inputFilter = m::mock(InputFilterInterface::class);
+        $inputFilter->shouldReceive('get')->with('address')->andReturn($addressInputFilter);
+
+        $form = m::mock(Form::class);
+
+        $form->shouldReceive('getInputFilter')->andReturn($inputFilter);
+
+        // ... existing mocks ...
+
 
         $adSendByPost = m::mock(ElementInterface::class);
         $adSendByPost->shouldReceive('setValue')
