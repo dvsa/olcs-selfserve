@@ -5,7 +5,7 @@
         "php": "^7.4",
         "container-interop/container-interop": "^1.2",
         "doctrine/annotations": "^1.14.2",
-        "doctrine/doctrine-module": "^1",
+        "doctrine/doctrine-module": "^2",
         "dvsa/laminas-config-cloud-parameters": "^0.2.0",
         "laminas/laminas-authentication": "^2.6",
         "laminas/laminas-eventmanager": "^2.6",
