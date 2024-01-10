@@ -41,7 +41,7 @@ class FormProvider
         FormFactory $formFactory,
         FieldsetPopulator $fieldsetPopulator,
         LaminasFormFactory $laminasFormFactory,
-        AnnotationBuilder $annotationBuilder,
+        $annotationBuilder,
         array $submitOptionsMappings
     ) {
         $this->formFactory = $formFactory;

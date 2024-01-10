@@ -87,29 +87,6 @@ class LvaOperatingCentreTest extends MockeryTestCase
             ->once()
             ->getMock();
 
-        $form->shouldReceive('getInputFilter')
-            ->andReturn(
-                m::mock(InputFilterInterface::class)
-                    ->shouldReceive('get')
-                    ->with('address')
-                    ->andReturn(
-                        m::mock(ElementInterface::class)
-                            ->shouldReceive('get')
-                            ->with('postcode')
-                            ->andReturn(
-                                m::mock(ElementInterface::class)
-                                    ->shouldReceive('setRequired')
-                                    ->with(false)
-                                    ->once()
-                                    ->getMock()
-                            )
-                            ->once()
-                            ->getMock()
-                    )
-                    ->getMock()
-            )
-            ->once();
-
         $form->shouldReceive('get')
             ->with('data')
             ->andReturn(
@@ -261,29 +238,6 @@ class LvaOperatingCentreTest extends MockeryTestCase
             )
             ->once()
             ->getMock();
-
-        $form->shouldReceive('getInputFilter')
-            ->andReturn(
-                m::mock(InputFilterInterface::class)
-                    ->shouldReceive('get')
-                    ->with('address')
-                    ->andReturn(
-                        m::mock(ElementInterface::class)
-                            ->shouldReceive('get')
-                            ->with('postcode')
-                            ->andReturn(
-                                m::mock(ElementInterface::class)
-                                    ->shouldReceive('setRequired')
-                                    ->with(false)
-                                    ->once()
-                                    ->getMock()
-                            )
-                            ->once()
-                            ->getMock()
-                    )
-                    ->getMock()
-            )
-            ->once();
 
         $postcodeInput = m::mock(InputInterface::class);
         $postcodeInput->shouldReceive('setRequired')->with(false)->once();
