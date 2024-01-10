@@ -12,7 +12,6 @@ use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Olcs\FormService\Form\Lva\People\SoleTrader\VariationSoleTrader as Sut;
 use Laminas\Form\Form;
-use OlcsTest\TestHelpers\AbstractFormValidationTestCase;
 use ZfcRbac\Service\AuthorizationService;
 
 /**
@@ -38,8 +37,6 @@ class VariationSoleTraderTest extends MockeryTestCase
 
         $this->mockVariationService = m::mock(Form::class);
 
-        $this->sm = $this->getServiceManager();
-
         /** @var FormServiceManager fsm */
         $this->fsm = m::mock('\Common\FormService\FormServiceManager')->makePartial();
         $this->peopleLvaService = m::mock(PeopleLvaService::class);
@@ -47,16 +44,6 @@ class VariationSoleTraderTest extends MockeryTestCase
         $this->fsm->setService('lva-variation', $this->mockVariationService);
 
         $this->sut = new Sut($this->formHelper, m::mock(AuthorizationService::class), $this->peopleLvaService, $this->fsm);
-    }
-
-    /**
-     * Added this method for backwards compatibility
-     *
-     * @return \Laminas\ServiceManager\ServiceManager
-     */
-    public function getServiceManager()
-    {
-        return AbstractFormValidationTestCase::getRealServiceManager();
     }
 
     /**

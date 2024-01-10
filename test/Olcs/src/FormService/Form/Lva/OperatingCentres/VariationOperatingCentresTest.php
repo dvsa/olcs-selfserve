@@ -20,7 +20,6 @@ use Laminas\Form\Fieldset;
 use Laminas\Form\Form;
 use Common\Service\Helper\FormHelperService;
 use Common\RefData;
-use OlcsTest\TestHelpers\AbstractFormValidationTestCase;
 use ZfcRbac\Service\AuthorizationService;
 
 class VariationOperatingCentresTest extends MockeryTestCase
@@ -38,31 +37,17 @@ class VariationOperatingCentresTest extends MockeryTestCase
 
     protected $translator;
 
-    /**
-     * We can access service manager if we need to add a mock for certain applications
-     *
-     * @return \Laminas\ServiceManager\ServiceManager
-     */
-    public function getServiceManager()
-    {
-        return AbstractFormValidationTestCase::getRealServiceManager();
-    }
-
     public function setUp(): void
     {
         $this->tableBuilder = m::mock();
-
         $this->translator = m::mock(TranslationHelperService::class);
-
-        $sm = $this->getServiceManager();
-        $sm->setService('Table', $this->tableBuilder);
-        $sm->setService('Helper\Translation', $this->translator);
+        $this->form = m::mock(Form::class);
 
         $fsm = m::mock(FormServiceManager::class)->makePartial();
-        $fsm->shouldReceive('getServiceLocator')
-            ->andReturn($sm);
-
-        $this->form = m::mock(Form::class);
+        $fsm->setService('Table', $this->tableBuilder);
+        $fsm->setService('Helper\Translation', $this->translator);
+        $fsm->allows('getServiceLocator')
+            ->andReturns($this->form);
 
         $lvaVariation = m::mock(Form::class);
         $lvaVariation->shouldReceive('alterForm')

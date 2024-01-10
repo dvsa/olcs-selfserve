@@ -5,6 +5,7 @@ namespace OlcsTest\FormService\Form\Lva;
 use Common\Form\Element\DynamicMultiCheckbox;
 use Common\Form\Element\DynamicRadio;
 use Common\Form\Element\DynamicSelect;
+use Common\FormService\FormServiceManager;
 use Common\Service\Translator\TranslationLoader;
 use Laminas\I18n\Translator\LoaderPluginManager;
 use Laminas\I18n\View\Helper\Translate;
@@ -13,7 +14,6 @@ use Laminas\ServiceManager\ServiceManager;
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use OlcsTest\FormService\Form\Lva\Stub\AbstractOverviewSubmissionStub;
-use OlcsTest\TestHelpers\AbstractFormValidationTestCase;
 
 /**
  * @covers Olcs\FormService\Form\Lva\AbstractOverviewSubmission
@@ -23,8 +23,6 @@ class AbstractOverviewSubmissionTest extends MockeryTestCase
     /** @var  AbstractOverviewSubmissionStub */
     private $sut;
 
-    /** @var  m\MockInterface */
-    private $mockSm;
     /** @var  m\MockInterface | \Laminas\Form\FormInterface */
     private $mockForm;
     /** @var  m\MockInterface | \Common\Service\Helper\FormHelperService */
@@ -32,19 +30,9 @@ class AbstractOverviewSubmissionTest extends MockeryTestCase
 
     private $mockTranslationHelper;
 
-    /**
-     * @return \Laminas\ServiceManager\ServiceManager
-     */
-    public function getServiceManager()
-    {
-        return AbstractFormValidationTestCase::getRealServiceManager();
-    }
-
     public function setUp(): void
     {
         $this->mockForm = m::mock(\Laminas\Form\FormInterface::class);
-
-        $this->mockSm = $this->getServiceManager();
 
         $this->mockTranslationHelper = m::mock(Translate::class);
         $this->mockTranslationHelper

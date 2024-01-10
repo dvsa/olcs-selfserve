@@ -18,7 +18,6 @@ use Olcs\FormService\Form\Lva\ApplicationFinancialEvidence;
 use Laminas\Form\Form;
 use Laminas\Http\Request;
 use OlcsTest\FormService\Form\Lva\Traits\ButtonsAlterations;
-use OlcsTest\TestHelpers\AbstractFormValidationTestCase;
 use ZfcRbac\Service\AuthorizationService;
 
 /**
@@ -44,16 +43,6 @@ class ApplicationFinancialEvidenceTest extends MockeryTestCase
     /** @var  m\MockInterface */
     protected $translator;
 
-    /**
-     * Added this method for backwards compatibility
-     *
-     * @return \Laminas\ServiceManager\ServiceManager
-     */
-    public function getServiceManager()
-    {
-        return AbstractFormValidationTestCase::getRealServiceManager();
-    }
-
     public function setUp(): void
     {
         $this->fh = m::mock(FormHelperService::class)->makePartial();
@@ -61,11 +50,11 @@ class ApplicationFinancialEvidenceTest extends MockeryTestCase
         $this->urlHelper = m::mock(UrlHelperService::class);
         $this->translator = m::mock(TranslationHelperService::class);
 
-        $sm = $this->getServiceManager();
-        $sm->setService('Helper\Url', $this->urlHelper);
-        $sm->setService('Helper\Translation', $this->translator);
 
-        $this->fsm->shouldReceive('getServiceLocator')->andReturn($sm);
+        $this->fsm->setService('Helper\Url', $this->urlHelper);
+        $this->fsm->setService('Helper\Translation', $this->translator);
+
+        $this->fsm->shouldReceive('getServiceLocator')->andReturn($this->fsm);
 
         $this->sut = new ApplicationFinancialEvidence($this->fh, m::mock(AuthorizationService::class), $this->translator, $this->urlHelper);
     }

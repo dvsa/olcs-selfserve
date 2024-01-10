@@ -15,7 +15,6 @@ use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Olcs\FormService\Form\Lva\People\SoleTrader\LicenceSoleTrader as Sut;
 use Laminas\Form\Form;
-use OlcsTest\TestHelpers\AbstractFormValidationTestCase;
 use ZfcRbac\Service\AuthorizationService;
 
 class LicenceSoleTraderTest extends MockeryTestCase
@@ -31,28 +30,18 @@ class LicenceSoleTraderTest extends MockeryTestCase
     protected $mockLicenceService;
     private $peopleLvaService;
 
-    /**
-     * We can access service manager if we need to add a mock for certain applications
-     *
-     * @return \Laminas\ServiceManager\ServiceManager
-     */
-    public function getServiceManager()
-    {
-        return AbstractFormValidationTestCase::getRealServiceManager();
-    }
-
     public function setUp(): void
     {
         $this->formHelper = m::mock('\Common\Service\Helper\FormHelperService');
+        $this->form = m::mock(Form::class);
 
         $this->mockLicenceService = m::mock(Form::class);
         $this->peopleLvaService = m::mock(PeopleLvaService::class);
 
-        $this->sm = $this->getServiceManager();
-
         /** @var FormServiceManager fsm */
         $this->fsm = m::mock('\Common\FormService\FormServiceManager')->makePartial();
-        $this->fsm->setServiceLocator($this->sm);
+        $this->fsm->allows('getServiceLocator')
+            ->andReturns($this->form);
         $this->fsm->setService('lva-licence', $this->mockLicenceService);
 
         $this->sut = new Sut($this->formHelper, m::mock(AuthorizationService::class), $this->peopleLvaService, $this->fsm);
@@ -170,7 +159,7 @@ class LicenceSoleTraderTest extends MockeryTestCase
             ->once()
             ->with($form, 'bar');
 
-        $this->sm->setService('Lva\People', $this->peopleLvaService);
+        $this->fsm->setService('Lva\People', $this->peopleLvaService);
 
         $this->sut->getForm($params);
     }

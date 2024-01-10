@@ -9,6 +9,7 @@ use Common\FormService\FormServiceManager;
 use Common\Service\Helper\FormHelperService;
 use Common\Service\Lva\PeopleLvaService;
 use Common\Service\Translator\TranslationLoader;
+use Laminas\Form\Form;
 use Laminas\I18n\Translator\LoaderPluginManager;
 use Laminas\Mvc\Service\ServiceManagerConfig;
 use Laminas\ServiceManager\ServiceManager;
@@ -18,7 +19,6 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Olcs\FormService\Form\Lva\People\SoleTrader\ApplicationSoleTrader as Sut;
 use OlcsTest\FormService\Form\Lva\Traits\ButtonsAlterations;
 use Laminas\ServiceManager\ServiceLocatorInterface;
-use OlcsTest\TestHelpers\AbstractFormValidationTestCase;
 use ZfcRbac\Service\AuthorizationService;
 
 class ApplicationSoleTraderTest extends MockeryTestCase
@@ -49,25 +49,15 @@ class ApplicationSoleTraderTest extends MockeryTestCase
      * @var PeopleLvaService|(PeopleLvaService&m\LegacyMockInterface)|(PeopleLvaService&m\MockInterface)|m\LegacyMockInterface|m\MockInterface
      */
     private $peopleLvaService;
-
-    /**
-     * Added this method for backwards compatibility
-     *
-     * @return \Laminas\ServiceManager\ServiceManager
-     */
-    public function getServiceManager()
-    {
-        return AbstractFormValidationTestCase::getRealServiceManager();
-    }
     public function setUp(): void
     {
         $this->formHelper = m::mock('\Common\Service\Helper\FormHelperService');
-
-        $this->sm = $this->getServiceManager();
+        $this->form = m::mock(Form::class);
 
         /** @var FormServiceManager fsm */
         $this->fsm = m::mock('\Common\FormService\FormServiceManager')->makePartial();
-        $this->fsm->setServiceLocator($this->sm);
+        $this->fsm->allows('getServiceLocator')
+            ->andReturns($this->form);
 
         $this->peopleLvaService = m::mock(PeopleLvaService::class);
 
@@ -191,9 +181,7 @@ class ApplicationSoleTraderTest extends MockeryTestCase
         $this->peopleLvaService->shouldReceive('lockPersonForm')
             ->once()
             ->with($form, 'bar');
-
-        $this->sm->setService('Lva\People', $this->peopleLvaService);
-
+        $this->fsm->setService('Lva\People', $this->peopleLvaService);
         $this->sut->getForm($params);
     }
 
