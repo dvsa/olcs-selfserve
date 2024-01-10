@@ -39,6 +39,9 @@ class VariationOperatingCentresTest extends MockeryTestCase
 
     public function setUp(): void
     {
+        $sm = m::mock('\Laminas\ServiceManager\ServiceManager')
+            ->makePartial()
+            ->setAllowOverride(true);
         $this->tableBuilder = m::mock();
         $this->translator = m::mock(TranslationHelperService::class);
         $this->form = m::mock(Form::class);
@@ -47,7 +50,7 @@ class VariationOperatingCentresTest extends MockeryTestCase
         $fsm->setService('Table', $this->tableBuilder);
         $fsm->setService('Helper\Translation', $this->translator);
         $fsm->allows('getServiceLocator')
-            ->andReturns($this->form);
+            ->andReturns($sm);
 
         $lvaVariation = m::mock(Form::class);
         $lvaVariation->shouldReceive('alterForm')

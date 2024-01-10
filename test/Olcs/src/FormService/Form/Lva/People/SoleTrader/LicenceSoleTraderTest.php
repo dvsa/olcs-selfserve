@@ -33,6 +33,11 @@ class LicenceSoleTraderTest extends MockeryTestCase
     public function setUp(): void
     {
         $this->formHelper = m::mock('\Common\Service\Helper\FormHelperService');
+
+        $this->sm = m::mock('\Laminas\ServiceManager\ServiceManager')
+            ->makePartial()
+            ->setAllowOverride(true);
+
         $this->form = m::mock(Form::class);
 
         $this->mockLicenceService = m::mock(Form::class);
@@ -41,7 +46,7 @@ class LicenceSoleTraderTest extends MockeryTestCase
         /** @var FormServiceManager fsm */
         $this->fsm = m::mock('\Common\FormService\FormServiceManager')->makePartial();
         $this->fsm->allows('getServiceLocator')
-            ->andReturns($this->form);
+            ->andReturns($this->sm);
         $this->fsm->setService('lva-licence', $this->mockLicenceService);
 
         $this->sut = new Sut($this->formHelper, m::mock(AuthorizationService::class), $this->peopleLvaService, $this->fsm);
