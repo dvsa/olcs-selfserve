@@ -2,15 +2,8 @@
 
 namespace OlcsTest\FormService\Form\Lva\People\SoleTrader;
 
-use Common\Form\Element\DynamicMultiCheckbox;
-use Common\Form\Element\DynamicRadio;
-use Common\Form\Element\DynamicSelect;
 use Common\FormService\FormServiceManager;
 use Common\Service\Lva\PeopleLvaService;
-use Common\Service\Translator\TranslationLoader;
-use Laminas\I18n\Translator\LoaderPluginManager;
-use Laminas\Mvc\Service\ServiceManagerConfig;
-use Laminas\ServiceManager\ServiceManager;
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Olcs\FormService\Form\Lva\People\SoleTrader\LicenceSoleTrader as Sut;
@@ -25,8 +18,6 @@ class LicenceSoleTraderTest extends MockeryTestCase
 
     protected $fsm;
 
-    protected $sm;
-
     protected $mockLicenceService;
     private $peopleLvaService;
 
@@ -34,19 +25,12 @@ class LicenceSoleTraderTest extends MockeryTestCase
     {
         $this->formHelper = m::mock('\Common\Service\Helper\FormHelperService');
 
-        $this->sm = m::mock('\Laminas\ServiceManager\ServiceManager')
-            ->makePartial()
-            ->setAllowOverride(true);
-
-        $this->form = m::mock(Form::class);
-
         $this->mockLicenceService = m::mock(Form::class);
         $this->peopleLvaService = m::mock(PeopleLvaService::class);
 
         /** @var FormServiceManager fsm */
         $this->fsm = m::mock('\Common\FormService\FormServiceManager')->makePartial();
-        $this->fsm->allows('getServiceLocator')
-            ->andReturns($this->sm);
+
         $this->fsm->setService('lva-licence', $this->mockLicenceService);
 
         $this->sut = new Sut($this->formHelper, m::mock(AuthorizationService::class), $this->peopleLvaService, $this->fsm);

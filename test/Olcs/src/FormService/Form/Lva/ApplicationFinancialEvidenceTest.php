@@ -8,10 +8,6 @@ use Common\Form\Element\DynamicSelect;
 use Common\Service\Helper\FormHelperService;
 use Common\Service\Helper\TranslationHelperService;
 use Common\Service\Helper\UrlHelperService;
-use Common\Service\Translator\TranslationLoader;
-use Laminas\I18n\Translator\LoaderPluginManager;
-use Laminas\Mvc\Service\ServiceManagerConfig;
-use Laminas\ServiceManager\ServiceManager;
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Olcs\FormService\Form\Lva\ApplicationFinancialEvidence;
@@ -33,9 +29,6 @@ class ApplicationFinancialEvidenceTest extends MockeryTestCase
      * @var ApplicationFinancialEvidence
      */
     protected $sut;
-
-    /** @var  \Common\FormService\FormServiceManager */
-    protected $fsm;
     /** @var  var FormHelperService */
     protected $fh;
     /** @var  m\MockInterface */
@@ -46,15 +39,8 @@ class ApplicationFinancialEvidenceTest extends MockeryTestCase
     public function setUp(): void
     {
         $this->fh = m::mock(FormHelperService::class)->makePartial();
-        $this->fsm = m::mock(\Common\FormService\FormServiceManager::class)->makePartial();
         $this->urlHelper = m::mock(UrlHelperService::class);
         $this->translator = m::mock(TranslationHelperService::class);
-
-
-        $this->fsm->setService('Helper\Url', $this->urlHelper);
-        $this->fsm->setService('Helper\Translation', $this->translator);
-
-        $this->fsm->shouldReceive('getServiceLocator')->andReturn($this->fsm);
 
         $this->sut = new ApplicationFinancialEvidence($this->fh, m::mock(AuthorizationService::class), $this->translator, $this->urlHelper);
     }

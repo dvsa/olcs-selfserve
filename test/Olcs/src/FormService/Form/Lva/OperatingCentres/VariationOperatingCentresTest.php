@@ -2,14 +2,7 @@
 
 namespace OlcsTest\FormService\Form\Lva\OperatingCentres;
 
-use Common\Form\Element\DynamicMultiCheckbox;
-use Common\Form\Element\DynamicRadio;
-use Common\Form\Element\DynamicSelect;
 use Common\Service\Helper\TranslationHelperService;
-use Common\Service\Translator\TranslationLoader;
-use Laminas\I18n\Translator\LoaderPluginManager;
-use Laminas\Mvc\Service\ServiceManagerConfig;
-use Laminas\ServiceManager\ServiceManager;
 use Olcs\FormService\Form\Lva\OperatingCentres\VariationOperatingCentres;
 use Common\FormService\FormServiceManager;
 use Common\Service\Table\TableBuilder;
@@ -39,18 +32,11 @@ class VariationOperatingCentresTest extends MockeryTestCase
 
     public function setUp(): void
     {
-        $sm = m::mock('\Laminas\ServiceManager\ServiceManager')
-            ->makePartial()
-            ->setAllowOverride(true);
         $this->tableBuilder = m::mock();
         $this->translator = m::mock(TranslationHelperService::class);
         $this->form = m::mock(Form::class);
 
         $fsm = m::mock(FormServiceManager::class)->makePartial();
-        $fsm->setService('Table', $this->tableBuilder);
-        $fsm->setService('Helper\Translation', $this->translator);
-        $fsm->allows('getServiceLocator')
-            ->andReturns($sm);
 
         $lvaVariation = m::mock(Form::class);
         $lvaVariation->shouldReceive('alterForm')
