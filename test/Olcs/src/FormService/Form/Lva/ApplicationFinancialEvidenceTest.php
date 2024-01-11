@@ -2,9 +2,6 @@
 
 namespace OlcsTest\FormService\Form\Lva;
 
-use Common\Form\Element\DynamicMultiCheckbox;
-use Common\Form\Element\DynamicRadio;
-use Common\Form\Element\DynamicSelect;
 use Common\Service\Helper\FormHelperService;
 use Common\Service\Helper\TranslationHelperService;
 use Common\Service\Helper\UrlHelperService;
