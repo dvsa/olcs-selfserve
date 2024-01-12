@@ -39,7 +39,6 @@ class ApplicationPeopleTest extends MockeryTestCase
     public function setUp(): void
     {
         $this->formHelper = m::mock('\Common\Service\Helper\FormHelperService');
-        $this->fsm = m::mock('\Common\FormService\FormServiceManager')->makePartial();
 
         $this->sut = new Sut($this->formHelper, m::mock(AuthorizationService::class));
     }

@@ -29,7 +29,6 @@ class ApplicationTransportManagerTest extends MockeryTestCase
     public function setUp(): void
     {
         $this->formHelper = m::mock(FormHelperService::class);
-        $this->fsm = m::mock(FormServiceManager::class)->makePartial();
 
         $this->sut = new Sut($this->formHelper, m::mock(AuthorizationService::class));
     }
