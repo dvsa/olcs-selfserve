@@ -148,8 +148,6 @@ class LicenceSoleTraderTest extends MockeryTestCase
             ->once()
             ->with($form, 'bar');
 
-        $this->fsm->setService('Lva\People', $this->peopleLvaService);
-
         $this->sut->getForm($params);
     }
 

@@ -39,9 +39,6 @@ class ApplicationSoleTraderTest extends MockeryTestCase
     {
         $this->formHelper = m::mock('\Common\Service\Helper\FormHelperService');
 
-        /** @var FormServiceManager $this fsm */
-        $this->fsm = m::mock(FormServiceManager::class)->makePartial();
-
         $this->peopleLvaService = m::mock(PeopleLvaService::class);
 
         $this->sut = new Sut($this->formHelper, m::mock(AuthorizationService::class), $this->peopleLvaService);
@@ -164,7 +161,7 @@ class ApplicationSoleTraderTest extends MockeryTestCase
         $this->peopleLvaService->shouldReceive('lockPersonForm')
             ->once()
             ->with($form, 'bar');
-        $this->fsm->setService('Lva\People', $this->peopleLvaService);
+
         $this->sut->getForm($params);
     }
 
