@@ -4,8 +4,6 @@ namespace OlcsTest\Controller\Lva;
 
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use OlcsTest\Bootstrap;
-
 /**
  * AbstractSummaryControllerTest
  *

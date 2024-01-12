@@ -7,7 +7,6 @@
  */
 namespace OlcsTest\Controller\Lva\Traits;
 
-use OlcsTest\Bootstrap;
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 

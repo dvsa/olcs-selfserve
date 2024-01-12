@@ -14,7 +14,6 @@ use Dvsa\Olcs\Utils\Translation\NiTextTranslation;
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryTestCase as TestCase;
 use Olcs\Controller\UserForgotUsernameController as Sut;
-use OlcsTest\Bootstrap;
 use ReflectionClass;
 use ZfcRbac\Service\AuthorizationService;
 
