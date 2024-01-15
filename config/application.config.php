@@ -41,8 +41,7 @@ if (file_exists(__DIR__ . '/../vendor/laminas/laminas-developer-tools/src/Module
     $config['modules'][] = 'Laminas\DeveloperTools';
 
     if (file_exists(__DIR__ . '/../vendor/san/san-session-toolbar/src/Module.php')) {
-        /** @todo once we're on Laminas 3, this line will be uncommented by VOL-3749  */
-        //$config['modules'][] = 'SanSessionToolbar';
+        $config['modules'][] = 'SanSessionToolbar';
     }
 }
 
