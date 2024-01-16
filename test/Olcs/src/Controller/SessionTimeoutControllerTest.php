@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace OlcsTest\Controller;
 
@@ -27,6 +28,7 @@ use Olcs\Controller\SessionTimeoutController;
 use Olcs\Controller\SessionTimeoutControllerFactory;
 use Interop\Container\ContainerInterface;
 use ZfcRbac\Identity\IdentityProviderInterface;
+use Laminas\Mvc\Controller\Plugin\Redirect as RedirectPlugin;
 
 /**
  * @see SessionTimeoutController
@@ -294,7 +296,7 @@ class SessionTimeoutControllerTest extends MockeryTestCase
     protected function setUpSut()
     {
         // Mock Dependencies
-        $identityProvide = $this->createMock( IdentityProviderInterface::class);
+        $identityProvide = $this->createMock(IdentityProviderInterface::class);
         $redirectHelper = $this->createMock(Redirect::class);
         $cookieService = $this->createMock(CookieService::class);
         $logoutService = $this->createMock(LogoutService::class);
