@@ -26,8 +26,8 @@
         "laminas/laminas-validator": "^2.25",
         "laminas/laminas-view": "^2.11",
         "lm-commons/lmc-rbac-mvc": "^3.3",
-        "olcs/olcs-auth": "dev-project/3.0",
-        "olcs/olcs-common": "dev-project/3.0",
+        "olcs/olcs-auth": "^5.0.0",
+        "olcs/olcs-common": "^5.0.0",
         "olcs/olcs-logging": "^5.0.0",
         "olcs/olcs-transfer": "^5.0.0",
         "olcs/olcs-utils": "^5.0.0"

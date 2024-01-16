@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6086e0c6726fdf1ee1d3a2ebfdfd6bbb",
+    "content-hash": "b84b5dc026d0ee153cd48a27959cd63e",
     "packages": [
         {
             "name": "brick/varexporter",
@@ -3904,16 +3904,16 @@
         },
         {
             "name": "olcs/olcs-auth",
-            "version": "dev-project/3.0",
+            "version": "5.0.0-beta.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dvsa/olcs-auth.git",
-                "reference": "b39236d3a9edbacdf9e1d35fec6d673a760baa6c"
+                "reference": "144eb3f73682efa55f284b8c523c8157bebd7def"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dvsa/olcs-auth/zipball/b39236d3a9edbacdf9e1d35fec6d673a760baa6c",
-                "reference": "b39236d3a9edbacdf9e1d35fec6d673a760baa6c",
+                "url": "https://api.github.com/repos/dvsa/olcs-auth/zipball/144eb3f73682efa55f284b8c523c8157bebd7def",
+                "reference": "144eb3f73682efa55f284b8c523c8157bebd7def",
                 "shasum": ""
             },
             "require": {
@@ -3935,7 +3935,7 @@
                 "bamarni/composer-bin-plugin": "^1.8",
                 "johnkary/phpunit-speedtrap": "^4.0",
                 "mockery/mockery": "^1.6",
-                "olcs/olcs-common": "~4.206.511",
+                "olcs/olcs-common": "^5.0.0",
                 "olcs/olcs-transfer": "^5.0.0",
                 "phpunit/phpunit": "^9.6"
             },
@@ -3957,22 +3957,22 @@
             ],
             "description": "OLCS Authentication",
             "support": {
-                "source": "https://github.com/dvsa/olcs-auth/tree/project/3.0"
+                "source": "https://github.com/dvsa/olcs-auth/tree/5.0.0-beta.1"
             },
-            "time": "2024-01-16T11:59:07+00:00"
+            "time": "2024-01-16T17:02:18+00:00"
         },
         {
             "name": "olcs/olcs-common",
-            "version": "dev-project/3.0",
+            "version": "5.0.0-beta.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dvsa/olcs-common.git",
-                "reference": "b1dd56d2353f807992f32e2243fb58034c4a8fda"
+                "reference": "26c78bc9a1bac4f71933b573ef808a034f2c89f8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dvsa/olcs-common/zipball/b1dd56d2353f807992f32e2243fb58034c4a8fda",
-                "reference": "b1dd56d2353f807992f32e2243fb58034c4a8fda",
+                "url": "https://api.github.com/repos/dvsa/olcs-common/zipball/26c78bc9a1bac4f71933b573ef808a034f2c89f8",
+                "reference": "26c78bc9a1bac4f71933b573ef808a034f2c89f8",
                 "shasum": ""
             },
             "require": {
@@ -4030,9 +4030,9 @@
             "notification-url": "https://packagist.org/downloads/",
             "description": "Common library for the OLCS Project",
             "support": {
-                "source": "https://github.com/dvsa/olcs-common/tree/project/3.0"
+                "source": "https://github.com/dvsa/olcs-common/tree/5.0.0-beta.1"
             },
-            "time": "2024-01-16T11:55:59+00:00"
+            "time": "2024-01-16T16:57:38+00:00"
         },
         {
             "name": "olcs/olcs-logging",
@@ -7994,10 +7994,7 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "olcs/olcs-auth": 20,
-        "olcs/olcs-common": 20
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
