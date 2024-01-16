@@ -57,15 +57,17 @@
       "PermitsTest\\": "test/Permits/src"
     }
   },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
-    "config": {
-        "sort-packages": true,
-        "allow-plugins": {
-            "bamarni/composer-bin-plugin": true,
-            "laminas/laminas-dependency-plugin": true
-        }
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "config": {
+    "allow-plugins": {
+      "laminas/laminas-dependency-plugin": true,
+      "bamarni/composer-bin-plugin": true
     },
+    "platform": {
+      "ext-redis": "4.3"
+    }
+  },
   "scripts": {
     "bin": "echo 'bin not installed'",
     "post-install-cmd": [
