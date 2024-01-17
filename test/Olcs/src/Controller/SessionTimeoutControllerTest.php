@@ -130,7 +130,7 @@ class SessionTimeoutControllerTest extends MockeryTestCase
         $controller->setEvent($mvcEvent);
 
         // Act
-        $result = $controller->indexAction($request);
+        $result = $controller->indexAction();
 
         // Assert
         $this->assertInstanceOf(ViewModel::class, $result);

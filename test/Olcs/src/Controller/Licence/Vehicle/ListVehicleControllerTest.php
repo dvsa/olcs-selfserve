@@ -104,25 +104,81 @@ class ListVehicleControllerTest extends TestCase
     }
 
     /**
-     * @depends indexAction_IsCallable
      * @test
      */
     public function indexAction_RespondsInHtmlFormat_WhenNoFormatIsProvided()
     {
         // Setup
         $this->setUpSut();
+
         $request = $this->setUpRequest('/');
         $routeMatch = new RouteMatch([]);
 
         // Execute
         $result = $this->sut->indexAction($request, $routeMatch);
 
-// Assert that $result is an instance of ResponseInterface
-        $this->assertInstanceOf(ResponseInterface::class, $result, 'Failed asserting that $result is an instance of ResponseInterface');
+        // Assert
+        $this->assertInstanceOf(ViewModel::class, $result);
     }
 
     /**
-     * @depends indexAction_IsCallable
+     * @test
+     */
+    public function getLicence_ReturnsExpectedResult()
+    {
+        // Setup
+        $this->setUpSut();
+
+        // Mock the queryHandler
+        $queryHandler = $this->createMock(HandleQuery::class);
+
+        // Set up expected result for the Licence query
+        $expectedLicenceData = [
+            'id' => 1,
+            'licNo' => 'ABC123',
+            'organisation' => ['confirmShareVehicleInfo' => 'Y']
+        ];
+
+        // Set up the queryHandler to return the expected result
+        $queryHandler->method('__invoke')->willReturnCallback(function ($query) use ($expectedLicenceData) {
+            // Assuming the Licence class has a getId method
+            if ($query instanceof Licence && $query->getId() === 1) {
+                return (new class($expectedLicenceData) {
+                    private $data;
+
+                    public function __construct($data)
+                    {
+                        $this->data = $data;
+                    }
+
+                    public function getResult()
+                    {
+                        return $this->data;
+                    }
+                });
+            }
+            return null; // Adjust based on your actual logic
+        });
+
+        // Use reflection to set the protected property
+        $reflection = new \ReflectionClass($this->sut);
+        $property = $reflection->getProperty('queryHandler');
+        $property->setAccessible(true);
+        $property->setValue($this->sut, $queryHandler);
+
+        // Create a Licence object to pass to getLicence method
+        $licenceQuery = Licence::create(['id' => 1]);
+
+        // Use reflection to invoke the protected method
+        $method = $reflection->getMethod('getLicence');
+        $method->setAccessible(true);
+        $result = $method->invoke($this->sut, $licenceQuery);
+
+        // Assert
+        $this->assertEquals($expectedLicenceData, $result);
+    }
+
+    /**
      * @test
      */
     public function indexAction_RespondsInHtmlFormat_WhenHtmlFormatIsProvided()
@@ -924,7 +980,30 @@ class ListVehicleControllerTest extends TestCase
 
     protected function setUpSut()
     {
-        $this->sut = $this->createMock(ListVehicleController::class);
+        // Instantiate the dependencies manually
+        $commandHandler = $this->createMock(HandleCommand::class);
+        $queryHandler = $this->createMock(HandleQuery::class);
+        $translator = $this->createMock(TranslationHelperService::class);
+        $urlHelper = $this->createMock(Url::class);
+        $responseHelper = $this->createMock(ResponseHelperService::class);
+        $tableFactory = $this->createMock(TableFactory::class);
+        $formHelper = $this->createMock(FormHelperService::class);
+        $flashMessenger = $this->createMock(FlashMessengerHelperService::class);
+        $redirectHelper = $this->createMock(Redirect::class);
+
+        // Create an instance of ListVehicleController
+        $this->sut = new ListVehicleController(
+            $commandHandler,
+            $queryHandler,
+            $translator,
+            $urlHelper,
+            $responseHelper,
+            $tableFactory,
+            $formHelper,
+            $flashMessenger,
+            $redirectHelper
+        );
+
     }
 
     /**
