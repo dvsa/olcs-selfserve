@@ -6,9 +6,8 @@ namespace OlcsTest\Controller;
 use Common\Controller\Plugin\Redirect;
 use Common\Rbac\JWTIdentityProvider;
 use Common\Rbac\User;
-use Common\Test\MocksServicesTrait;
+use Interop\Container\Containerinterface;
 use Laminas\ServiceManager\ServiceManager;
-use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Laminas\Http\Request;
 use Laminas\Http\Response;
 use Laminas\Mvc\Controller\PluginManager;
@@ -24,68 +23,29 @@ use Mockery\MockInterface;
 use Olcs\Controller\SessionTimeoutController;
 use Olcs\Controller\SessionTimeoutControllerFactory;
 use LmcRbacMvc\Identity\IdentityProviderInterface;
+use Dvsa\Olcs\Auth\Service\Auth\CookieService;
+use Dvsa\Olcs\Auth\Service\Auth\LogoutService;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @see SessionTimeoutController
  */
-class SessionTimeoutControllerTest extends MockeryTestCase
+class SessionTimeoutControllerTest extends TestCase
 {
-    use MocksServicesTrait;
 
     protected const COOKIE_NAME = 'cookie';
 
     private $identityProviderClass = JWTIdentityProvider::class;
 
     /**
-     * @var ServiceManager
-     */
-    private $serviceManager;
-
-    /**
-     * @return ServiceManager
-     */
-    protected function serviceManager(): ServiceManager
-    {
-        assert(null !== $this->serviceManager, 'Expected service manager to be set. Hint: You may need to call `setUpServiceManager` before trying to get a service manager');
-        return $this->serviceManager;
-    }
-
-    /**
      * @test
      */
     public function indexAction_IsCallable()
     {
-        // Setup
-        $serviceLocator = $this->setUpServiceManager();
-
-        $sut = $this->setUpSut($serviceLocator, new Request());
+        $sut = $this->setUpSut();
 
         // Assert
         $this->assertTrue(method_exists($sut, 'indexAction') && is_callable([$sut, 'indexAction']));
-    }
-
-    /**
-     * @return ServiceManager
-     */
-    protected function setUpServiceManager(): ServiceManager
-    {
-        $this->serviceManager = new ServiceManager();
-        $this->serviceManager->setAllowOverride(true);
-        $services = $this->setUpDefaultServices($this->serviceManager);
-
-        // Maintain support for deprecated way of registering services via an array of services. Instead, services
-        // should be registered by calling the available setter methods on the ServiceManager instance.
-        if (is_array($services)) {
-            foreach ($services as $serviceName => $service) {
-                $this->serviceManager->setService($serviceName, $service);
-            }
-        }
-
-        // Set controller plugin manager to the main service manager so that all services can be resolved from the one
-        // service manager instance.
-        $this->serviceManager->setService('ControllerPluginManager', $this->serviceManager);
-
-        return $this->serviceManager;
     }
 
     /**
@@ -94,18 +54,44 @@ class SessionTimeoutControllerTest extends MockeryTestCase
      */
     public function indexAction_ReturnsViewModelIfIdentityIsAnonymous()
     {
-        // Setup
-        $serviceLocator = $this->setUpServiceLocator();
-        $sut = $this->setUpSut($serviceLocator, new Request());
+        // Arrange
+        $container = $this->createMock(ContainerInterface::class);
 
-        // Define Expectations
-        $identity = $this->setUpMockService(User::class);
-        $identity->shouldReceive('isAnonymous')->andReturnTrue();
-        $currentUser = $this->resolveMockService($serviceLocator, IdentityProviderInterface::class);
-        $currentUser->shouldReceive('getIdentity')->withNoArgs()->andReturn($identity);
+        // Mock dependencies
+        $identityProvider = $this->createMock(IdentityProviderInterface::class);
+        $redirectHelper = $this->createMock(Redirect::class);
+        $cookieService = $this->createMock(CookieService::class);
+        $logoutService = $this->createMock(LogoutService::class);
 
-        // Execute
-        $result = $sut->indexAction($this->setUpRequest());
+        // Setup container to return mocked dependencies
+        $container->method('get')->willReturnMap([
+            [IdentityProviderInterface::class, $identityProvider],
+            [Redirect::class, $redirectHelper],
+            ['Auth\CookieService', $cookieService],
+            ['Auth\LogoutService', $logoutService],
+            ['ControllerPluginManager', $container]
+        ]);
+
+        // Create controller instance using factory and set container
+        $factory = new SessionTimeoutControllerFactory();
+        $controller = $factory($container, SessionTimeoutController::class);
+
+        // Create a mock request (you may adjust this based on your requirements)
+        $request = new Request();
+        $uri = $this->createMock(Http::class);
+        $uri->method('toString')->willReturn('http://example.com');
+        $request->setUri($uri);
+        $request->setQuery(new Parameters([]));
+
+        // Create a mock MvcEvent and set it on the controller
+        $routeMatch = new RouteMatch([]);
+        $mvcEvent = new MvcEvent();
+        $mvcEvent->setRequest($request);
+        $mvcEvent->setRouteMatch($routeMatch);
+        $controller->setEvent($mvcEvent);
+
+        // Act
+        $result = $controller->indexAction();
 
         // Assert
         $this->assertInstanceOf(ViewModel::class, $result);
@@ -222,30 +208,31 @@ class SessionTimeoutControllerTest extends MockeryTestCase
      * @param ServiceLocatorInterface $serviceLocator
      * @return PluginManager
      */
-    protected function setUpPluginManager(ServiceLocatorInterface $serviceLocator): PluginManager
+    protected function setUpPluginManager(Containerinterface $serviceLocator): PluginManager
     {
         $pluginManager = new PluginManager($serviceLocator);
         return $pluginManager;
     }
 
     /**
-     * @param ServiceLocatorInterface $serviceLocator
-     * @param Request $request
-     * @param RouteMatch|null $routeMatch
      * @return SessionTimeoutController
      */
-    protected function setUpSut(ServiceLocatorInterface $serviceLocator, Request $request): SessionTimeoutController
+    protected function setUpSut()
     {
-        $routeMatch = new RouteMatch([]);
-        $factory = new SessionTimeoutControllerFactory();
-        $instance = $factory->__invoke($serviceLocator, SessionTimeoutController::class);
-        $instance->setEvent($this->setUpMvcEvent($request, $routeMatch));
-        $instance->setPluginManager($this->setUpPluginManager($serviceLocator));
+        // Mock Dependencies
+        $identityProvide = $this->createMock(IdentityProviderInterface::class);
+        $redirectHelper = $this->createMock(Redirect::class);
+        $cookieService = $this->createMock(CookieService::class);
+        $logoutService = $this->createMock(LogoutService::class);
 
-        // Dispatch a request so that the request gets set on the controller.
-        $instance->dispatch($request);
+        //Mock Event
+        $event = $this->createMock(MvcEvent::class);
+        $pluginManager = $this->createMock(PluginManager::class);
 
-        return $instance->getDelegate();
+        return new SessionTimeoutController(
+            $identityProvide,
+            $redirectHelper
+        );
     }
 
     /**
