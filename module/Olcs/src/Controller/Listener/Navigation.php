@@ -2,8 +2,11 @@
 
 namespace Olcs\Controller\Listener;
 
+use Common\FeatureToggle;
 use Common\Rbac\User as RbacUser;
 use Common\Service\Cqrs\Query\QuerySender;
+use Dvsa\Olcs\Transfer\Query\Application\Application as ApplicationQuery;
+use Dvsa\Olcs\Transfer\Query\FeatureToggle\IsEnabled as IsEnabledQry;
 use Laminas\EventManager\EventManagerInterface;
 use Laminas\EventManager\ListenerAggregateInterface;
 use Laminas\EventManager\ListenerAggregateTrait;
@@ -83,7 +86,7 @@ class Navigation implements ListenerAggregateInterface
         $shouldShowPermitsTab = $this->shouldShowPermitsTab($e);
         $this->togglePermitsMenus($shouldShowPermitsTab);
 
-        $shouldShowMessagesTab = $this->shouldShowMessagesTab($e);
+        $shouldShowMessagesTab = $this->shouldShowMessagesTab();
         $this->toggleMessagesTab($shouldShowMessagesTab);
     }
 
@@ -163,23 +166,20 @@ class Navigation implements ListenerAggregateInterface
      *
      * @return void
      */
-    private function toggleMessagesTab(bool $shouldShowPermitsTab): void
+    private function toggleMessagesTab(bool $shouldShowMessagesTab): void
     {
         $this->navigation->findBy('id', 'dashboard-messaging')
             ->setVisible($shouldShowMessagesTab);
     }
 
     /**
-     *
-     *
-     * @param MvcEvent $e
-     *
      * @return bool
      */
-    private function shouldShowMessagesTab(MvcEvent $e)
+    private function shouldShowMessagesTab()
     {
+        $messagingToggleState = $this->querySender->featuresEnabled([FeatureToggle::MESSAGING]);
 
-        return ;
+        return $messagingToggleState;
     }
 
     /**
