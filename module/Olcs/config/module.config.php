@@ -16,6 +16,7 @@ use Olcs\Controller\Factory\BusReg\BusRegRegistrationsControllerFactory;
 use Olcs\Controller\Factory\CorrespondenceControllerFactory;
 use Olcs\Controller\Factory\Ebsr\UploadsControllerFactory;
 use Olcs\Controller\Factory\IndexControllerFactory;
+use Olcs\Controller\Factory\MessagesControllerFactory;
 use Olcs\Controller\Factory\MyDetailsControllerFactory;
 use Olcs\Controller\IndexController;
 use Olcs\Controller\Licence\Vehicle\ListVehicleController;
@@ -436,6 +437,28 @@ $routes = [
                 ]
             ]
         ]
+    ],
+    'messages' => [
+        'type' => Segment::class,
+        'options' => [
+            'route' => '/messages[/]',
+            'defaults' => [
+                'controller' => Olcs\Controller\MessagesController::class,
+                'action' => 'index',
+            ],
+        ],
+        'may_terminate' => true,
+        'child_routes' => [
+            'view' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route' => ':conversationId[/]',
+                    'defaults' => [
+                        'action' => 'view',
+                    ],
+                ],
+            ],
+        ],
     ],
     'create_variation' => [
         'type' => 'segment',
@@ -1285,6 +1308,8 @@ return array(
             Olcs\Controller\Entity\ViewController::class => \Olcs\Controller\Factory\Entity\ViewControllerFactory::class,
 
             Olcs\Controller\GdsVerifyController::class => \Olcs\Controller\Factory\GdsVerifyControllerFactory::class,
+
+            Olcs\Controller\MessagesController::class => MessagesControllerFactory::class,
 
             // License - Surrender
             Olcs\Controller\Licence\Surrender\ReviewContactDetailsController::class => Olcs\Controller\Licence\Surrender\ReviewContactDetailsControllerFactory::class,
