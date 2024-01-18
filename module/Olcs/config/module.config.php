@@ -437,6 +437,28 @@ $routes = [
             ]
         ]
     ],
+    'messaging' => [
+        'type' => 'segment',
+        'options' => [
+            'route' => '/messaging[/]',
+            'defaults' => [
+                'controller' => Olcs\Controller\AbstractSelfserveController::class,
+                'action' => 'index'
+            ]
+        ],
+        'may_terminate' => true,
+        'child_routes' => [
+            'messaging-conversations' => [
+                'type' => 'segment',
+                'options' => [
+                    'route' => 'messaging/conversations',
+                    'defaults' => [
+                        'action' => 'index',
+                    ],
+                ]
+            ]
+        ]
+    ],
     'create_variation' => [
         'type' => 'segment',
         'options' => [
@@ -1043,6 +1065,11 @@ $applicationNavigation = array(
                     'id' => 'dashboard-correspondence',
                     'label' => 'dashboard-nav-documents',
                     'route' => 'correspondence',
+                ),
+                array(
+                    'id' => 'dashboard-messaging',
+                    'label' => 'dashboard-nav-messaging',
+                    'route' => 'messaging',
                 ),
             ),
         ),

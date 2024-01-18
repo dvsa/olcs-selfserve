@@ -82,6 +82,9 @@ class Navigation implements ListenerAggregateInterface
     {
         $shouldShowPermitsTab = $this->shouldShowPermitsTab($e);
         $this->togglePermitsMenus($shouldShowPermitsTab);
+
+        $shouldShowMessagesTab = $this->shouldShowMessagesTab($e);
+        $this->toggleMessagesTab($shouldShowMessagesTab);
     }
 
     /**
@@ -151,6 +154,32 @@ class Navigation implements ListenerAggregateInterface
         }
 
         return in_array($referer->getUri(), $this->govUkReferers);
+    }
+
+    /**
+     * Toggle Messaging menus
+     *
+     * @param bool $shouldShowMessagesTab whether to show messages tab
+     *
+     * @return void
+     */
+    private function toggleMessagesTab(bool $shouldShowPermitsTab): void
+    {
+        $this->navigation->findBy('id', 'dashboard-messaging')
+            ->setVisible($shouldShowMessagesTab);
+    }
+
+    /**
+     *
+     *
+     * @param MvcEvent $e
+     *
+     * @return bool
+     */
+    private function shouldShowMessagesTab(MvcEvent $e)
+    {
+
+        return ;
     }
 
     /**
