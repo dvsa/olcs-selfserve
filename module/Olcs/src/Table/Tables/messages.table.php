@@ -8,7 +8,7 @@ return [
     'variables'  => [
         'title'         => 'dashboard-messages.table.title',
         'titleSingular' => 'dashboard-messages.table.title',
-        'empty_message' => 'dashboard-messages-empty-message',
+        'empty_message' => 'dashboard-messages.empty-message',
     ],
     'settings'   => [
         'crud'     => [
