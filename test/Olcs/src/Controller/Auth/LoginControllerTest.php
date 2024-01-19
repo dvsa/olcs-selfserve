@@ -9,6 +9,8 @@ use Common\Controller\Plugin\Redirect;
 use Common\Rbac\User;
 use Common\Service\Helper\FormHelperService;
 use Dvsa\Olcs\Auth\Container\AuthChallengeContainer;
+use Interop\Container\Containerinterface;
+use Laminas\Authentication\Adapter\ValidatableAdapterInterface;
 use Laminas\Authentication\Result;
 use Laminas\Form\Annotation\AnnotationBuilder;
 use Laminas\Form\Form;
@@ -20,18 +22,16 @@ use Laminas\Router\Http\RouteMatch;
 use Laminas\ServiceManager\ServiceManager;
 use Laminas\Stdlib\Parameters;
 use Laminas\View\Model\ViewModel;
-use Mockery as m;
 use Mockery\MockInterface;
 use Olcs\Auth\Adapter\SelfserveCommandAdapter;
 use Olcs\Controller\Auth\LoginController;
 use Olcs\Form\Model\Form\Auth\Login;
-use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Common\Test\MocksServicesTrait;
 use Olcs\Logging\Log\Logger;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class LoginControllerTest extends MockeryTestCase
+class LoginControllerTest extends TestCase
 {
-    use MocksServicesTrait;
 
     const EMPTY_FORM_DATA = [
         'username' => null,
@@ -68,15 +68,61 @@ class LoginControllerTest extends MockeryTestCase
     const AUTHENTICATION_RESULT_CREDENTIAL_INVALID = [Result::FAILURE_CREDENTIAL_INVALID, [], ['Authentication Failed']];
     const AUTHENTICATION_RESULT_FAILURE_ACCOUNT_DISABLED = [LoginController::AUTH_FAILURE_ACCOUNT_DISABLED, [], ['account-disabled']];
 
-    /**
-     * @var LoginController
-     */
-    protected $sut;
+    /** @var LoginController */
+    private LoginController $sut;
+
+    /** @var MockObject */
+    private $authenticationAdapter;
+
+    /** @var MockObject */
+    private $authenticationService;
+
+    /** @var MockObject */
+    private $currentUser;
+
+    /** @var MockObject */
+    private $flashMessenger;
+
+    /** @var MockObject */
+    private $formHelper;
+
+    /** @var MockObject */
+    private $redirectHelper;
+
+    /** @var MockObject */
+    private $authChallengeContainer;
+
+    /** @var MockObject */
+    private $container;
 
     protected function setUp(): void
     {
-        $this->setUpServiceManager();
-        self::setupLogger();
+        $this->authenticationAdapter = $this->createMock(ValidatableAdapterInterface::class);
+        $this->authenticationService = $this->createMock(AuthenticationServiceInterface::class);
+        $this->currentUser = $this->createMock(CurrentUser::class);
+        $this->flashMessenger = $this->createMock(FlashMessenger::class);
+        $this->formHelper = $this->createMock(FormHelperService::class);
+        $this->redirectHelper = $this->createMock(Redirect::class);
+        $this->authChallengeContainer = $this->createMock(AuthChallengeContainer::class);
+    }
+    private function createLoginController(
+        $authenticationAdapter = null,
+        $authenticationService = null,
+        $currentUser = null,
+        $flashMessenger = null,
+        $formHelper = null,
+        $redirectHelper = null,
+        $authChallengeContainer = null
+    ) {
+        return new LoginController(
+            $authenticationAdapter ?? $this->authenticationAdapter,
+            $authenticationService ?? $this->authenticationService,
+            $currentUser ?? $this->currentUser,
+            $flashMessenger ?? $this->flashMessenger,
+            $formHelper ?? $this->formHelper,
+            $redirectHelper ?? $this->redirectHelper,
+            $authChallengeContainer ?? $this->authChallengeContainer
+        );
     }
 
     /**
@@ -85,7 +131,6 @@ class LoginControllerTest extends MockeryTestCase
     public function indexAction_IsCallable()
     {
         // Setup
-
         $this->setUpSut();
 
         // Assert
@@ -94,19 +139,20 @@ class LoginControllerTest extends MockeryTestCase
 
     /**
      * @test
-     * @depends indexAction_IsCallable
      */
     public function indexAction_RedirectsToDashboard_WhenUserAlreadyLoggedIn()
     {
-        // Setup
-        $this->setUpSut();
-        $this->currentUser()->allows('getIdentity')->andReturn($this->identity(false));
+        $this->currentUser->expects($this->once())
+            ->method('getIdentity')
+            ->willReturn($this->createMock(User::class));
 
-        // Expect
-        $this->redirectHelper()->expects('toRoute')->with(LoginController::ROUTE_INDEX)->andReturn($this->redirect());
+        // Mock the redirectHelper to expect a call to toRoute with the specified route and return a redirect response
+        $this->redirectHelper->expects($this->once())->method('toRoute')
+            ->with(LoginController::ROUTE_INDEX)
+            ->willReturn($this->createMock(Redirect::class));
 
         // Execute
-        $this->sut->indexAction();
+        $this->createLoginController()->indexAction();
     }
 
     /**
@@ -114,13 +160,31 @@ class LoginControllerTest extends MockeryTestCase
      */
     public function indexAction_ReturnsViewModel()
     {
-        // Setup
-        $this->setUpSut();
+        // required Mock Dependencies
+        $formHelperMock = $this->createMock(FormHelperService::class);
+        $dummyForm = $this->createMock(Form::class);
+        $formHelperMock->method('createForm')
+            ->willReturn($dummyForm);
+        $currentUserMock = $this->createMock(CurrentUser::class);
+        $identityMock = $this->createMock(User::class);
+        $identityMock->method('isAnonymous')->willReturn(true);
+        $currentUserMock->method('getIdentity')->willReturn($identityMock);
 
-        // Execute
-        $result = $this->sut->indexAction();
+        // Instantiate LoginController with mocked dependencies
+        $loginController = $this->createLoginController(
+            null,
+            null,
+            $currentUserMock,
+            null,
+            $formHelperMock,
+            null,
+            null
+        );
 
-        // Assert
+        // Call indexAction
+        $result = $loginController->indexAction();
+
+        // Assertions
         $this->assertInstanceOf(ViewModel::class, $result);
     }
 
@@ -494,20 +558,25 @@ class LoginControllerTest extends MockeryTestCase
         $this->sut->postAction($request, new RouteMatch([]), new Response());
     }
 
-    /**
-     * @return LoginController
-     */
+    public function setContainer(ContainerInterface $container)
+    {
+        $this->container = $container;
+    }
+
     protected function setUpSut()
     {
+        $this->container = $this->createMock(ContainerInterface::class);
         $this->sut = new LoginController(
-            $this->authenticationAdapter(),
-            $this->authenticationService(),
-            $this->currentUser(),
-            $this->flashMessenger(),
-            $this->formHelper(),
-            $this->redirectHelper(),
-            $this->authChallengeContainer()
+            $this->createMock(ValidatableAdapterInterface::class),
+            $this->createMock(AuthenticationServiceInterface::class),
+            $this->createMock(CurrentUser::class),
+            $this->createMock(FlashMessenger::class),
+            $this->createMock(FormHelperService::class),
+            $this->createMock(Redirect::class),
+            $this->createMock(AuthChallengeContainer::class)
         );
+        // Inject the container into the controller
+        $this->setContainer($this->container);
     }
 
     /**
@@ -550,24 +619,22 @@ class LoginControllerTest extends MockeryTestCase
         return $instance;
     }
 
-    /**
-     * @return MockInterface|CurrentUser
-     */
+
     protected function currentUser()
     {
-        if (!$this->serviceManager->has(CurrentUser::class)) {
-            $instance = $this->setUpMockService(CurrentUser::class);
-            $instance->allows('getIdentity')->andReturn($this->identity())->byDefault();
-            $this->serviceManager->setService(CurrentUser::class, $instance);
-        }
-        $instance = $this->serviceManager->get(CurrentUser::class);
+        $instance = $this->createMock(CurrentUser::class);
+        $instance->expects($this->once())
+            ->method('getIdentity')
+            ->willReturn($this->createMock(CurrentUser::class));
+
         return $instance;
     }
 
     protected function identity(bool $isAnonymous = true)
     {
-        $identity = m::mock(User::class);
-        $identity->shouldReceive('isAnonymous')->andReturn($isAnonymous);
+        $identity = $this->createMock(User::class);
+        $identity->expects($this->once())
+        ->method('isAnonymous')->willReturn($isAnonymous);
         return $identity;
     }
 
@@ -588,32 +655,21 @@ class LoginControllerTest extends MockeryTestCase
         return $instance;
     }
 
-    /**
-     * @return MockInterface|FlashMessenger
-     */
-    protected function flashMessenger(): MockInterface
+    protected function flashMessenger()
     {
-        if (!$this->serviceManager->has(FlashMessenger::class)) {
-            $this->serviceManager->setService(FlashMessenger::class, $this->setUpMockService(FlashMessenger::class));
-        }
-        $instance = $this->serviceManager->get(FlashMessenger::class);
-        assert($instance instanceof MockInterface);
-        return $instance;
+        $this->flashMessenger =  $this->createMock(FlashMessenger::class);
     }
-
-    /**
-     * @return MockInterface|Redirect
-     */
-    protected function redirectHelper(): MockInterface
+    protected function redirectHelper()
     {
-        if (!$this->serviceManager->has(Redirect::class)) {
-            $instance = $this->setUpMockService(Redirect::class);
-            $instance->allows('toRoute')->andReturn($this->redirect())->byDefault();
-            $this->serviceManager->setService(Redirect::class, $instance);
+        $serviceName = Redirect::class;
+
+        if (!isset($this->instances[$serviceName])) {
+            $instance = $this->createMock(Redirect::class);
+            $instance->method('toRoute')->willReturn($this->redirect());
+            $this->instances[$serviceName] = $instance;
         }
-        $instance = $this->serviceManager->get(Redirect::class);
-        assert($instance instanceof MockInterface);
-        return $instance;
+
+        return $this->instances[$serviceName];
     }
 
     /**
