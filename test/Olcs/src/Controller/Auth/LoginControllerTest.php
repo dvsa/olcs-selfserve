@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace OlcsTest\Controller\Auth;
@@ -32,7 +33,6 @@ use PHPUnit\Framework\TestCase;
 
 class LoginControllerTest extends TestCase
 {
-
     const EMPTY_FORM_DATA = [
         'username' => null,
         'password' => null,
@@ -105,23 +105,16 @@ class LoginControllerTest extends TestCase
         $this->redirectHelper = $this->createMock(Redirect::class);
         $this->authChallengeContainer = $this->createMock(AuthChallengeContainer::class);
     }
-    private function createLoginController(
-        $authenticationAdapter = null,
-        $authenticationService = null,
-        $currentUser = null,
-        $flashMessenger = null,
-        $formHelper = null,
-        $redirectHelper = null,
-        $authChallengeContainer = null
-    ) {
+    private function createLoginController()
+    {
         return new LoginController(
-            $authenticationAdapter ?? $this->authenticationAdapter,
-            $authenticationService ?? $this->authenticationService,
-            $currentUser ?? $this->currentUser,
-            $flashMessenger ?? $this->flashMessenger,
-            $formHelper ?? $this->formHelper,
-            $redirectHelper ?? $this->redirectHelper,
-            $authChallengeContainer ?? $this->authChallengeContainer
+            $this->authenticationAdapter,
+            $this->authenticationService,
+            $this->currentUser,
+            $this->flashMessenger,
+            $this->formHelper,
+            $this->redirectHelper,
+            $this->authChallengeContainer
         );
     }
 
@@ -149,7 +142,7 @@ class LoginControllerTest extends TestCase
         // Mock the redirectHelper to expect a call to toRoute with the specified route and return a redirect response
         $this->redirectHelper->expects($this->once())->method('toRoute')
             ->with(LoginController::ROUTE_INDEX)
-            ->willReturn($this->createMock(Redirect::class));
+            ->willReturn($this->redirectHelper);
 
         // Execute
         $this->createLoginController()->indexAction();
@@ -161,25 +154,15 @@ class LoginControllerTest extends TestCase
     public function indexAction_ReturnsViewModel()
     {
         // required Mock Dependencies
-        $formHelperMock = $this->createMock(FormHelperService::class);
         $dummyForm = $this->createMock(Form::class);
-        $formHelperMock->method('createForm')
+        $this->formHelper->method('createForm')
             ->willReturn($dummyForm);
-        $currentUserMock = $this->createMock(CurrentUser::class);
         $identityMock = $this->createMock(User::class);
         $identityMock->method('isAnonymous')->willReturn(true);
-        $currentUserMock->method('getIdentity')->willReturn($identityMock);
+        $this->currentUser->method('getIdentity')->willReturn($identityMock);
 
         // Instantiate LoginController with mocked dependencies
-        $loginController = $this->createLoginController(
-            null,
-            null,
-            $currentUserMock,
-            null,
-            $formHelperMock,
-            null,
-            null
-        );
+        $loginController = $this->createLoginController();
 
         // Call indexAction
         $result = $loginController->indexAction();
@@ -190,15 +173,22 @@ class LoginControllerTest extends TestCase
 
     /**
      * @test
-     * @depends indexAction_ReturnsViewModel
      */
     public function indexAction_ReturnsViewModel_WithLoginForm()
     {
-        // Setup
-        $this->setUpSut();
+        // required Mock Dependencies
+        $dummyForm = $this->createMock(Form::class);
+        $this->formHelper->method('createForm')
+            ->willReturn($dummyForm);
+        $identityMock = $this->createMock(User::class);
+        $identityMock->method('isAnonymous')->willReturn(true);
+        $this->currentUser->method('getIdentity')->willReturn($identityMock);
 
-        // Execute
-        $result = $this->sut->indexAction();
+        // Instantiate LoginController with mocked dependencies
+        $loginController = $this->createLoginController();
+
+        // Call indexAction
+        $result = $loginController->indexAction();
         $form = $result->getVariable('form');
 
         // Assert
@@ -207,7 +197,6 @@ class LoginControllerTest extends TestCase
 
     /**
      * @test
-     * @depends indexAction_ReturnsViewModel_WithLoginForm
      */
     public function indexAction_SetsFormData_WhenHasBeenStoredInSession()
     {
