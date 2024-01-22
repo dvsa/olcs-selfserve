@@ -1310,6 +1310,7 @@ return array(
             \Olcs\Controller\Licence\Vehicle\TransferVehicleConfirmationController::class => \Olcs\Controller\Licence\Vehicle\TransferVehicleConfirmationControllerFactory::class,
             \Olcs\Controller\Licence\Vehicle\Reprint\ReprintLicenceVehicleDiscController::class => \Olcs\Controller\Licence\Vehicle\Reprint\ReprintLicenceVehicleDiscControllerFactory::class,
             \Olcs\Controller\Licence\Vehicle\Reprint\ReprintLicenceVehicleDiscConfirmationController::class => \Olcs\Controller\Licence\Vehicle\Reprint\ReprintLicenceVehicleDiscConfirmationControllerFactory::class,
+            Olcs\Controller\MessagesController::class => Olcs\Controller\Factory\MessagesControllerFactory::class,
             PromptController::class => \Olcs\Controller\PromptControllerFactory::class,
             // Process Signature from GOV.UK Account
             \Olcs\Controller\SignatureVerificationController::class => \Olcs\Controller\SignatureVerificationControllerFactory::class,
