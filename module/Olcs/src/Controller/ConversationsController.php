@@ -14,7 +14,7 @@ use Dvsa\Olcs\Utils\Translation\NiTextTranslation;
 use Laminas\View\Model\ViewModel;
 use LmcRbacMvc\Service\AuthorizationService;
 
-class MessagesController extends AbstractController implements ToggleAwareInterface
+class ConversationsController extends AbstractController implements ToggleAwareInterface
 {
     use Lva\Traits\ExternalControllerTrait;
 

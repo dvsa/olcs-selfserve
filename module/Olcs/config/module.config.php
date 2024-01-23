@@ -437,12 +437,12 @@ $routes = [
             ]
         ]
     ],
-    'messages' => [
+    'conversations' => [
         'type' => 'segment',
         'options' => [
-            'route' => '/messages[/]',
+            'route' => '/conversations[/]',
             'defaults' => [
-                'controller' => Olcs\Controller\MessagesController::class,
+                'controller' => Olcs\Controller\ConversationsController::class,
                 'action' => 'index'
             ]
         ],
@@ -1323,26 +1323,26 @@ return array(
             Olcs\Controller\Licence\Surrender\PrintSignReturnController::class => Olcs\Controller\Licence\Surrender\PrintSignReturnControllerFactory::class,
             \Olcs\Controller\Licence\Surrender\InformationChangedController::class => \Olcs\Controller\Licence\Surrender\InformationChangedControllerFactory::class,
             // Licence - Vehicles
-            \Olcs\Controller\Licence\Vehicle\AddVehicleSearchController::class => \Olcs\Controller\Licence\Vehicle\AddVehicleSearchControllerFactory::class,
-            \Olcs\Controller\Licence\Vehicle\AddDuplicateVehicleController::class => \Olcs\Controller\Licence\Vehicle\AddDuplicateVehicleControllerFactory::class,
-            \Olcs\Controller\Licence\Vehicle\RemoveVehicleController::class => \Olcs\Controller\Licence\Vehicle\RemoveVehicleControllerFactory::class,
-            \Olcs\Controller\Licence\Vehicle\RemoveVehicleConfirmationController::class => \Olcs\Controller\Licence\Vehicle\RemoveVehicleConfirmationControllerFactory::class,
-            \Olcs\Controller\Licence\Vehicle\TransferVehicleController::class => \Olcs\Controller\Licence\Vehicle\TransferVehicleControllerFactory::class,
-            \Olcs\Controller\Licence\Vehicle\ViewVehicleController::class => \Olcs\Controller\Licence\Vehicle\ViewVehicleControllerFactory::class,
-            \Olcs\Controller\Licence\Vehicle\TransferVehicleConfirmationController::class => \Olcs\Controller\Licence\Vehicle\TransferVehicleConfirmationControllerFactory::class,
-            \Olcs\Controller\Licence\Vehicle\Reprint\ReprintLicenceVehicleDiscController::class => \Olcs\Controller\Licence\Vehicle\Reprint\ReprintLicenceVehicleDiscControllerFactory::class,
+            \Olcs\Controller\Licence\Vehicle\AddVehicleSearchController::class                              => \Olcs\Controller\Licence\Vehicle\AddVehicleSearchControllerFactory::class,
+            \Olcs\Controller\Licence\Vehicle\AddDuplicateVehicleController::class                           => \Olcs\Controller\Licence\Vehicle\AddDuplicateVehicleControllerFactory::class,
+            \Olcs\Controller\Licence\Vehicle\RemoveVehicleController::class                                 => \Olcs\Controller\Licence\Vehicle\RemoveVehicleControllerFactory::class,
+            \Olcs\Controller\Licence\Vehicle\RemoveVehicleConfirmationController::class                     => \Olcs\Controller\Licence\Vehicle\RemoveVehicleConfirmationControllerFactory::class,
+            \Olcs\Controller\Licence\Vehicle\TransferVehicleController::class                               => \Olcs\Controller\Licence\Vehicle\TransferVehicleControllerFactory::class,
+            \Olcs\Controller\Licence\Vehicle\ViewVehicleController::class                                   => \Olcs\Controller\Licence\Vehicle\ViewVehicleControllerFactory::class,
+            \Olcs\Controller\Licence\Vehicle\TransferVehicleConfirmationController::class                   => \Olcs\Controller\Licence\Vehicle\TransferVehicleConfirmationControllerFactory::class,
+            \Olcs\Controller\Licence\Vehicle\Reprint\ReprintLicenceVehicleDiscController::class             => \Olcs\Controller\Licence\Vehicle\Reprint\ReprintLicenceVehicleDiscControllerFactory::class,
             \Olcs\Controller\Licence\Vehicle\Reprint\ReprintLicenceVehicleDiscConfirmationController::class => \Olcs\Controller\Licence\Vehicle\Reprint\ReprintLicenceVehicleDiscConfirmationControllerFactory::class,
-            Olcs\Controller\MessagesController::class => Olcs\Controller\Factory\MessagesControllerFactory::class,
-            PromptController::class => \Olcs\Controller\PromptControllerFactory::class,
+            Olcs\Controller\ConversationsController::class                                                  => Olcs\Controller\Factory\ConversationsControllerFactory::class,
+            PromptController::class                                                                         => \Olcs\Controller\PromptControllerFactory::class,
             // Process Signature from GOV.UK Account
-            \Olcs\Controller\SignatureVerificationController::class => \Olcs\Controller\SignatureVerificationControllerFactory::class,
+            \Olcs\Controller\SignatureVerificationController::class                                         => \Olcs\Controller\SignatureVerificationControllerFactory::class,
             // LVA Controller Factories
-            LvaLicenceControllers\AddressesController::class => LvaLicenceControllerFactories\AddressesControllerFactory::class,
-            LvaLicenceControllers\BusinessDetailsController::class => LvaLicenceControllerFactories\BusinessDetailsControllerFactory::class,
-            LvaLicenceControllers\BusinessTypeController::class => LvaLicenceControllerFactories\BusinessTypeControllerFactory::class,
-            LvaLicenceControllers\ConditionsUndertakingsController::class => LvaLicenceControllerFactories\ConditionsUndertakingsControllerFactory::class,
-            LvaLicenceControllers\DiscsController::class => LvaLicenceControllerFactories\DiscsControllerFactory::class,
-            LvaLicenceControllers\OperatingCentresController::class => LvaLicenceControllerFactories\OperatingCentresControllerFactory::class,
+            LvaLicenceControllers\AddressesController::class                                                => LvaLicenceControllerFactories\AddressesControllerFactory::class,
+            LvaLicenceControllers\BusinessDetailsController::class                                          => LvaLicenceControllerFactories\BusinessDetailsControllerFactory::class,
+            LvaLicenceControllers\BusinessTypeController::class                                             => LvaLicenceControllerFactories\BusinessTypeControllerFactory::class,
+            LvaLicenceControllers\ConditionsUndertakingsController::class                                   => LvaLicenceControllerFactories\ConditionsUndertakingsControllerFactory::class,
+            LvaLicenceControllers\DiscsController::class                                                    => LvaLicenceControllerFactories\DiscsControllerFactory::class,
+            LvaLicenceControllers\OperatingCentresController::class                                         => LvaLicenceControllerFactories\OperatingCentresControllerFactory::class,
             LvaLicenceControllers\OverviewController::class => LvaLicenceControllerFactories\OverviewControllerFactory::class,
             LvaLicenceControllers\PeopleController::class => LvaLicenceControllerFactories\PeopleControllerFactory::class,
             LvaLicenceControllers\SafetyController::class => LvaLicenceControllerFactories\SafetyControllerFactory::class,

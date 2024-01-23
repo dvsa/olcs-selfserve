@@ -11,18 +11,18 @@ use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use LmcRbacMvc\Service\AuthorizationService;
-use Olcs\Controller\MessagesController;
+use Olcs\Controller\ConversationsController;
 
-class MessagesControllerFactory implements FactoryInterface
+class ConversationsControllerFactory implements FactoryInterface
 {
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null): MessagesController
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null): ConversationsController
     {
         $niTextTranslationUtil = $container->get(NiTextTranslation::class);
         $authService = $container->get(AuthorizationService::class);
         $flashMessengerHelper = $container->get(FlashMessengerHelperService::class);
         $tableFactory = $container->get(TableFactory::class);
 
-        return new MessagesController(
+        return new ConversationsController(
             $niTextTranslationUtil,
             $authService,
             $flashMessengerHelper,
