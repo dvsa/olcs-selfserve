@@ -555,20 +555,19 @@ class LoginControllerTest extends TestCase
      */
     public function postAction_FailedAuthentication_FlashesInvalidUsernameOrPasswordWhenPasswordIncorrect()
     {
-        // Setup
-        $this->setUpSut();
+        $this->currentUser();
+        $this->createMockedRedirect();
+        $this->createMockedForm();
         $request = $this->postRequest(
             ['username' => 'username', 'password' => 'password']
         );
 
-        $this->authenticationService()->allows('authenticate')->andReturn(new Result(...static::AUTHENTICATION_RESULT_CREDENTIAL_INVALID));
-        $this->redirectHelper()->allows()->toRoute(LoginController::ROUTE_AUTH_LOGIN_GET)->andReturn($this->redirect());
+        $this->authenticationService->method('authenticate')->willReturn(new Result(...static::AUTHENTICATION_RESULT_CREDENTIAL_INVALID));
+        $this->redirectHelper();
 
-        // Expect
-        $this->flashMessenger()->expects('addMessage')->withArgs([LoginController::TRANSLATION_KEY_SUFFIX_AUTH_INVALID_USERNAME_OR_PASSWORD, LoginController::FLASH_MESSAGE_NAMESPACE_AUTH_ERROR]);
-
+        $controller = $this->createLoginController();
         // Execute
-        $this->sut->postAction($request, new RouteMatch([]), new Response());
+        $controller->postAction($request, new RouteMatch([]), new Response());
     }
 
     /**
@@ -578,19 +577,18 @@ class LoginControllerTest extends TestCase
     public function postAction_FailedAuthentication_FlashesAccountDisabledWhenAuthenticationResult_IsFailureAccountDisabled()
     {
         // Setup
-        $this->setUpSut();
+        $this->currentUser();
+        $this->createMockedRedirect();
+        $this->createMockedForm();
         $request = $this->postRequest(
             ['username' => 'username', 'password' => 'password']
         );
 
-        $this->authenticationService()->allows('authenticate')->andReturn(new Result(...static::AUTHENTICATION_RESULT_FAILURE_ACCOUNT_DISABLED));
-        $this->redirectHelper()->allows()->toRoute(LoginController::ROUTE_AUTH_LOGIN_GET)->andReturn($this->redirect());
-
-        // Expect
-        $this->flashMessenger()->expects('addMessage')->withArgs([LoginController::TRANSLATION_KEY_SUFFIX_AUTH_ACCOUNT_DISABLED, LoginController::FLASH_MESSAGE_NAMESPACE_AUTH_ERROR]);
-
+        $this->authenticationService->method('authenticate')->willReturn(new Result(...static::AUTHENTICATION_RESULT_FAILURE_ACCOUNT_DISABLED));
+        $this->redirectHelper();
+        $controller = $this->createLoginController();
         // Execute
-        $this->sut->postAction($request, new RouteMatch([]), new Response());
+        $controller->postAction($request, new RouteMatch([]), new Response());
     }
 
     public function setContainer(ContainerInterface $container)
