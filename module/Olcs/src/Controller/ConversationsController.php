@@ -51,9 +51,6 @@ class ConversationsController extends AbstractController implements ToggleAwareI
         ];
 
         $response = $this->handleQuery(ByOrganisationQuery::create($params));
-        if ($response === null) {
-            return $this->notFoundAction();
-        }
 
         if ($response->isOk()) {
             $messages = $response->getResult();
