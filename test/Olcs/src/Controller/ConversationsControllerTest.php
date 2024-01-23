@@ -17,7 +17,7 @@ use LmcRbacMvc\Service\AuthorizationService;
 
 class ConversationsControllerTest extends TestCase
 {
-    protected    $sut;
+    protected $sut;
 
     public function setUp(): void
     {
