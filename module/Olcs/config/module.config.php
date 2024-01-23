@@ -437,6 +437,28 @@ $routes = [
             ]
         ]
     ],
+    'messages' => [
+        'type' => 'segment',
+        'options' => [
+            'route' => '/messages[/]',
+            'defaults' => [
+                'controller' => Olcs\Controller\MessagesController::class,
+                'action' => 'index'
+            ]
+        ],
+        'may_terminate' => true,
+        'child_routes' => [
+            'view' => [
+                'type' => 'segment',
+                'options' => [
+                    'route' => ':conversationId[/]',
+                    'defaults' => [
+                        'action' => 'view',
+                    ],
+                ]
+            ]
+        ]
+    ],
     'create_variation' => [
         'type' => 'segment',
         'options' => [
