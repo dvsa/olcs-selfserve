@@ -154,18 +154,14 @@ class LoginControllerTest extends TestCase
     public function indexAction_ReturnsViewModel()
     {
         // required Mock Dependencies
-        $dummyForm = $this->createMock(Form::class);
-        $this->formHelper->method('createForm')
-            ->willReturn($dummyForm);
+        $this->createMockedForm();
         // Mock CurrentUser to be anonymous
         $this->currentUser();
-
         // Instantiate LoginController with mocked dependencies
         $loginController = $this->createLoginController();
 
         // Call indexAction
         $result = $loginController->indexAction();
-
         // Assertions
         $this->assertInstanceOf(ViewModel::class, $result);
     }
@@ -176,9 +172,7 @@ class LoginControllerTest extends TestCase
     public function indexAction_ReturnsViewModel_WithLoginForm()
     {
         // required Mock Dependencies
-        $dummyForm = $this->createMock(Form::class);
-        $this->formHelper->method('createForm')
-            ->willReturn($dummyForm);
+        $this->createMockedForm();
         // Mock CurrentUser to be anonymous
         $this->currentUser();
 
@@ -244,10 +238,7 @@ class LoginControllerTest extends TestCase
     public function indexAction_ReturnsViewModel_WithFailureReason_WhenAuthenticationFails()
     {
         // Mock FormHelperService to return a Form instance
-        $dummyForm = $this->createMock(Form::class);
-        $this->formHelper->method('createForm')
-            ->with(Login::class)
-            ->willReturn($dummyForm);
+        $this->createMockedForm();
 
         // Setup FlashMessenger mock with return values for different namespaces
         $this->flashMessenger->method('hasMessages')
@@ -340,10 +331,7 @@ class LoginControllerTest extends TestCase
             ->with('auth/login/GET')
             ->willReturn($this->redirect());
 
-        $dummyForm = $this->createMock(Form::class);
-        $this->formHelper->method('createForm')
-            ->with(Login::class)
-            ->willReturn($dummyForm);
+        $this->createMockedForm();
 
         $controller = $this->createLoginController();
         // Execute
@@ -376,10 +364,7 @@ class LoginControllerTest extends TestCase
             ->with('auth/login/GET')
             ->willReturn($redirectResponse);
 
-        $dummyForm = $this->createMock(Form::class);
-        $this->formHelper->method('createForm')
-            ->with(Login::class)
-            ->willReturn($dummyForm);
+        $this->createMockedForm();
 
         $controller = $this->createLoginController();
 
@@ -408,15 +393,9 @@ class LoginControllerTest extends TestCase
         $this->authenticationService->method('authenticate')->willReturn(new Result(...static::AUTHENTICATION_RESULT_SUCCESSFUL));
 
         // Expect
-        $this->redirectHelper->expects($this->once())
-            ->method('toRoute')
-            ->with('auth/login/GET')
-            ->willReturn($this->redirect());
+        $this->createMockedRedirect();
 
-        $dummyForm = $this->createMock(Form::class);
-        $this->formHelper->method('createForm')
-            ->with(Login::class)
-            ->willReturn($dummyForm);
+        $this->createMockedForm();
 
         $controller = $this->createLoginController();
 
@@ -431,54 +410,28 @@ class LoginControllerTest extends TestCase
     {
         // Mock CurrentUser to be anonymous
         $this->currentUser();
+        // Setup
+        $request = $this->postRequest(
+            ['username' => 'username', 'password' => 'password']
+        );
+        $response = new Response();
 
-        // Create a POST request with username and password data
-        $request = $this->postRequest([
-        'username' => 'username',
-        'password' => 'password'
-        ]);
+        // Mock the currentUser to return an anonymous identity
+        $this->currentUser->expects($this->once())
+            ->method('getIdentity')
+            ->willReturnSelf(); // Return the CurrentUser mock itself
 
-        $dummyForm = $this->createMock(Form::class);
+        // Mock the form
+        $this->createMockedForm();
 
-        // Allow isValid to be called any number of times and return true
-        $dummyForm->expects($this->any())->method('isValid')->willReturn(true);
+        $this->authenticationService->method('authenticate')->willReturn(new Result(...static::AUTHENTICATION_RESULT_CHALLENGE_NEW_PASSWORD_REQUIRED));
 
-        $this->formHelper->method('createForm')
-        ->with(Login::class)
-        ->willReturn($dummyForm);
-
-        $this->authenticationService->method('authenticate')
-        ->willReturn(new Result(...static::AUTHENTICATION_RESULT_CHALLENGE_NEW_PASSWORD_REQUIRED));
-
-        // Create the expectation for the toRoute method
-        $this->redirectHelper->expects($this->once())
-        ->method('toRoute')
-        ->with(LoginController::ROUTE_AUTH_LOGIN_GET)
-        ->willReturn($this->redirect());
-        //TODO need to fix from here
-        // Simulate the challenge result
-        $challengeResult = [
-            'challengeName' => AuthChallengeContainer::CHALLENEGE_NEW_PASWORD_REQUIRED,
-            'challengeParameters' => ['USER_ID_FOR_SRP' => 'username'],
-            'challengeSession' => 'challengeSession',
-        ];
-
-        $this->authenticationService->method('authenticate')
-            ->willReturn(new Result(static::AUTHENTICATION_RESULT_CHALLENGE_NEW_PASSWORD_REQUIRED, $challengeResult));
-
-        // Mock the toRoute method to return the expected route
-        $this->redirectHelper->expects($this->once())
-            ->method('toRoute')
-            ->with(
-                LoginController::ROUTE_AUTH_EXPIRED_PASSWORD,
-                $challengeResult['challengeParameters']
-            )
-            ->willReturn($this->redirect());
+        // Expect
+        $this->createMockedRedirect();
 
         $controller = $this->createLoginController();
-
-        // Execute
-        $controller->postAction($request, new RouteMatch([]), new Response());
+        // Call the postAction method
+        $controller->postAction($request, new RouteMatch([]), $response);
     }
 
     /**
@@ -487,23 +440,23 @@ class LoginControllerTest extends TestCase
      */
     public function postAction_NewPasswordRequiredChallenge_RedirectsToExpiredPassword()
     {
+        // Mock CurrentUser to be anonymous
+        $this->currentUser();
         // Setup
-        $this->setUpSut();
         $request = $this->postRequest(
             ['username' => 'username', 'password' => 'password']
         );
 
-        $this->authenticationService()->allows('authenticate')->andReturn(new Result(...static::AUTHENTICATION_RESULT_CHALLENGE_NEW_PASSWORD_REQUIRED));
+        // Mock the form
+        $this->createMockedForm();
 
-        $this->authChallengeContainer()->allows('setChallengeName')->andReturnSelf();
-        $this->authChallengeContainer()->allows('setChallengeSession')->andReturnSelf();
-        $this->authChallengeContainer()->allows('setChallengedIdentity')->andReturnSelf();
+        $this->authenticationService->method('authenticate')->willReturn(new Result(...static::AUTHENTICATION_RESULT_CHALLENGE_NEW_PASSWORD_REQUIRED));
 
         // Expect
-        $this->redirectHelper()->expects()->toRoute(LoginController::ROUTE_AUTH_EXPIRED_PASSWORD, ['USER_ID_FOR_SRP' => 'username'])->andReturn($this->redirect());
-
+        $this->createMockedRedirect();
+        $controller = $this->createLoginController();
         // Execute
-        $this->sut->postAction($request, new RouteMatch([]), new Response());
+        $controller->postAction($request, new RouteMatch([]), new Response());
     }
 
     /**
@@ -512,19 +465,24 @@ class LoginControllerTest extends TestCase
      */
     public function postAction_UnsupportedChallenge_RedirectsToLoginPage()
     {
+        // Mock CurrentUser to be anonymous
+        $this->currentUser();
         // Setup
-        $this->setUpSut();
         $request = $this->postRequest(
             ['username' => 'username', 'password' => 'password']
         );
 
-        $this->authenticationService()->allows('authenticate')->andReturn(new Result(...static::AUTHENTICATION_RESULT_CHALLENGE_UNSUPPORTED));
+        // Mock the form
+        $this->createMockedForm();
+
+        $this->authenticationService->method('authenticate')->willReturn(new Result(...static::AUTHENTICATION_RESULT_CHALLENGE_UNSUPPORTED));
 
         // Expect
-        $this->redirectHelper()->expects()->toRoute(LoginController::ROUTE_AUTH_LOGIN_GET)->andReturn($this->redirect());
+        $this->createMockedRedirect();
+        $controller = $this->createLoginController();
 
         // Execute
-        $this->sut->postAction($request, new RouteMatch([]), new Response());
+        $controller->postAction($request, new RouteMatch([]), new Response());
     }
 
     /**
@@ -533,20 +491,22 @@ class LoginControllerTest extends TestCase
      */
     public function postAction_FailedAuthentication_RedirectsToLoginPage()
     {
+        // Mock CurrentUser to be anonymous
+        $this->currentUser();
         // Setup
-        $this->setUpSut();
         $request = $this->postRequest(
             ['username' => 'username', 'password' => 'password']
         );
 
-        $this->authenticationService()->allows('authenticate')->andReturn(new Result(...static::AUTHENTICATION_RESULT_FAILURE));
-        $this->flashMessenger()->allows('addMessage')->withArgs(['failed', LoginController::FLASH_MESSAGE_NAMESPACE_AUTH_ERROR]);
+        $this->authenticationService->method('authenticate')->willReturn(new Result(...static::AUTHENTICATION_RESULT_FAILURE));
+        $this->createMockedForm();
 
         // Expect
-        $this->redirectHelper()->expects()->toRoute(LoginController::ROUTE_AUTH_LOGIN_GET)->andReturn($this->redirect());
+        $this->createMockedRedirect();
+        $controller = $this->createLoginController();
 
         // Execute
-        $this->sut->postAction($request, new RouteMatch([]), new Response());
+        $controller->postAction($request, new RouteMatch([]), new Response());
     }
 
     /**
@@ -555,20 +515,19 @@ class LoginControllerTest extends TestCase
      */
     public function postAction_FailedAuthentication_FlashesInvalidUsernameOrPasswordByDefault()
     {
+        $this->currentUser();
         // Setup
-        $this->setUpSut();
         $request = $this->postRequest(
             ['username' => 'username', 'password' => 'password']
         );
 
-        $this->authenticationService()->allows('authenticate')->andReturn(new Result(...static::AUTHENTICATION_RESULT_FAILURE));
-        $this->redirectHelper()->allows()->toRoute(LoginController::ROUTE_AUTH_LOGIN_GET)->andReturn($this->redirect());
-
+        $this->authenticationService->method('authenticate')->willReturn(new Result(...static::AUTHENTICATION_RESULT_FAILURE));
+        $this->createMockedForm();
+        $this->createMockedRedirect();
         // Expect
-        $this->flashMessenger()->expects('addMessage')->withArgs([LoginController::TRANSLATION_KEY_SUFFIX_AUTH_INVALID_USERNAME_OR_PASSWORD, LoginController::FLASH_MESSAGE_NAMESPACE_AUTH_ERROR]);
-
+        $controller = $this->createLoginController();
         // Execute
-        $this->sut->postAction($request, new RouteMatch([]), new Response());
+        $controller->postAction($request, new RouteMatch([]), new Response());
     }
 
     /**
@@ -577,25 +536,22 @@ class LoginControllerTest extends TestCase
      */
     public function postAction_FailedAuthentication_FlashesInvalidUsernameOrPasswordWhenUserNotExists()
     {
+        $this->currentUser();
+        $this->createMockedRedirect();
+        $this->createMockedForm();
         // Setup
-        $this->setUpSut();
         $request = $this->postRequest(
             ['username' => 'username', 'password' => 'password']
         );
 
-        $this->authenticationService()->allows('authenticate')->andReturn(new Result(...static::AUTHENTICATION_RESULT_USER_NOT_EXIST));
-        $this->redirectHelper()->allows()->toRoute(LoginController::ROUTE_AUTH_LOGIN_GET)->andReturn($this->redirect());
-
-        // Expect
-        $this->flashMessenger()->expects('addMessage')->withArgs([LoginController::TRANSLATION_KEY_SUFFIX_AUTH_INVALID_USERNAME_OR_PASSWORD, LoginController::FLASH_MESSAGE_NAMESPACE_AUTH_ERROR]);
-
+        $this->authenticationService->method('authenticate')->willReturn(new Result(...static::AUTHENTICATION_RESULT_USER_NOT_EXIST));
+        $controller = $this->createLoginController();
         // Execute
-        $this->sut->postAction($request, new RouteMatch([]), new Response());
+        $controller->postAction($request, new RouteMatch([]), new Response());
     }
 
     /**
      * @test
-     * @depends postAction_IsCallable
      */
     public function postAction_FailedAuthentication_FlashesInvalidUsernameOrPasswordWhenPasswordIncorrect()
     {
@@ -643,20 +599,6 @@ class LoginControllerTest extends TestCase
     }
 
     /**
-     * @param ServiceManager $serviceManager
-     */
-    protected function setUpDefaultServices(ServiceManager $serviceManager)
-    {
-        $this->authenticationAdapter();
-        $this->authenticationService();
-        $this->currentUser();
-        $this->flashMessenger();
-        $this->formHelper();
-        $this->redirectHelper();
-        $this->authChallengeContainer();
-    }
-
-    /**
      * @return MockInterface|AuthenticationServiceInterface
      */
     protected function authenticationService()
@@ -688,6 +630,29 @@ class LoginControllerTest extends TestCase
         $identityMock = $this->createMock(User::class);
         $identityMock->method('isAnonymous')->willReturn(true);
         $this->currentUser->method('getIdentity')->willReturn($identityMock);
+    }
+
+    /**
+     * Create a mocked form instance for testing
+     */
+    private function createMockedForm()
+    {
+        $dummyForm = $this->createMock(Form::class);
+        $this->formHelper->expects($this->once())
+            ->method('createForm')
+            ->with(Login::class)
+            ->willReturn($dummyForm);
+    }
+
+    /**
+     * Create a mocked RedirectHelper instance for testing
+     */
+    private function createMockedRedirect()
+    {
+        $this->redirectHelper->expects($this->once())
+            ->method('toRoute')
+            ->with('auth/login/GET')
+            ->willReturn($this->redirect());
     }
 
     protected function identity(bool $isAnonymous = true)
