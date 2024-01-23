@@ -17,25 +17,24 @@ use LmcRbacMvc\Service\AuthorizationService;
 
 class ConversationsControllerTest extends TestCase
 {
-    protected $sut;
-    protected $sm;
+    protected    $sut;
 
     public function setUp(): void
     {
-        $this->mockniTextTranslationUtil = m::mock(NiTextTranslation::class)->makePartial();
-        $this->mockauthService = m::mock(AuthorizationService::class)->makePartial();
-        $this->mockflashMessengerHelper = m::mock(FlashMessengerHelperService::class)->makePartial();
-        $this->mocktableFactory = m::mock(TableFactory::class)->makePartial();
+        $this->mockNiTextTranslationUtil = m::mock(NiTextTranslation::class)->makePartial();
+        $this->mockAuthService = m::mock(AuthorizationService::class)->makePartial();
+        $this->mockFlashMessengerHelper = m::mock(FlashMessengerHelperService::class)->makePartial();
+        $this->mockTableFactory = m::mock(TableFactory::class)->makePartial();
 
         $this->sut = m::mock(Sut::class)
                       ->makePartial()
                       ->shouldAllowMockingProtectedMethods();
 
         $reflectionClass = new ReflectionClass(Sut::class);
-        $this->setMockedProperties($reflectionClass, 'niTextTranslationUtil', $this->mockniTextTranslationUtil);
-        $this->setMockedProperties($reflectionClass, 'authService', $this->mockauthService);
-        $this->setMockedProperties($reflectionClass, 'flashMessengerHelper', $this->mockflashMessengerHelper);
-        $this->setMockedProperties($reflectionClass, 'tableFactory', $this->mocktableFactory);
+        $this->setMockedProperties($reflectionClass, 'niTextTranslationUtil', $this->mockNiTextTranslationUtil);
+        $this->setMockedProperties($reflectionClass, 'authService', $this->mockAuthService);
+        $this->setMockedProperties($reflectionClass, 'flashMessengerHelper', $this->mockFlashMessengerHelper);
+        $this->setMockedProperties($reflectionClass, 'tableFactory', $this->mockTableFactory);
     }
 
     public function setMockedProperties(ReflectionClass $reflectionClass, string $property, $value): void
@@ -80,7 +79,7 @@ class ConversationsControllerTest extends TestCase
 
         $table = '<table/>';
 
-        $this->mocktableFactory->shouldReceive('buildTable')
+        $this->mockTableFactory->shouldReceive('buildTable')
                                ->with(
                                    'messages-view',
                                    [],
