@@ -10,24 +10,19 @@ use Common\Controller\Plugin\Redirect;
 use Common\Rbac\User;
 use Common\Service\Helper\FormHelperService;
 use Dvsa\Olcs\Auth\Container\AuthChallengeContainer;
-use Interop\Container\Containerinterface;
 use Laminas\Authentication\Adapter\ValidatableAdapterInterface;
 use Laminas\Authentication\Result;
-use Laminas\Form\Annotation\AnnotationBuilder;
 use Laminas\Form\Form;
 use Laminas\Http\Request;
 use Laminas\Http\Response;
 use Laminas\Http\Response as HttpResponse;
 use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Laminas\Router\Http\RouteMatch;
-use Laminas\ServiceManager\ServiceManager;
 use Laminas\Stdlib\Parameters;
 use Laminas\View\Model\ViewModel;
 use Mockery\MockInterface;
-use Olcs\Auth\Adapter\SelfserveCommandAdapter;
 use Olcs\Controller\Auth\LoginController;
 use Olcs\Form\Model\Form\Auth\Login;
-use Olcs\Logging\Log\Logger;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -590,39 +585,6 @@ class LoginControllerTest extends TestCase
         // Execute
         $controller->postAction($request, new RouteMatch([]), new Response());
     }
-
-    public function setContainer(ContainerInterface $container)
-    {
-        $this->container = $container;
-    }
-
-    /**
-     * @return MockInterface|AuthenticationServiceInterface
-     */
-    protected function authenticationService()
-    {
-        if (!$this->serviceManager->has(AuthenticationServiceInterface::class)) {
-            $instance = $this->setUpMockService(AuthenticationServiceInterface::class);
-            $this->serviceManager->setService(AuthenticationServiceInterface::class, $instance);
-        }
-        $instance = $this->serviceManager->get(AuthenticationServiceInterface::class);
-        return $instance;
-    }
-
-    /**
-     * @return MockInterface|SelfserveCommandAdapter
-     */
-    protected function authenticationAdapter()
-    {
-        if (!$this->serviceManager->has(SelfserveCommandAdapter::class)) {
-            $instance = $this->setUpMockService(SelfserveCommandAdapter::class);
-            $this->serviceManager->setService(SelfserveCommandAdapter::class, $instance);
-        }
-        $instance = $this->serviceManager->get(SelfserveCommandAdapter::class);
-        return $instance;
-    }
-
-
     protected function currentUser()
     {
         $identityMock = $this->createMock(User::class);
@@ -653,31 +615,6 @@ class LoginControllerTest extends TestCase
             ->willReturn($this->redirect());
     }
 
-    protected function identity(bool $isAnonymous = true)
-    {
-        $identity = $this->createMock(User::class);
-        $identity->expects($this->once())
-        ->method('isAnonymous')->willReturn($isAnonymous);
-        return $identity;
-    }
-
-    /**
-     * @return MockInterface|FormHelperService
-     */
-    protected function formHelper()
-    {
-        if (!$this->serviceManager->has(FormHelperService::class)) {
-            $instance = $this->setUpMockService(FormHelperService::class);
-            $instance->allows('createForm')->andReturnUsing(function () {
-                $formBuilder = new AnnotationBuilder();
-                return $formBuilder->createForm(Login::class);
-            })->byDefault();
-            $this->serviceManager->setService(FormHelperService::class, $instance);
-        }
-        $instance = $this->serviceManager->get(FormHelperService::class);
-        return $instance;
-    }
-
     protected function flashMessenger()
     {
         $this->flashMessenger =  $this->createMock(FlashMessenger::class);
@@ -698,16 +635,6 @@ class LoginControllerTest extends TestCase
     /**
      * @return MockInterface|AuthChallengeContainer
      */
-    private function authChallengeContainer()
-    {
-        if (!$this->serviceManager->has(AuthChallengeContainer::class)) {
-            $instance = $this->setUpMockService(AuthChallengeContainer::class);
-            $this->serviceManager->setService(AuthChallengeContainer::class, $instance);
-        }
-        $instance = $this->serviceManager->get(AuthChallengeContainer::class);
-        assert($instance instanceof MockInterface);
-        return $instance;
-    }
 
     /**
      * @return HttpResponse
@@ -731,14 +658,5 @@ class LoginControllerTest extends TestCase
         $request->setQuery(new Parameters($query ?? []));
         $request->setUri('https://localhost');
         return $request;
-    }
-
-    private static function setupLogger()
-    {
-        $logWriter = new \Laminas\Log\Writer\Mock();
-        $logger = new \Laminas\Log\Logger();
-        $logger->addWriter($logWriter);
-
-        Logger::setLogger($logger);
     }
 }
