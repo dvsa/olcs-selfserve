@@ -9,6 +9,7 @@ use Common\Controller\Lva\AbstractController;
 use Common\FeatureToggle;
 use Common\Service\Helper\FlashMessengerHelperService;
 use Common\Service\Table\TableFactory;
+use Dvsa\Olcs\Transfer\Query\Messaging\Messages\ByConversation as ByConversationQuery;
 use Dvsa\Olcs\Transfer\Query\Messaging\Conversations\ByOrganisation as ByOrganisationQuery;
 use Dvsa\Olcs\Utils\Translation\NiTextTranslation;
 use Laminas\View\Model\ViewModel;
@@ -63,6 +64,33 @@ class ConversationsController extends AbstractController implements ToggleAwareI
 
         $view = new ViewModel(['table' => $table]);
         $view->setTemplate('messages');
+
+        return $view;
+    }
+
+    public function viewAction(): ViewModel
+    {
+        $params = [
+            'page'         => $this->params()->fromQuery('page', 1),
+            'limit'        => $this->params()->fromQuery('limit', 10),
+            'conversation' => $this->params()->fromRoute('conversationId'),
+            'query'        => $this->params()->fromQuery(),
+        ];
+
+        $response = $this->handleQuery(ByConversationQuery::create($params));
+
+        if ($response->isOk()) {
+            $messages = $response->getResult();
+        } else {
+            $this->flashMessengerHelper->addErrorMessage('unknown-error');
+            $messages = [];
+        }
+
+        $table = $this->tableFactory
+            ->buildTable('messages-view', $messages, $params);
+
+        $view = new ViewModel(['table' => $table]);
+        $view->setTemplate('messages-view');
 
         return $view;
     }
