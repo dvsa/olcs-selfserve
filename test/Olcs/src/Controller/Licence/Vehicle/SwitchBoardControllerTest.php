@@ -189,22 +189,22 @@ class SwitchBoardControllerTest extends TestCase
 
     /**
      * @test
-     * @depends indexAction_ReturnsViewModel
      */
     public function indexAction_ReturnsViewModel_WithPanel_WhenFlashMessageHasPanelNamespace()
     {
-        // Setup
-        $this->setUpSut();
         $routeMatch = new RouteMatch([]);
-
-        // Define Expectations
-        $flashMessenger = $this->resolveMockService($this->serviceManager, FlashMessenger::class);
-        $flashMessenger->shouldReceive('getMessages')
+        $this->setUpSessionManagerMock();
+        $this->queryHandler = $this->setupQueryHandler();
+        $this->radioFieldOptionsMock();
+        // Create a mock of FlashMessenger
+        $this->flashMessenger->method('getMessages')
             ->with('panel')
-            ->andReturn(['title']);
+            ->willReturn(['title']);
 
+        // Assuming you're using one of the methods above to set the FlashMessenger
+        $controller = $this->createSwitchBoardController();
         // Execute
-        $result = $this->sut->indexAction(new Request(), $routeMatch);
+        $result = $controller->indexAction(new Request(), $routeMatch);
 
         $expected = [
             'title' => 'title',
