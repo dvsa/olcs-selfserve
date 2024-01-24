@@ -11,35 +11,149 @@ use Common\Form\FormValidator;
 use Common\Service\Cqrs\Response as QueryResponse;
 use Common\Service\Helper\FormHelperService;
 use Common\Service\Helper\ResponseHelperService;
-use Common\Test\MockeryTestCase;
-use Common\Test\MocksServicesTrait;
 use Common\View\Helper\Panel;
 use Dvsa\Olcs\Transfer\Query\Licence\Licence;
 use Hamcrest\Core\IsInstanceOf;
 use Laminas\Form\Annotation\AnnotationBuilder;
+use Laminas\Form\Element\Select;
+use Laminas\Form\ElementInterface;
+use Laminas\Form\FieldsetInterface;
 use Laminas\Http\Request;
 use Laminas\Http\Response;
 use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Laminas\Mvc\Controller\Plugin\Url;
 use Laminas\Router\Http\RouteMatch;
-use Laminas\ServiceManager\ServiceManager;
+use Laminas\Session\ManagerInterface;
+use Laminas\Session\Storage\StorageInterface;
 use Laminas\Stdlib\Parameters;
 use Laminas\View\Model\ViewModel;
 use Mockery as m;
 use Mockery\MockInterface;
 use Olcs\Controller\Licence\Vehicle\ListVehicleController;
 use Olcs\Controller\Licence\Vehicle\SwitchBoardController;
-use Olcs\Controller\Licence\Vehicle\SwitchBoardControllerFactory;
 use Olcs\Form\Model\Form\Vehicle\SwitchBoard;
 use Olcs\Session\LicenceVehicleManagement;
+use PHPUnit\Framework\TestCase;
+use Olcs\Form\Model\Form\Vehicle\SwitchBoard as SwitchBoardForm;
 
-class SwitchBoardControllerTest extends MockeryTestCase
+class SwitchBoardControllerTest extends TestCase
 {
-    use MocksServicesTrait;
-
     protected const VEHICLES_ROUTE = ['lva-licence/vehicles', [], [], true];
     protected const A_DECISION_VALUE = 'A_DECISION_VALUE';
 
+    /**
+     * @var FlashMessenger
+     */
+    private $flashMessenger;
+
+    /**
+     * @var FormHelperService
+     */
+    private $formHelper;
+
+    /**
+     * @var HandleQuery
+     */
+    private $queryHandler;
+
+    /**
+     * @var Redirect
+     */
+    private $redirectHelper;
+
+    /**
+     * @var ResponseHelperService
+     */
+    private $responseHelper;
+
+    /**
+     * @var LicenceVehicleManagement
+     */
+    private $session;
+
+    /**
+     * @var Url
+     */
+    private $urlHelper;
+
+    /**
+     * @var FormValidator
+     */
+    private $formValidator;
+
+    private SwitchBoardController $sut;
+
+    protected function setup(): void
+    {
+         $this->flashMessenger = $this->createMock(FlashMessenger::class);
+         $this->formHelper = $this->createMock(FormHelperService::class);
+         $this->queryHandler = $this->createMock(HandleQuery::class);
+         $this->redirectHelper = $this->createMock(Redirect::class);
+         $this->responseHelper = $this->createMock(ResponseHelperService::class);
+         $this->session = $this->createMock(LicenceVehicleManagement::class);
+         $this->urlHelper = $this->createMock(Url::class);
+         $this->formValidator = $this->createMock(FormValidator::class);
+    }
+
+    private function createSwitchBoardController()
+    {
+        return new  SwitchBoardController(
+            $this->flashMessenger,
+            $this->formHelper,
+            $this->queryHandler,
+            $this->redirectHelper,
+            $this->responseHelper,
+            $this->session,
+            $this->urlHelper,
+            $this->formValidator
+        );
+    }
+
+    private function radioFieldOptionsMock()
+    {
+        // Create a mock of the Select class, which is a specific type of form field.
+        $selectMock = $this->createMock(Select::class);
+
+        // Configure the mock to simulate the behavior of the unsetValueOption method.
+        // When unsetValueOption is called, the mock will return itself to support method chaining.
+        $selectMock->method('unsetValueOption')->willReturnCallback(function ($key) use ($selectMock) {
+            return $selectMock;
+        });
+
+        // Configure the fieldset mock to return the Select mock when the FIELD_OPTIONS_NAME is requested.
+        $fieldsetMock = $this->createMock(FieldsetInterface::class);
+
+        // Configure the fieldset mock to return the Select mock when the FIELD_OPTIONS_NAME is requested.
+        $fieldsetMock->method('get')
+            ->with(SwitchBoardForm::FIELD_OPTIONS_NAME)
+            ->willReturn($selectMock);
+
+        // Create a mock of the Form class, which represents the entire form.
+        $formMock = $this->createMock(Form::class);
+
+        // Configure the form mock to return the Fieldset mock when the FIELD_OPTIONS_FIELDSET_NAME is requested.
+        $formMock->method('get')
+            ->with(SwitchBoardForm::FIELD_OPTIONS_FIELDSET_NAME)
+            ->willReturn($fieldsetMock);
+
+        // Configure the FormHelperService mock to return the Form mock when createForm is called with SwitchBoardForm class.
+        $this->formHelper->method('createForm')
+            ->with(SwitchBoardForm::class)
+            ->willReturn($formMock);
+    }
+
+    protected function setUpSessionManagerMock()
+    {
+        $sessionStorageMock = $this->createMock(StorageInterface::class);
+        $sessionManagerMock = $this->createMock(ManagerInterface::class);
+        // Configure the session manager mock to return the session storage mock
+        $sessionManagerMock->method('getStorage')->willReturn($sessionStorageMock);
+
+        // Mock for LicenceVehicleManagement to return session manager mock
+        $this->session = $this->createMock(LicenceVehicleManagement::class);
+
+        $this->session->method('getManager')->willReturn($sessionManagerMock);
+    }
 
     /**
      * @test
@@ -47,8 +161,7 @@ class SwitchBoardControllerTest extends MockeryTestCase
     public function indexAction_IsCallable()
     {
         // Setup
-
-        $this->setUpSut();
+        $this->sut = $this->createSwitchBoardController();
 
         // Assert
         $this->assertIsCallable([$this->sut, 'indexAction']);
@@ -56,18 +169,21 @@ class SwitchBoardControllerTest extends MockeryTestCase
 
     /**
      * @test
-     * @depends indexAction_IsCallable
      */
     public function indexAction_ReturnsViewModel()
     {
-        // Setup
-        $this->setUpSut();
-        $routeMatch = new RouteMatch([]);
+        $routeMatchMock = $this->createMock(RouteMatch::class);
+        $routeMatchMock->method('getParam')
+            ->with('licence')
+            ->willReturn(1);
+        $this->setUpSessionManagerMock();
 
-        // Execute
-        $result = $this->sut->indexAction(new Request(), $routeMatch);
+        $this->queryHandler = $this->setupQueryHandler();
+        $this->radioFieldOptionsMock();
 
-        // Assert
+        $controller = $this->createSwitchBoardController();
+        $result = $controller->indexAction(new Request(), $routeMatchMock);
+
         $this->assertInstanceOf(ViewModel::class, $result);
     }
 
@@ -300,7 +416,7 @@ class SwitchBoardControllerTest extends MockeryTestCase
     {
         // Setup
         $this->setUpSut();
-        $this->formValidator()->allows('isValid')->andReturnUsing(function($form) {
+        $this->formValidator()->allows('isValid')->andReturnUsing(function ($form) {
             $form->isValid();
             return false;
         });
@@ -425,35 +541,6 @@ class SwitchBoardControllerTest extends MockeryTestCase
         ];
     }
 
-    protected function setUp(): void
-    {
-        $this->setUpServiceManager();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function setUpDefaultServices(ServiceManager $serviceManager)
-    {
-        $this->serviceManager->setService(FlashMessenger::class, $this->setUpMockService(FlashMessenger::class));
-        $this->serviceManager->setService(FormHelperService::class, $this->formHelper());
-        $this->serviceManager->setService(HandleQuery::class, $this->setupQueryHandler());
-        $this->serviceManager->setService(ResponseHelperService::class, $this->setUpMockService(ResponseHelperService::class));
-        $this->serviceManager->setService(Url::class, $this->setUpMockService(Url::class));
-        $this->serviceManager->setService(LicenceVehicleManagement::class, new LicenceVehicleManagement());
-        $this->redirectHelper();
-        $this->formValidator();
-    }
-
-    /**
-     * @return SwitchBoardController
-     */
-    protected function setUpSut(): SwitchBoardController
-    {
-        $this->sut = (new SwitchBoardControllerFactory())->__invoke($this->serviceManager, SwitchBoardController::class)->getDelegate();
-        return $this->sut;
-    }
-
     /**
      * @return MockInterface|Redirect
      */
@@ -484,20 +571,19 @@ class SwitchBoardControllerTest extends MockeryTestCase
     }
 
     /**
-     * @return MockInterface|FormHelperService
+     * @return FormHelperService
      */
-    protected function formHelper(): MockInterface
+    protected function formHelper(): FormHelperService
     {
-        if (! $this->serviceManager->has(FormHelperService::class)) {
-            $instance = $this->setUpMockService(FormHelperService::class);
-            $instance->shouldReceive('createForm')->andReturnUsing(function () {
+        $formHelperMock = $this->createMock(FormHelperService::class);
+
+        $formHelperMock->method('createForm')
+            ->willReturnCallback(function () {
                 $annotationBuilder = new AnnotationBuilder();
-                $form = $annotationBuilder->createForm(SwitchBoard::class);
-                return $form;
-            })->byDefault();
-            $this->serviceManager->setService(FormHelperService::class, $instance);
-        }
-        return $this->serviceManager->get(FormHelperService::class);
+                return $annotationBuilder->createForm(SwitchBoard::class);
+            });
+
+        return $formHelperMock;
     }
 
     /**
