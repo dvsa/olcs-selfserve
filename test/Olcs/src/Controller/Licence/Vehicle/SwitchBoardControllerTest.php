@@ -217,22 +217,25 @@ class SwitchBoardControllerTest extends TestCase
 
     /**
      * @test
-     * @depends indexAction_ReturnsViewModel_WithPanel_WhenFlashMessageHasPanelNamespace
      */
     public function indexAction_ReturnsViewModel_WithPanelBody_WhenFlashMessageHasPanelNamespaceSecondMessage()
     {
         // Setup
-        $this->setUpSut();
         $routeMatch = new RouteMatch([]);
+        $this->setUpSessionManagerMock();
+        $this->queryHandler = $this->setupQueryHandler();
+        $this->radioFieldOptionsMock();
 
-        // Define Expectations
-        $flashMessenger = $this->resolveMockService($this->serviceManager, FlashMessenger::class);
-        $flashMessenger->shouldReceive('getMessages')
+        // Create a mock of FlashMessenger
+        $this->flashMessenger->method('getMessages')
             ->with('panel')
-            ->andReturn(['title', 'body']);
+            ->willReturn(['title', 'body']);
+
+        // Create the controller with the FlashMessenger mock
+        $controller = $this->createSwitchBoardController();
 
         // Execute
-        $result = $this->sut->indexAction(new Request(), $routeMatch);
+        $result = $controller->indexAction(new Request(), $routeMatch);
 
         $expected = [
             'title' => 'title',
@@ -246,23 +249,28 @@ class SwitchBoardControllerTest extends TestCase
 
     /**
      * @test
-     * @depends indexAction_ReturnsViewModel
      */
     public function indexAction_ReturnsViewModel_WithBackRouteToLicenceOverview()
     {
         // Setup
-        $this->setUpSut();
         $routeMatch = new RouteMatch([]);
         $expectedUrl = 'licence/overview/link';
 
-        // Define Expectations
-        $urlHelper = $this->resolveMockService($this->serviceManager, Url::class);
-        $urlHelper->shouldReceive('fromRoute')
+        // Create a mock of Url
+        $this->urlHelper->method('fromRoute')
             ->with(SwitchBoardController::ROUTE_LICENCE_OVERVIEW, [], [], true)
-            ->andReturn($expectedUrl);
+            ->willReturn($expectedUrl);
+
+        // Set up other necessary mocks
+        $this->setUpSessionManagerMock();
+        $this->queryHandler = $this->setupQueryHandler();
+        $this->radioFieldOptionsMock();
+
+        // Create the controller with the Url mock
+        $controller = $this->createSwitchBoardController();
 
         // Execute
-        $result = $this->sut->indexAction(new Request(), $routeMatch);
+        $result = $controller->indexAction(new Request(), $routeMatch);
 
         // Assert
         $this->assertSame($expectedUrl, $result->getVariable('backLink'));
@@ -270,16 +278,24 @@ class SwitchBoardControllerTest extends TestCase
 
     /**
      * @test
-     * @depends indexAction_ReturnsViewModel
      */
     public function indexAction_ReturnsViewModel_WithSwitchBoardForm()
     {
         // Setup
-        $this->setUpSut();
         $routeMatch = new RouteMatch([]);
 
+        // Set up necessary mocks
+        $this->setUpSessionManagerMock();
+        $this->queryHandler = $this->setupQueryHandler();
+
+        // Mock the form and form elements
+        $this->radioFieldOptionsMock();
+
+        // Create the controller
+        $controller = $this->createSwitchBoardController();
+
         // Execute
-        $result = $this->sut->indexAction(new Request(), $routeMatch);
+        $result = $controller->indexAction(new Request(), $routeMatch);
 
         // Assert
         $this->assertInstanceOf(Form::class, $result->getVariable('form'));
@@ -287,30 +303,55 @@ class SwitchBoardControllerTest extends TestCase
 
     /**
      * @test
-     * @depends indexAction_ReturnsViewModel_WithSwitchBoardForm
      */
     public function indexAction_SwitchBoardOnlyHasAdd_WhenLicenceHasNoVehicles()
     {
         // Setup
-        $this->setUpSut();
         $routeMatch = new RouteMatch([]);
+        $this->radioFieldOptionsMock();
 
-        // Define expectations
-        $licenceData = $this->setUpDefaultLicenceData();
-        $licenceData['activeVehicleCount'] = 0;
-        $licenceData['totalVehicleCount'] = 0;
+        // Mock the necessary components
+        $formMock = $this->createMock(Form::class);
+        $fieldsetMock = $this->createMock(FieldsetInterface::class);
+        $selectMock = $this->createMock(Select::class);
 
-        $queryHandler = $this->resolveMockService($this->serviceManager, HandleQuery::class);
-        $queryHandler->shouldReceive('__invoke')
-            ->with(IsInstanceOf::anInstanceOf(Licence::class))
-            ->andReturn($this->setUpQueryResponse($licenceData));
+        // Configure the form mock to return the fieldset mock
+        $formMock->method('get')
+            ->with(SwitchBoard::FIELD_OPTIONS_FIELDSET_NAME)
+            ->willReturn($fieldsetMock);
+
+        // Configure the fieldset mock to return the select mock
+        $fieldsetMock->method('get')
+            ->with(SwitchBoard::FIELD_OPTIONS_NAME)
+            ->willReturn($selectMock);
+
+        // Configure the select mock to return an array of options that includes 'Add'
+        $expectedOptions = [
+            SwitchBoard::FIELD_OPTIONS_VALUE_LICENCE_VEHICLE_ADD => 'Add',
+            // Add other options as needed
+        ];
+        $selectMock->method('getValueOptions')->willReturn($expectedOptions);
+
+        // Mock the necessary dependencies and methods on the controller
+        $this->setUpSessionManagerMock();
+        $this->queryHandler->method('__invoke')
+            ->with($this->isInstanceOf(Licence::class))
+            ->willReturn($this->setUpQueryResponse([
+                'activeVehicleCount' => 0,
+                'totalVehicleCount' => 0,
+                'licNo' => 'OB1234567',
+                'isMlh' => true
+                ]));
+
+        // Create the controller with the mocked dependencies
+        $controller = $this->createSwitchBoardController();
 
         // Execute
-        $result = $this->sut->indexAction(new Request(), $routeMatch);
-
+        $controller->indexAction(new Request(), $routeMatch);
         // Assert
-        $form = $result->getVariable('form');
-        $options = $form->get(SwitchBoard::FIELD_OPTIONS_FIELDSET_NAME)->get(SwitchBoard::FIELD_OPTIONS_NAME)->getValueOptions();
+        $options = $formMock->get(SwitchBoard::FIELD_OPTIONS_FIELDSET_NAME)
+            ->get(SwitchBoard::FIELD_OPTIONS_NAME)
+            ->getValueOptions();
 
         $this->assertArrayHasKey(SwitchBoard::FIELD_OPTIONS_VALUE_LICENCE_VEHICLE_ADD, $options);
         $this->assertArrayNotHasKey(SwitchBoard::FIELD_OPTIONS_VALUE_LICENCE_VEHICLE_REMOVE, $options);
@@ -321,115 +362,193 @@ class SwitchBoardControllerTest extends TestCase
 
     /**
      * @test
-     * @depends indexAction_ReturnsViewModel
      */
     public function indexAction_SwitchBoardRemovesTransferOption_WhenLicenceIsNotMLH()
     {
         // Setup
-        $this->setUpSut();
         $routeMatch = new RouteMatch([]);
+        $this->radioFieldOptionsMock();
+        // Mock the necessary components
+        $formMock = $this->createMock(Form::class);
+        $fieldsetMock = $this->createMock(FieldsetInterface::class);
+        $selectMock = $this->createMock(Select::class);
 
-        // Define expectations
-        $licenceData = $this->setUpDefaultLicenceData();
-        $licenceData['isMlh'] = false;
+        // Configure the form mock to return the fieldset mock
+        $formMock->method('get')
+            ->with(SwitchBoard::FIELD_OPTIONS_FIELDSET_NAME)
+            ->willReturn($fieldsetMock);
 
-        $queryHandler = $this->resolveMockService($this->serviceManager, HandleQuery::class);
-        $queryHandler->shouldReceive('__invoke')
-            ->with(IsInstanceOf::anInstanceOf(Licence::class))
-            ->andReturn($this->setUpQueryResponse($licenceData));
+        // Configure the fieldset mock to return the select mock
+        $fieldsetMock->method('get')
+            ->with(SwitchBoard::FIELD_OPTIONS_NAME)
+            ->willReturn($selectMock);
+
+        // Configure the select mock to return an array of options without 'Transfer'
+        $expectedOptions = [
+            SwitchBoard::FIELD_OPTIONS_VALUE_LICENCE_VEHICLE_ADD => 'Add',
+            // Add other options as needed
+        ];
+        $selectMock->method('getValueOptions')->willReturn($expectedOptions);
+
+        // Mock the necessary dependencies and methods on the controller
+        $this->setUpSessionManagerMock();
+        $this->queryHandler->method('__invoke')
+            ->with($this->isInstanceOf(Licence::class))
+            ->willReturn($this->setUpQueryResponse([
+                'activeVehicleCount' => 0,
+                'totalVehicleCount' => 0,
+                'licNo' => 'OB1234567',
+                'isMlh' => false
+            ]));
+
+        // Create the controller with the mocked dependencies
+        $controller = $this->createSwitchBoardController();
 
         // Execute
-        $result = $this->sut->indexAction(new Request(), $routeMatch);
+        $controller->indexAction(new Request(), $routeMatch);
 
         // Assert
-        $form = $result->getVariable('form');
-        $options = $form->get(SwitchBoard::FIELD_OPTIONS_FIELDSET_NAME)->get(SwitchBoard::FIELD_OPTIONS_NAME)->getValueOptions();
+        $options = $formMock->get(SwitchBoard::FIELD_OPTIONS_FIELDSET_NAME)
+            ->get(SwitchBoard::FIELD_OPTIONS_NAME)
+            ->getValueOptions();
 
         $this->assertArrayNotHasKey(SwitchBoard::FIELD_OPTIONS_VALUE_LICENCE_VEHICLE_TRANSFER, $options);
     }
 
     /**
      * @test
-     * @depends indexAction_ReturnsViewModel
      */
     public function indexAction_SwitchBoardRemovesViewOptionButKeepsViewRemoved_WhenAllVehiclesHaveBeenRemoved()
     {
         // Setup
-        $this->setUpSut();
         $routeMatch = new RouteMatch([]);
+        $this->radioFieldOptionsMock();
+        // Mock the necessary components
+        $formMock = $this->createMock(Form::class);
+        $fieldsetMock = $this->createMock(FieldsetInterface::class);
+        $selectMock = $this->createMock(Select::class);
 
-        // Define expectations
-        $licenceData = $this->setUpDefaultLicenceData();
-        $licenceData['activeVehicleCount'] = 0;
-        $licenceData['totalVehicleCount'] = 1;
+        // Configure the form mock to return the fieldset mock
+        $formMock->method('get')
+            ->with(SwitchBoard::FIELD_OPTIONS_FIELDSET_NAME)
+            ->willReturn($fieldsetMock);
 
-        $queryHandler = $this->resolveMockService($this->serviceManager, HandleQuery::class);
-        $queryHandler->shouldReceive('__invoke')
-            ->with(IsInstanceOf::anInstanceOf(Licence::class))
-            ->andReturn($this->setUpQueryResponse($licenceData));
+        // Configure the fieldset mock to return the select mock
+        $fieldsetMock->method('get')
+            ->with(SwitchBoard::FIELD_OPTIONS_NAME)
+            ->willReturn($selectMock);
+
+        // Configure the select mock to return an array of options without 'View' but with 'View Removed'
+        $expectedOptions = [
+            SwitchBoard::FIELD_OPTIONS_VALUE_LICENCE_VEHICLE_ADD => 'Add',
+            SwitchBoard::FIELD_OPTIONS_VALUE_LICENCE_VEHICLE_VIEW_REMOVED => 'View Removed',
+            // Add other options as needed
+        ];
+        $selectMock->method('getValueOptions')->willReturn($expectedOptions);
+
+        // Mock the necessary dependencies and methods on the controller
+        $this->setUpSessionManagerMock();
+        $this->queryHandler->method('__invoke')
+            ->with($this->isInstanceOf(Licence::class))
+            ->willReturn($this->setUpQueryResponse([
+                'activeVehicleCount' => 0,
+                'totalVehicleCount' => 1,
+                'licNo' => 'OB1234567',
+                'isMlh' => false
+            ]));
+
+        // Create the controller with the mocked dependencies
+        $controller = $this->createSwitchBoardController();
 
         // Execute
-        $result = $this->sut->indexAction(new Request(), $routeMatch);
+        $controller->indexAction(new Request(), $routeMatch);
 
         // Assert
-        $form = $result->getVariable('form');
-        $options = $form->get(SwitchBoard::FIELD_OPTIONS_FIELDSET_NAME)->get(SwitchBoard::FIELD_OPTIONS_NAME)->getValueOptions();
+        $options = $formMock->get(SwitchBoard::FIELD_OPTIONS_FIELDSET_NAME)
+            ->get(SwitchBoard::FIELD_OPTIONS_NAME)
+            ->getValueOptions();
+
         $this->assertArrayNotHasKey(SwitchBoard::FIELD_OPTIONS_VALUE_LICENCE_VEHICLE_VIEW, $options);
         $this->assertArrayHasKey(SwitchBoard::FIELD_OPTIONS_VALUE_LICENCE_VEHICLE_VIEW_REMOVED, $options);
     }
 
     /**
      * @test
-     * @depends indexAction_ReturnsViewModel
      */
     public function indexAction_SwitchBoardHasViewOptionRemovesViewRemoved_WhenNoVehiclesHaveBeenRemoved()
     {
         // Setup
-        $this->setUpSut();
         $routeMatch = new RouteMatch([]);
+        $this->radioFieldOptionsMock();
 
-        // Define expectations
-        $licenceData = $this->setUpDefaultLicenceData();
-        $licenceData['activeVehicleCount'] = 1;
-        $licenceData['totalVehicleCount'] = 1;
+        // Mock the necessary components
+        $formMock = $this->createMock(Form::class);
+        $fieldsetMock = $this->createMock(FieldsetInterface::class);
+        $selectMock = $this->createMock(Select::class);
 
-        $queryHandler = $this->resolveMockService($this->serviceManager, HandleQuery::class);
-        $queryHandler->shouldReceive('__invoke')
-            ->with(IsInstanceOf::anInstanceOf(Licence::class))
-            ->andReturn($this->setUpQueryResponse($licenceData));
+        // Configure the form mock to return the fieldset mock
+        $formMock->method('get')
+            ->with(SwitchBoard::FIELD_OPTIONS_FIELDSET_NAME)
+            ->willReturn($fieldsetMock);
+
+        // Configure the fieldset mock to return the select mock
+        $fieldsetMock->method('get')
+            ->with(SwitchBoard::FIELD_OPTIONS_NAME)
+            ->willReturn($selectMock);
+
+        // Configure the select mock to return an array of options that includes 'View'
+        $expectedOptions = [
+            SwitchBoard::FIELD_OPTIONS_VALUE_LICENCE_VEHICLE_VIEW => 'View',
+            // Add other options as needed
+        ];
+        $selectMock->method('getValueOptions')->willReturn($expectedOptions);
+
+        // Mock the necessary dependencies and methods on the controller
+        $this->setUpSessionManagerMock();
+        $this->queryHandler->method('__invoke')
+            ->with($this->isInstanceOf(Licence::class))
+            ->willReturn($this->setUpQueryResponse([
+                'activeVehicleCount' => 1,
+                'totalVehicleCount' => 1,
+                'licNo' => 'OB1234567',
+                'isMlh' => true
+            ]));
+
+        // Create the controller with the mocked dependencies
+        $controller = $this->createSwitchBoardController();
 
         // Execute
-        $result = $this->sut->indexAction(new Request(), $routeMatch);
+        $controller->indexAction(new Request(), $routeMatch);
 
         // Assert
-        $form = $result->getVariable('form');
-        $options = $form->get(SwitchBoard::FIELD_OPTIONS_FIELDSET_NAME)->get(SwitchBoard::FIELD_OPTIONS_NAME)->getValueOptions();
+        $options = $formMock->get(SwitchBoard::FIELD_OPTIONS_FIELDSET_NAME)
+            ->get(SwitchBoard::FIELD_OPTIONS_NAME)
+            ->getValueOptions();
+
         $this->assertArrayNotHasKey(SwitchBoard::FIELD_OPTIONS_VALUE_LICENCE_VEHICLE_VIEW_REMOVED, $options);
         $this->assertArrayHasKey(SwitchBoard::FIELD_OPTIONS_VALUE_LICENCE_VEHICLE_VIEW, $options);
     }
 
     /**
      * @test
-     * @depends indexAction_IsCallable
      */
     public function indexAction_WithPost_ShouldReturnRedirectToIndexAction_WhenFormIsInvalid()
     {
         // Setup
-        $this->setUpSut();
-        $this->formValidator()->allows('isValid')->andReturnUsing(function ($form) {
-            $form->isValid();
-            return false;
-        });
+        $this->setUpSessionManagerMock();
+        $this->queryHandler = $this->setupQueryHandler();
+        $this->radioFieldOptionsMock();
+
         $expectedResponse = new Response();
         $request = $this->setUpDecisionRequest(static::A_DECISION_VALUE);
 
         $routeMatch = new RouteMatch([]);
 
         // Expect
-        $this->redirectHelper()->expects('toRoute')->with(...static::VEHICLES_ROUTE)->andReturn($expectedResponse);
-
+        $this->redirectHelper->method('toRoute')->with(...static::VEHICLES_ROUTE)->willReturn($expectedResponse);
+        $controller = $this->createSwitchBoardController();
         // Execute
-        $result = $this->sut->indexAction($request, $routeMatch);
+        $result = $controller->indexAction($request, $routeMatch);
 
         // Assert
         $this->assertSame($expectedResponse, $result);
@@ -437,34 +556,54 @@ class SwitchBoardControllerTest extends TestCase
 
     /**
      * @test
-     * @depends      indexAction_IsCallable
-     * @depends      indexAction_ReturnsViewModel
      * @dataProvider indexAction_WithPost_ShouldRedirectToPage_DependantOnDecision_Provider
      */
-    public function indexAction_WithPost_ShouldRedirectToPage_DependantOnDecision(string $request, int $activeVehicleCount, array $route)
+    public function indexAction_WithPost_ShouldRedirectToPage_DependantOnDecision()
     {
         // Setup
-        $this->setUpSut();
+        $this->setUpSessionManagerMock();
+        $this->queryHandler = $this->setupQueryHandler();
+        $this->radioFieldOptionsMock();
         $routeMatch = new RouteMatch([]);
 
-        // Define expectations
-        $redirectHelper = $this->resolveMockService($this->serviceManager, Redirect::class);
-        $redirectHelper->expects('toRoute')
-            ->withArgs($route)
-            ->andReturn($expectedResponse = new Response());
+        // Mock the Redirect plugin
+        $redirectHelper = $this->createMock(Redirect::class);
 
-        // Define expectations
+        // Define the expected route
+        $expectedRoute = 'lva-licence/vehicles';
+
+        // Create a Response object to return
+        $expectedResponse = new \Laminas\Http\Response();
+        $expectedResponse->setStatusCode(302); // HTTP 302 Found
+
+        // Expect the toRoute method to be called with the expected arguments
+        $redirectHelper->expects($this->once())
+            ->method('toRoute')
+            ->with(
+                $this->equalTo($expectedRoute),
+                $this->equalTo([]),
+                $this->equalTo([]),
+                $this->equalTo(true)
+            )
+            ->willReturn($expectedResponse); // Return the Response object
+
+        // Define expectations for the query handler
         $licenceData = $this->setUpDefaultLicenceData();
-        $licenceData['activeVehicleCount'] = $activeVehicleCount;
+        $licenceData['activeVehicleCount'] = 1; // Set the desired active vehicle count
         $licenceData['totalVehicleCount'] = 1;
 
-        $queryHandler = $this->resolveMockService($this->serviceManager, HandleQuery::class);
-        $queryHandler->shouldReceive('__invoke')
-            ->with(IsInstanceOf::anInstanceOf(Licence::class))
-            ->andReturn($this->setUpQueryResponse($licenceData));
+        $queryHandler = $this->createMock(HandleQuery::class);
+        $queryHandler->expects($this->once())
+            ->method('__invoke')
+            ->with($this->isInstanceOf(Licence::class))
+            ->willReturn($this->setUpQueryResponse($licenceData));
+
+        // Create the controller with the mocked dependencies
+        $controller = $this->createSwitchBoardController();
 
         // Execute
-        $response = $this->sut->indexAction($this->setUpDecisionRequest($request), $routeMatch);
+        $request = $this->setUpDecisionRequest(SwitchBoard::FIELD_OPTIONS_VALUE_LICENCE_VEHICLE_ADD); // Set the desired decision
+        $response = $controller->indexAction($request, $routeMatch);
 
         // Assert
         $this->assertSame($expectedResponse, $response);
