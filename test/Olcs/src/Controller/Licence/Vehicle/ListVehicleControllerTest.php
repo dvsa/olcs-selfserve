@@ -15,7 +15,6 @@ use Common\Service\Helper\ResponseHelperService;
 use Common\Service\Helper\TranslationHelperService;
 use Common\Service\Table\TableBuilder;
 use Common\Service\Table\TableFactory;
-use Common\Test\MockeryTestCase;
 use Dvsa\Olcs\Transfer\Command\Licence\UpdateVehicles;
 use Dvsa\Olcs\Transfer\Query\Licence\Licence;
 use Dvsa\Olcs\Transfer\Query\Licence\Vehicles;
@@ -41,14 +40,13 @@ use Olcs\Controller\Licence\Vehicle\ListVehicleController;
 use Olcs\Controller\Licence\Vehicle\ListVehicleControllerFactory;
 use Olcs\Form\Model\Form\Vehicle\ListVehicleSearch;
 use Olcs\Table\TableEnum;
-use Common\Test\MocksServicesTrait;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @see ListVehicleController
  */
-class ListVehicleControllerTest extends MockeryTestCase
+class ListVehicleControllerTest extends TestCase
 {
-    use MocksServicesTrait;
 
     protected const ROUTE_CONFIGURATION_FOR_LICENCE_WITH_REMOVED_VEHICLES_SHOWING_AND_FOCUSED = [
         'licence/vehicle/list/GET',
@@ -85,7 +83,7 @@ class ListVehicleControllerTest extends MockeryTestCase
     public function indexAction_IsCallable()
     {
         // Setup
-        $this->setUpSut();
+        $this->sut = $this->createListVehicleController();
 
         // Assert
         $this->assertIsCallable([$this->sut, 'indexAction']);
@@ -97,7 +95,7 @@ class ListVehicleControllerTest extends MockeryTestCase
     public function postAction_IsCallable()
     {
         // Setup
-        $this->setUpSut();
+        $this->sut = $this->createListVehicleController();
 
         // Assert
         $this->assertIsCallable([$this->sut, 'postAction']);
@@ -110,7 +108,6 @@ class ListVehicleControllerTest extends MockeryTestCase
     public function indexAction_RespondsInHtmlFormat_WhenNoFormatIsProvided()
     {
         // Setup
-        $this->setUpSut();
         $request = $this->setUpRequest('/');
         $routeMatch = new RouteMatch([]);
 
@@ -906,7 +903,30 @@ class ListVehicleControllerTest extends MockeryTestCase
 
     protected function setUp(): void
     {
-        $this->setUpServiceManager();
+        // Create mock objects for dependencies
+        $this->handleCommand = $this->createMock(HandleCommand::class);
+        $this->handleQuery = $this->createMock(HandleQuery::class);
+        $this->translator = $this->createMock(TranslationHelperService::class);
+        $this->urlHelper = $this->createMock(Url::class);
+        $this->responseHelper = $this->createMock(ResponseHelperService::class);
+        $this->tableFactory = $this->createMock(TableFactory::class);
+        $this->formHelper = $this->createMock(FormHelperService::class);
+        $this->flashMessenger = $this->createMock(FlashMessengerHelperService::class);
+        $this->redirectHelper = $this->createMock(Redirect::class);
+    }
+    protected function createListVehicleController(){
+        // Create the ListVehicleController instance with mock dependencies
+        return new ListVehicleController(
+            $this->handleCommand,
+            $this->handleQuery,
+            $this->translator,
+            $this->urlHelper,
+            $this->responseHelper,
+            $this->tableFactory,
+            $this->formHelper,
+            $this->flashMessenger,
+            $this->redirectHelper
+        );
     }
 
     public function setUpDefaultServices()
