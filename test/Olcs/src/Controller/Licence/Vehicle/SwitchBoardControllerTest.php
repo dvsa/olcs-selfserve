@@ -14,9 +14,7 @@ use Common\Service\Helper\ResponseHelperService;
 use Common\View\Helper\Panel;
 use Dvsa\Olcs\Transfer\Query\Licence\Licence;
 use Hamcrest\Core\IsInstanceOf;
-use Laminas\Form\Annotation\AnnotationBuilder;
 use Laminas\Form\Element\Select;
-use Laminas\Form\ElementInterface;
 use Laminas\Form\FieldsetInterface;
 use Laminas\Http\Request;
 use Laminas\Http\Response;
@@ -562,12 +560,8 @@ class SwitchBoardControllerTest extends TestCase
     {
         // Setup
         $this->setUpSessionManagerMock();
-        $this->queryHandler = $this->setupQueryHandler();
         $this->radioFieldOptionsMock();
         $routeMatch = new RouteMatch([]);
-
-        // Mock the Redirect plugin
-        $redirectHelper = $this->createMock(Redirect::class);
 
         // Define the expected route
         $expectedRoute = 'lva-licence/vehicles';
@@ -577,7 +571,7 @@ class SwitchBoardControllerTest extends TestCase
         $expectedResponse->setStatusCode(302); // HTTP 302 Found
 
         // Expect the toRoute method to be called with the expected arguments
-        $redirectHelper->expects($this->once())
+        $this->redirectHelper->expects($this->once())
             ->method('toRoute')
             ->with(
                 $this->equalTo($expectedRoute),
@@ -592,8 +586,7 @@ class SwitchBoardControllerTest extends TestCase
         $licenceData['activeVehicleCount'] = 1; // Set the desired active vehicle count
         $licenceData['totalVehicleCount'] = 1;
 
-        $queryHandler = $this->createMock(HandleQuery::class);
-        $queryHandler->expects($this->once())
+        $this->queryHandler->expects($this->once())
             ->method('__invoke')
             ->with($this->isInstanceOf(Licence::class))
             ->willReturn($this->setUpQueryResponse($licenceData));
@@ -678,51 +671,6 @@ class SwitchBoardControllerTest extends TestCase
                 ],
             ]
         ];
-    }
-
-    /**
-     * @return MockInterface|Redirect
-     */
-    protected function redirectHelper(): MockInterface
-    {
-        if (! $this->serviceManager->has(Redirect::class)) {
-            $instance = $this->setUpMockService(Redirect::class);
-            $this->serviceManager->setService(Redirect::class, $instance);
-        }
-        return $this->serviceManager->get(Redirect::class);
-    }
-
-    /**
-     * @return MockInterface|FormValidator
-     */
-    protected function formValidator(): MockInterface
-    {
-        if (! $this->serviceManager->has(FormValidator::class)) {
-            $instance = $this->setUpMockService(FormValidator::class);
-            $instance->allows('isValid')->andReturnUsing(function ($form) {
-
-                $form->isValid();
-                return true;
-            })->byDefault();
-            $this->serviceManager->setService(FormValidator::class, $instance);
-        }
-        return $this->serviceManager->get(FormValidator::class);
-    }
-
-    /**
-     * @return FormHelperService
-     */
-    protected function formHelper(): FormHelperService
-    {
-        $formHelperMock = $this->createMock(FormHelperService::class);
-
-        $formHelperMock->method('createForm')
-            ->willReturnCallback(function () {
-                $annotationBuilder = new AnnotationBuilder();
-                return $annotationBuilder->createForm(SwitchBoard::class);
-            });
-
-        return $formHelperMock;
     }
 
     /**
