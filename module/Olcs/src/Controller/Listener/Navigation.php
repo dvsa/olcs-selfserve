@@ -2,6 +2,7 @@
 
 namespace Olcs\Controller\Listener;
 
+use Common\FeatureToggle;
 use Common\Rbac\User as RbacUser;
 use Common\Service\Cqrs\Query\QuerySender;
 use Laminas\EventManager\EventManagerInterface;
@@ -82,6 +83,9 @@ class Navigation implements ListenerAggregateInterface
     {
         $shouldShowPermitsTab = $this->shouldShowPermitsTab($e);
         $this->togglePermitsMenus($shouldShowPermitsTab);
+
+        $shouldShowMessagesTab = $this->shouldShowMessagesTab();
+        $this->toggleMessagesTab($shouldShowMessagesTab);
     }
 
     /**
@@ -151,6 +155,28 @@ class Navigation implements ListenerAggregateInterface
         }
 
         return in_array($referer->getUri(), $this->govUkReferers);
+    }
+
+    /**
+     * Toggle Messaging menus
+     *
+     * @param bool $shouldShowMessagesTab whether to show messages tab
+     *
+     * @return void
+     */
+    private function toggleMessagesTab(bool $shouldShowMessagesTab): void
+    {
+        $this->navigation->findBy('id', 'dashboard-messaging')
+            ->setVisible($shouldShowMessagesTab);
+    }
+
+    private function shouldShowMessagesTab(): bool
+    {
+        $hasPendingOrValidLicence = $this->identity->getUserData()['hasOrganisationSubmittedLicenceApplication'];
+
+        $messagingToggleState = $this->querySender->featuresEnabled([FeatureToggle::MESSAGING]);
+
+        return $messagingToggleState && $hasPendingOrValidLicence;
     }
 
     /**

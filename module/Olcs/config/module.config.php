@@ -1066,6 +1066,11 @@ $applicationNavigation = array(
                     'label' => 'dashboard-nav-documents',
                     'route' => 'correspondence',
                 ),
+                array(
+                    'id' => 'dashboard-messaging',
+                    'label' => 'dashboard-nav-messaging',
+                    'route' => 'conversations',
+                ),
             ),
         ),
     ),
