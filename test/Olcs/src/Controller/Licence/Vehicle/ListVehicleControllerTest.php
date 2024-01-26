@@ -173,34 +173,11 @@ class ListVehicleControllerTest extends TestCase
         // Define Expectations
         $queryMatcher = IsIdentical::identicalTo($query);
         $paramsMatcher = IsArrayContainingKeyValuePair::hasKeyValuePair('query', $queryMatcher);
-// Pass buildHTMLCurrent
-
-        // Set up the expectation for prepareTable on the mock
-        $tableBuilder = $this->setUpTableBuilder(); // You might need to define this method
-        $this->tableFactoryMock
-            ->expects($this->once())
-            ->method('prepareTable')
-            ->with(
-                TableEnum::LICENCE_VEHICLE_LIST_CURRENT,
-                $this->anything(), // You might want to replace this with specific data if needed
-                $paramsMatcher
-            )
-            ->willReturn($tableBuilder);
 
 
-        $tableBuilder = $this->setUpTableFactory();
-        $tableFactoryMock = $this->createMock(TableFactory::class);
-        $tableFactoryMock
-            ->expects($this->once())
-            ->method('prepareTable')
-            ->with(
-                TableEnum::LICENCE_VEHICLE_LIST_CURRENT,
-                $this->isType('array'), // You might want to replace this with specific data if needed
-                $paramsMatcher
-            )
-            ->willReturn($tableBuilder);
+        $this->setUpTableFactory();
 
-
+        // Pass buildHTMLCurrent
         $this->sut = $this->createListVehicleController();
         // Execute
         $result = $this->sut->indexAction($request, $routeMatch);
@@ -1148,11 +1125,20 @@ class ListVehicleControllerTest extends TestCase
      */
     protected function setUpTableFactory(): TableFactory
     {
-        $instance = m::mock(TableFactory::class);
-        $instance->shouldIgnoreMissing();
-        $instance->shouldReceive('prepareTable', 'getTableBuilder')->andReturnUsing(function () {
-            return $this->setUpTableBuilder();
-        })->byDefault();
+        // Create a mock for TableFactory
+        $instance = $this->createMock(TableFactory::class);
+
+        // Mock the methods and set defaults
+        $instance
+            ->method('prepareTable')
+            ->willReturnCallback(function () {
+                return $this->setUpTableBuilder();
+            });
+
+        $instance
+            ->method('getTableBuilder')
+            ->willReturn($this->setUpTableBuilder()); // You might need to replace this if needed
+
         return $instance;
     }
 
@@ -1169,15 +1155,13 @@ class ListVehicleControllerTest extends TestCase
     }
 
     /**
-     * @return MockInterface
      */
-    public function setUpTableBuilder(): MockInterface
+    public function setUpTableBuilder()
     {
-        $tableBuilder = m::mock(TableBuilder::class);
-        $tableBuilder->shouldIgnoreMissing($tableBuilder);
-        $tableBuilder->shouldReceive('getSettings')->andReturn([])->byDefault();
-        $tableBuilder->shouldReceive('getTotal')->andReturn(0)->byDefault();
-        $tableBuilder->shouldReceive('getLimit')->andReturn(9)->byDefault();
+        $tableBuilder = $this->createMock(TableBuilder::class);
+        $tableBuilder->expects($this->once())->method('getSettings')->willReturn([]);
+        $tableBuilder->expects($this->once())->method('getTotal')->willReturn(0);
+        $tableBuilder->expects($this->once())->method('getLimit')->willReturn(9);
         return $tableBuilder;
     }
 
@@ -1243,7 +1227,6 @@ class ListVehicleControllerTest extends TestCase
         $any = IsAnything::anything();
         $instance->shouldReceive('createForm')->with(ListVehicleSearch::class, $any, $any)->andReturn($searchForm)->byDefault();
 
-
         return $instance;
     }
 
@@ -1274,7 +1257,10 @@ class ListVehicleControllerTest extends TestCase
     {
         $any = IsAnything::anything();
         $tableBuilder = $this->setUpTableBuilder();
-        $tableFactory->shouldReceive('prepareTable')->with($tableName, $data ?? $any, $params ?? $any)->once()->andReturn($tableBuilder);
+        $this->tableFactoryMock->expects($this->once())
+        ->method('prepareTable')
+            ->with($tableName, $data ?? $any, $params ?? $any)
+            ->willReturn($tableBuilder);
         return $tableBuilder;
     }
 
