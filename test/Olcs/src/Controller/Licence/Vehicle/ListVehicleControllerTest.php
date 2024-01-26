@@ -41,6 +41,7 @@ use Mockery\MockInterface;
 use Olcs\Controller\Licence\Vehicle\ListVehicleController;
 use Olcs\Controller\Licence\Vehicle\ListVehicleControllerFactory;
 use Olcs\Form\Model\Form\Vehicle\ListVehicleSearch;
+use Olcs\Form\Model\Form\Vehicle\OCRSOptIn;
 use Olcs\Table\TableEnum;
 use PHPUnit\Framework\TestCase;
 
@@ -163,21 +164,16 @@ class ListVehicleControllerTest extends TestCase
         $this->queryHandlerMock = $this->setUpQueryHandler();
         // Configure the mock to return a valid URL when fromRoute is called
         $this->urlHelperMock->method('fromRoute')->willReturn('licence/vehicle/list/GET');
-
-        $query = [
-            ListVehicleController::QUERY_KEY_SORT_CURRENT_VEHICLES => 'v.vrm',
-            ListVehicleController::QUERY_KEY_ORDER_CURRENT_VEHICLES => 'ASC',
-            'limit' => 56,
-        ];
-
-        // Define Expectations
-        $queryMatcher = IsIdentical::identicalTo($query);
-        $paramsMatcher = IsArrayContainingKeyValuePair::hasKeyValuePair('query', $queryMatcher);
-
-
         $this->setUpTableFactory();
 
-        // Pass buildHTMLCurrent
+        // Create a mock for FormNock
+        $formMock = $this->createMock(Form::class);
+
+        $this->formHelperMock->method('createForm')->willReturn($formMock);
+
+        // till here completed createOcrsOptInForm
+
+
         $this->sut = $this->createListVehicleController();
         // Execute
         $result = $this->sut->indexAction($request, $routeMatch);
@@ -1084,6 +1080,7 @@ class ListVehicleControllerTest extends TestCase
                     'organisation' => [
                         'confirmShareVehicleInfo' => 'N',
                     ],
+                    'count' => 10
                 ];
             }
         };
@@ -1120,26 +1117,15 @@ class ListVehicleControllerTest extends TestCase
         return $instance;
     }
 
-    /**
-     * @return TableFactory
-     */
-    protected function setUpTableFactory(): TableFactory
+
+    protected function setUpTableFactory()
     {
-        // Create a mock for TableFactory
-        $instance = $this->createMock(TableFactory::class);
-
         // Mock the methods and set defaults
-        $instance
+        $tableBuilder = $this->setUpTableBuilder();
+
+        $this->tableFactoryMock
             ->method('prepareTable')
-            ->willReturnCallback(function () {
-                return $this->setUpTableBuilder();
-            });
-
-        $instance
-            ->method('getTableBuilder')
-            ->willReturn($this->setUpTableBuilder()); // You might need to replace this if needed
-
-        return $instance;
+            ->willReturn($tableBuilder);
     }
 
     /**
