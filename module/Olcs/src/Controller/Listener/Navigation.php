@@ -5,6 +5,7 @@ namespace Olcs\Controller\Listener;
 use Common\FeatureToggle;
 use Common\Rbac\User as RbacUser;
 use Common\Service\Cqrs\Query\QuerySender;
+use Dvsa\Olcs\Transfer\Query;
 use Dvsa\Olcs\Transfer\Query\Application\Application as ApplicationQuery;
 use Dvsa\Olcs\Transfer\Query\FeatureToggle\IsEnabled as IsEnabledQry;
 use Laminas\EventManager\EventManagerInterface;
@@ -177,9 +178,11 @@ class Navigation implements ListenerAggregateInterface
      */
     private function shouldShowMessagesTab()
     {
+        $hasPendingOrValidLicence = $this->identity->getUserData()['hasOrganisationSubmittedLicenceApplication'];
+
         $messagingToggleState = $this->querySender->featuresEnabled([FeatureToggle::MESSAGING]);
 
-        return $messagingToggleState;
+        return $messagingToggleState && $hasPendingOrValidLicence;
     }
 
     /**
