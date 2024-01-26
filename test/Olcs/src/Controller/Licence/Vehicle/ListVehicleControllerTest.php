@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace OlcsTest\Controller\Licence\Vehicle;
 
+use Common\Controller\Dispatcher;
 use Common\Controller\Plugin\HandleCommand;
 use Common\Controller\Plugin\HandleQuery;
 use Common\Controller\Plugin\Redirect;
@@ -23,6 +24,7 @@ use Hamcrest\Core\IsAnything;
 use Hamcrest\Core\IsIdentical;
 use Hamcrest\Arrays\IsArrayContainingKey;
 use Hamcrest\Core\IsInstanceOf;
+use Interop\Container\Containerinterface;
 use Laminas\Form\ElementInterface;
 use Laminas\Form\Form;
 use Laminas\Http\Request;
@@ -47,6 +49,51 @@ use PHPUnit\Framework\TestCase;
  */
 class ListVehicleControllerTest extends TestCase
 {
+    private $containerMock;
+    /**
+     * @var HandleCommand
+     */
+    protected $commandHandlerMock;
+
+    /**
+     * @var HandleQuery
+     */
+    protected $queryHandlerMock;
+
+    /**
+     * @var TranslationHelperService
+     */
+    protected $translatorMock;
+
+    /**
+     * @var Url
+     */
+    protected $urlHelperMock;
+
+    /**
+     * @var ResponseHelperService
+     */
+    protected $responseHelperMock;
+
+    /**
+     * @var TableFactory
+     */
+    protected $tableFactoryMock;
+
+    /**
+     * @var FormHelperService
+     */
+    protected $formHelperMock;
+
+    /**
+     * @var FlashMessengerHelperService
+     */
+    protected $flashMessengerMock;
+
+    /**
+     * @var Redirect
+     */
+    protected $redirectHelperMock;
 
     protected const ROUTE_CONFIGURATION_FOR_LICENCE_WITH_REMOVED_VEHICLES_SHOWING_AND_FOCUSED = [
         'licence/vehicle/list/GET',
@@ -102,15 +149,59 @@ class ListVehicleControllerTest extends TestCase
     }
 
     /**
-     * @depends indexAction_IsCallable
      * @test
+     * @dataProvider validInputDataProvider
      */
-    public function indexAction_RespondsInHtmlFormat_WhenNoFormatIsProvided()
+    public function indexAction_RespondsInHtmlFormat_WhenNoFormatIsProvided(array $input)
     {
         // Setup
-        $request = $this->setUpRequest('/');
-        $routeMatch = new RouteMatch([]);
+        // Instantiate the controller with mocked dependencies
 
+        $request = $this->setUpRequest('/');
+        $request->setQuery(new Parameters($input));
+        $routeMatch = new RouteMatch([]);
+        $this->queryHandlerMock = $this->setUpQueryHandler();
+        // Configure the mock to return a valid URL when fromRoute is called
+        $this->urlHelperMock->method('fromRoute')->willReturn('licence/vehicle/list/GET');
+
+        $query = [
+            ListVehicleController::QUERY_KEY_SORT_CURRENT_VEHICLES => 'v.vrm',
+            ListVehicleController::QUERY_KEY_ORDER_CURRENT_VEHICLES => 'ASC',
+            'limit' => 56,
+        ];
+
+        // Define Expectations
+        $queryMatcher = IsIdentical::identicalTo($query);
+        $paramsMatcher = IsArrayContainingKeyValuePair::hasKeyValuePair('query', $queryMatcher);
+// Pass buildHTMLCurrent
+
+        // Set up the expectation for prepareTable on the mock
+        $tableBuilder = $this->setUpTableBuilder(); // You might need to define this method
+        $this->tableFactoryMock
+            ->expects($this->once())
+            ->method('prepareTable')
+            ->with(
+                TableEnum::LICENCE_VEHICLE_LIST_CURRENT,
+                $this->anything(), // You might want to replace this with specific data if needed
+                $paramsMatcher
+            )
+            ->willReturn($tableBuilder);
+
+
+        $tableBuilder = $this->setUpTableFactory();
+        $tableFactoryMock = $this->createMock(TableFactory::class);
+        $tableFactoryMock
+            ->expects($this->once())
+            ->method('prepareTable')
+            ->with(
+                TableEnum::LICENCE_VEHICLE_LIST_CURRENT,
+                $this->isType('array'), // You might want to replace this with specific data if needed
+                $paramsMatcher
+            )
+            ->willReturn($tableBuilder);
+
+
+        $this->sut = $this->createListVehicleController();
         // Execute
         $result = $this->sut->indexAction($request, $routeMatch);
 
@@ -901,31 +992,93 @@ class ListVehicleControllerTest extends TestCase
         $this->assertArrayNotHasKey('showRemovedVehicles', $result);
     }
 
+//    protected function setUp(): void
+//    {
+//        // Create mock objects for dependencies
+//        $this->commandHandler = m::mock(HandleCommand::class);
+//        $this->queryHandler = m::mock(HandleQuery::class);
+//        $this->translator = m::mock(TranslationHelperService::class);
+//        $this->urlHelper = m::mock(Url::class);
+//        $this->responseHelper = m::mock(ResponseHelperService::class);
+//        $this->tableFactory = m::mock(TableFactory::class);
+//        $this->formHelper = m::mock(FormHelperService::class);
+//        $this->flashMessenger = m::mock(FlashMessengerHelperService::class);
+//        $this->redirectHelper = m::mock(Redirect::class);
+//    }
+//    protected function createListVehicleController()
+//    {
+//        // Create the ListVehicleController instance with mock dependencies
+//        return new ListVehicleController(
+//            $this->commandHandler,
+//            $this->queryHandler,
+//            $this->translator,
+//            $this->urlHelper,
+//            $this->responseHelper,
+//            $this->tableFactory,
+//            $this->formHelper,
+//            $this->flashMessenger,
+//            $this->redirectHelper
+//        );
+//    }
+
     protected function setUp(): void
     {
-        // Create mock objects for dependencies
-        $this->handleCommand = $this->createMock(HandleCommand::class);
-        $this->handleQuery = $this->createMock(HandleQuery::class);
-        $this->translator = $this->createMock(TranslationHelperService::class);
-        $this->urlHelper = $this->createMock(Url::class);
-        $this->responseHelper = $this->createMock(ResponseHelperService::class);
-        $this->tableFactory = $this->createMock(TableFactory::class);
-        $this->formHelper = $this->createMock(FormHelperService::class);
-        $this->flashMessenger = $this->createMock(FlashMessengerHelperService::class);
-        $this->redirectHelper = $this->createMock(Redirect::class);
+        parent::setUp();
+
+        // Create a mock of the ContainerInterface
+        $this->containerMock = $this->createMock(ContainerInterface::class);
+
+        // Mock all other dependencies
+        $this->commandHandlerMock = $this->createMock(HandleCommand::class);
+        $this->queryHandlerMock = $this->createMock(HandleQuery::class);
+        $this->translatorMock = $this->createMock(TranslationHelperService::class);
+        $this->urlHelperMock = $this->createMock(Url::class);
+        $this->responseHelperMock = $this->createMock(ResponseHelperService::class);
+        $this->tableFactoryMock = $this->createMock(TableFactory::class);
+        $this->formHelperMock = $this->createMock(FormHelperService::class);
+        $this->flashMessengerMock = $this->createMock(FlashMessengerHelperService::class);
+        $this->redirectHelperMock = $this->createMock(Redirect::class);
+
+        // Configure the ContainerInterface mock to return the appropriate mocks
+        $this->containerMock->method('get')
+            ->willReturnMap([
+                [HandleCommand::class, $this->commandHandlerMock],
+                [HandleQuery::class, $this->queryHandlerMock],
+                [TranslationHelperService::class, $this->translatorMock],
+                [Url::class, $this->urlHelperMock],
+                [ResponseHelperService::class, $this->responseHelperMock],
+                [TableFactory::class, $this->tableFactoryMock],
+                [FormHelperService::class, $this->formHelperMock],
+                [FlashMessengerHelperService::class, $this->flashMessengerMock],
+                [Redirect::class, $this->redirectHelperMock],
+            ]);
     }
-    protected function createListVehicleController(){
-        // Create the ListVehicleController instance with mock dependencies
+
+    protected function createListVehicleController()
+    {
+        // Create the ListVehicleController instance with the container mock
+        // Fetch each dependency from the container mock
+        $commandHandler = $this->containerMock->get(HandleCommand::class);
+        $queryHandler = $this->containerMock->get(HandleQuery::class);
+        $translator = $this->containerMock->get(TranslationHelperService::class);
+        $urlHelper = $this->containerMock->get(Url::class);
+        $responseHelper = $this->containerMock->get(ResponseHelperService::class);
+        $tableFactory = $this->containerMock->get(TableFactory::class);
+        $formHelper = $this->containerMock->get(FormHelperService::class);
+        $flashMessenger = $this->containerMock->get(FlashMessengerHelperService::class);
+        $redirectHelper = $this->containerMock->get(Redirect::class);
+
+        // Create the ListVehicleController instance with the fetched dependencies
         return new ListVehicleController(
-            $this->handleCommand,
-            $this->handleQuery,
-            $this->translator,
-            $this->urlHelper,
-            $this->responseHelper,
-            $this->tableFactory,
-            $this->formHelper,
-            $this->flashMessenger,
-            $this->redirectHelper
+            $commandHandler,
+            $queryHandler,
+            $translator,
+            $urlHelper,
+            $responseHelper,
+            $tableFactory,
+            $formHelper,
+            $flashMessenger,
+            $redirectHelper
         );
     }
 
@@ -942,27 +1095,23 @@ class ListVehicleControllerTest extends TestCase
         $this->serviceManager->setService(Redirect::class, $this->setUpRedirectHelper());
     }
 
-    protected function setUpSut()
+    protected function setUpQueryHandler()
     {
-        $factory = new ListVehicleControllerFactory();
-        $dispatcher = $factory->__invoke($this->serviceManager, ListVehicleController::class);
-        $this->sut = $dispatcher->getDelegate();
-    }
+        // Mock the response of queryHandler->__invoke using an anonymous class
+        $mockQueryResponse = new class {
+            public function getResult()
+            {
+                return [
+                    'id' => 1,
+                    'licNo' => 'OB1234567',
+                    'organisation' => [
+                        'confirmShareVehicleInfo' => 'N',
+                    ],
+                ];
+            }
+        };
 
-    /**
-     * @return HandleQuery
-     */
-    protected function setUpQueryHandler(): HandleQuery
-    {
-        $instance = m::mock(HandleQuery::class);
-        $instance->shouldIgnoreMissing();
-        $instance->shouldReceive('__invoke')->andReturn($this->setUpQueryResponse())->byDefault();
-        $instance->shouldReceive('__invoke')->with(IsInstanceOf::anInstanceOf(Licence::class))->andReturnUsing(function ($query) {
-            $licenceData = $this->setUpDefaultLicenceData();
-            $licenceData['id'] = $query->getId();
-            return $this->setUpQueryResponse($licenceData);
-        })->byDefault();
-        return $instance;
+        $this->queryHandlerMock->method('__invoke')->willReturn($mockQueryResponse);
     }
 
     /**
@@ -1116,17 +1265,15 @@ class ListVehicleControllerTest extends TestCase
     }
 
     /**
-     * @param ServiceLocatorInterface $serviceLocator
+     * @param TableFactory $tableFactory
      * @param string $tableName
      * @param null $data
      * @param null $params
-     * @return MockInterface
      */
-    protected function expectTableToBePrepared(ServiceLocatorInterface $serviceLocator, string $tableName, $data = null, $params = null): MockInterface
+    protected function expectTableToBePrepared(TableFactory $tableFactory, string $tableName, $data = null, $params = null)
     {
         $any = IsAnything::anything();
         $tableBuilder = $this->setUpTableBuilder();
-        $tableFactory = $this->resolveMockService($serviceLocator, TableFactory::class);
         $tableFactory->shouldReceive('prepareTable')->with($tableName, $data ?? $any, $params ?? $any)->once()->andReturn($tableBuilder);
         return $tableBuilder;
     }
