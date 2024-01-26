@@ -170,10 +170,7 @@ class Navigation implements ListenerAggregateInterface
             ->setVisible($shouldShowMessagesTab);
     }
 
-    /**
-     * @return bool
-     */
-    private function shouldShowMessagesTab()
+    private function shouldShowMessagesTab(): bool
     {
         $hasPendingOrValidLicence = $this->identity->getUserData()['hasOrganisationSubmittedLicenceApplication'];
 
