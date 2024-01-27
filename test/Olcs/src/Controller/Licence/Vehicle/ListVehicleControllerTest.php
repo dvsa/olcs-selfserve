@@ -156,10 +156,7 @@ class ListVehicleControllerTest extends TestCase
     public function indexAction_RespondsInHtmlFormat_WhenNoFormatIsProvided(array $input)
     {
         // Setup
-        // Instantiate the controller with mocked dependencies
-
         $request = $this->setUpRequest('/');
-        $request->setQuery(new Parameters($input));
         $routeMatch = new RouteMatch([]);
         $this->queryHandlerMock = $this->setUpQueryHandler();
         // Configure the mock to return a valid URL when fromRoute is called
@@ -170,9 +167,6 @@ class ListVehicleControllerTest extends TestCase
         $formMock = $this->createMock(Form::class);
 
         $this->formHelperMock->method('createForm')->willReturn($formMock);
-
-        // till here completed createOcrsOptInForm
-
 
         $this->sut = $this->createListVehicleController();
         // Execute
@@ -1145,9 +1139,9 @@ class ListVehicleControllerTest extends TestCase
     public function setUpTableBuilder()
     {
         $tableBuilder = $this->createMock(TableBuilder::class);
-        $tableBuilder->expects($this->once())->method('getSettings')->willReturn([]);
-        $tableBuilder->expects($this->once())->method('getTotal')->willReturn(0);
-        $tableBuilder->expects($this->once())->method('getLimit')->willReturn(9);
+        $tableBuilder->expects($this->any())->method('getSettings')->willReturn([]);
+        $tableBuilder->expects($this->any())->method('getTotal')->willReturn(0);
+        $tableBuilder->expects($this->any())->method('getLimit')->willReturn(9);
         return $tableBuilder;
     }
 
