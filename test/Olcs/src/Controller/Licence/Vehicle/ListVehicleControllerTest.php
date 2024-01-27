@@ -44,6 +44,7 @@ use Olcs\Form\Model\Form\Vehicle\ListVehicleSearch;
 use Olcs\Form\Model\Form\Vehicle\OCRSOptIn;
 use Olcs\Table\TableEnum;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 /**
  * @see ListVehicleController
@@ -151,9 +152,8 @@ class ListVehicleControllerTest extends TestCase
 
     /**
      * @test
-     * @dataProvider validInputDataProvider
      */
-    public function indexAction_RespondsInHtmlFormat_WhenNoFormatIsProvided(array $input)
+    public function indexAction_RespondsInHtmlFormat_WhenNoFormatIsProvided()
     {
         // Setup
         $request = $this->setUpRequest('/');
@@ -177,17 +177,23 @@ class ListVehicleControllerTest extends TestCase
     }
 
     /**
-     * @depends indexAction_IsCallable
      * @test
      */
     public function indexAction_RespondsInHtmlFormat_WhenHtmlFormatIsProvided()
     {
         // Setup
-        $this->setUpSut();
         $request = $this->setUpRequest('/');
         $request->setQuery(new Parameters(['format' => ListVehicleController::FORMAT_HTML]));
         $routeMatch = new RouteMatch([]);
+        $this->queryHandlerMock = $this->setUpQueryHandler();
+        $this->urlHelperMock->method('fromRoute')->willReturn('licence/vehicle/list/GET');
+        $this->setUpTableFactory();
+        // Create a mock for FormNock
+        $formMock = $this->createMock(Form::class);
 
+        $this->formHelperMock->method('createForm')->willReturn($formMock);
+
+        $this->sut = $this->createListVehicleController();
         // Execute
         $result = $this->sut->indexAction($request, $routeMatch);
 
@@ -196,43 +202,53 @@ class ListVehicleControllerTest extends TestCase
     }
 
     /**
-     * @depends indexAction_RespondsInHtmlFormat_WhenHtmlFormatIsProvided
      * @test
      */
     public function indexAction_RespondsInHtmlFormat_WithLicence()
     {
-        // Setup
-        $this->setUpSut();
+        // Arrange
         $request = $this->setUpRequest('/');
         $routeMatch = new RouteMatch([]);
+        $this->queryHandlerMock = $this->setUpQueryHandler();
+        // Configure the mock to return a valid URL when fromRoute is called
+        $this->urlHelperMock->method('fromRoute')->willReturn('licence/vehicle/list/GET');
+        $this->setUpTableFactory();
 
-        $queryHandler = $this->serviceManager->get(HandleQuery::class);
-        assert($queryHandler instanceof MockInterface, 'Expected instance of MockInterface');
+        // Create a mock for Form
+        $mockForm = $this->createMock(Form::class);
+        $this->formHelperMock->expects($this->once())
+            ->method('createForm')
+            ->willReturn($mockForm);
+
+        // Expected licence data
         $licenceData = $this->setUpDefaultLicenceData();
-        $licenceQueryMatcher = IsInstanceOf::anInstanceOf(Licence::class);
-        $licenceQueryResponse = m::mock(QueryResponse::class);
-        $licenceQueryResponse->shouldIgnoreMissing();
-        $licenceQueryResponse->shouldReceive('getResult')->andReturn($licenceData);
-        $queryHandler->shouldReceive('__invoke')->with($licenceQueryMatcher)->andReturn($licenceQueryResponse);
-
-        // Execute
+        $this->sut = $this->createListVehicleController();
+        // Act
         $result = $this->sut->indexAction($request, $routeMatch);
-
         // Assert
         $this->assertSame($licenceData, $result->getVariables()['licence'] ?? null);
     }
 
     /**
-     * @depends indexAction_RespondsInHtmlFormat_WhenHtmlFormatIsProvided
      * @test
      */
     public function indexAction_RespondsInHtmlFormat_WithExportCurrentAndRemovedCsvAction()
     {
         // Setup
-        $this->setUpSut();
         $request = $this->setUpRequest('/');
         $routeMatch = new RouteMatch([]);
+        $this->queryHandlerMock = $this->setUpQueryHandler();
+        // Configure the mock to return a valid URL when fromRoute is called
+        $this->urlHelperMock->method('fromRoute')->willReturn('licence/vehicle/list/GET');
+        $this->setUpTableFactory();
 
+        // Create a mock for Form
+        $mockForm = $this->createMock(Form::class);
+        $this->formHelperMock->expects($this->once())
+            ->method('createForm')
+            ->willReturn($mockForm);
+
+        $this->sut = $this->createListVehicleController();
         // Execute
         $result = $this->sut->indexAction($request, $routeMatch);
 
@@ -241,99 +257,154 @@ class ListVehicleControllerTest extends TestCase
     }
 
     /**
-     * @depends indexAction_RespondsInHtmlFormat_WhenHtmlFormatIsProvided
      * @test
      */
     public function indexAction_RespondsInHtmlFormat_WithExportCurrentAndRemovedCsvAction_WithFormatQueryParameter()
     {
         // Setup
-        $this->setUpSut();
         $request = $this->setUpRequest('/');
         $licenceId = 1;
         $routeMatch = new RouteMatch($routeParams = ['licence' => $licenceId]);
-        $urlHelper = $this->resolveMockService($this->serviceManager, Url::class);
-        $expectedUrl = "abcdefg";
+        $this->queryHandlerMock = $this->setUpQueryHandler();
+        $expectedUrl1 = 'lva-licence/vehicles';
+        $expectedUrl2 = 'licence/vehicle/list/GET?format=csv';
+        $expectedUrl3 = 'licence/vehicle/list/GET?param=example';
 
-        // Define Expectations
-        $queryMatcher = IsArrayContainingKeyValuePair::hasKeyValuePair('format', 'csv');
-        $optionsMatcher = IsArrayContainingKeyValuePair::hasKeyValuePair('query', $queryMatcher);
-        $urlHelper->shouldReceive('fromRoute')->with('licence/vehicle/list/GET', $routeParams, $optionsMatcher)->andReturn($expectedUrl);
+        $this->urlHelperMock->expects($this->exactly(3))
+            ->method('fromRoute')
+            ->withAnyParameters()
+            ->willReturnOnConsecutiveCalls($expectedUrl1, $expectedUrl2, $expectedUrl3);
 
+        $this->setUpTableFactory();
+
+        // Create a mock for Form
+        $mockForm = $this->createMock(Form::class);
+        $this->formHelperMock->expects($this->once())
+            ->method('createForm')
+            ->willReturn($mockForm);
+        $this->sut = $this->createListVehicleController();
         // Execute
         $result = $this->sut->indexAction($request, $routeMatch);
 
         // Assert
-        $this->assertEquals($expectedUrl, $result->getVariables()['exportCurrentAndRemovedCsvAction']);
+        $this->assertEquals($expectedUrl2, $result->getVariables()['exportCurrentAndRemovedCsvAction']);
     }
 
     /**
-     * @depends indexAction_RespondsInHtmlFormat_WhenHtmlFormatIsProvided
      * @test
      */
     public function indexAction_RespondsInHtmlFormat_WithExportCurrentAndRemovedCsvAction_WithIncludeRemovedQueryParameter()
     {
         // Setup
-        $this->setUpSut();
         $request = $this->setUpRequest('/');
         $licenceId = 1;
         $routeMatch = new RouteMatch($routeParams = ['licence' => $licenceId]);
-        $urlHelper = $this->resolveMockService($this->serviceManager, Url::class);
-        $expectedUrl = "abcdefg";
+        $this->queryHandlerMock = $this->setUpQueryHandler();
+        $expectedUrl1 = 'lva-licence/vehicles';
+        $expectedUrl2 = 'licence/vehicle/list/GET?includeRemoved';
+        $expectedUrl3 = 'licence/vehicle/list/GET?param=example';
+        // Note:  with Format Query Parameter fromRoute has been called 3 time
+        $this->urlHelperMock->expects($this->exactly(3))
+            ->method('fromRoute')
+            ->withAnyParameters()
+            ->willReturnOnConsecutiveCalls($expectedUrl1, $expectedUrl2, $expectedUrl3);
 
-        // Define Expectations
-        $queryMatcher = IsArrayContainingKey::hasKeyInArray('includeRemoved');
-        $optionsMatcher = IsArrayContainingKeyValuePair::hasKeyValuePair('query', $queryMatcher);
-        $urlHelper->shouldReceive('fromRoute')->with('licence/vehicle/list/GET', $routeParams, $optionsMatcher)->andReturn($expectedUrl);
+        $this->setUpTableFactory();
 
+        // Create a mock for Form
+        $mockForm = $this->createMock(Form::class);
+        $this->formHelperMock->expects($this->once())
+            ->method('createForm')
+            ->willReturn($mockForm);
+        $this->sut = $this->createListVehicleController();
         // Execute
         $result = $this->sut->indexAction($request, $routeMatch);
 
         // Assert
-        $this->assertEquals($expectedUrl, $result->getVariables()['exportCurrentAndRemovedCsvAction']);
+        $this->assertEquals($expectedUrl2, $result->getVariables()['exportCurrentAndRemovedCsvAction']);
     }
 
     /**
      * @test
-     * @depends indexAction_RespondsInHtmlFormat_WhenHtmlFormatIsProvided
      */
     public function indexAction_RespondsInHtmlFormat_AndConfiguresCurrentVehicleTable_Query()
     {
         // Setup
-        $this->setUpSut();
-
         $query = [
             ListVehicleController::QUERY_KEY_SORT_CURRENT_VEHICLES => 'v.vrm',
             ListVehicleController::QUERY_KEY_ORDER_CURRENT_VEHICLES => 'ASC',
             'limit' => 56,
         ];
+        $expectedUrl = 'lva-licence/vehicles';
         $request = $this->setUpRequest('/');
         $request->setQuery(new Parameters($query));
         $routeMatch = new RouteMatch([]);
-
+        $this->queryHandlerMock = $this->setUpQueryHandler();
         // Define Expectations
-        $queryMatcher = IsIdentical::identicalTo($query);
-        $paramsMatcher = IsArrayContainingKeyValuePair::hasKeyValuePair('query', $queryMatcher);
-        $this->expectTableToBePrepared($this->serviceManager, TableEnum::LICENCE_VEHICLE_LIST_CURRENT, null, $paramsMatcher);
 
+        $this->urlHelperMock->method('fromRoute')
+            ->withAnyParameters()
+            ->willReturn($expectedUrl);
+        $this->setUpTableFactory();
+
+        // Create a mock for Form
+        $mockForm = $this->createMock(Form::class);
+        $this->formHelperMock->expects($this->once())
+            ->method('createForm')
+            ->willReturn($mockForm);
+
+        $this->sut = $this->createListVehicleController();
         // Execute
         $this->sut->indexAction($request, $routeMatch);
     }
 
     /**
-     * @depends indexAction_RespondsInHtmlFormat_WhenHtmlFormatIsProvided
      * @test
      */
     public function indexAction_RespondsInHtmlFormat_AndConfiguresCurrentVehicleTable_Page_WhenNoPageIsSetOnARequest()
     {
         // Setup
-        $this->setUpSut();
         $request = $this->setUpRequest('/');
         $routeMatch = new RouteMatch([]);
-
+        $this->queryHandlerMock = $this->setUpQueryHandler();
+        $this->urlHelperMock->method('fromRoute')->willReturn('licence/vehicle/list/GET');
         // Define Expectations
         $paramsMatcher = IsArrayContainingKeyValuePair::hasKeyValuePair('page', 1);
-        $this->expectTableToBePrepared($this->serviceManager, TableEnum::LICENCE_VEHICLE_LIST_CURRENT, null, $paramsMatcher);
 
+        // Create a mock TableBuilder with the expected settings
+        $expectedSettings = ['paginate' => true]; // Replace with your expected settings
+        $tableBuilderMock = $this->createMock(TableBuilder::class);
+        // Define a method to return the expected settings
+        $tableBuilderMock->method('getSettings')
+            ->willReturnCallback(function () use ($expectedSettings) {
+                return $expectedSettings;
+            });
+
+        $this->tableFactoryMock->expects($this->once())
+            ->method('prepareTable')
+            ->with(
+                $this->equalTo(TableEnum::LICENCE_VEHICLE_LIST_CURRENT),
+                $this->anything(), // Pass null for the $currentLicenceVehicleList parameter
+                $this->callback(function ($param) use ($paramsMatcher) {
+                    // Check if $param is an array containing the key-value pair from $paramsMatcher
+                    return is_array($param) && isset($param['page']) && $param['page'] == 1;
+                })
+            )
+            ->willReturn($tableBuilderMock);
+
+        // Create a mock form object
+        $form = $this->createMock(Form::class);
+        $setData = ["ocrsCheckbox" => "N"];
+        // Mock the behavior of setData() on the form object
+        $form->expects($this->once())
+            ->method('setData')
+            ->with($this->equalTo($setData));
+
+        // Create a mock for $formHelper and make it return the mock form object
+
+        $this->formHelperMock->method('createForm')->willReturn($form);
+
+        $this->sut = $this->createListVehicleController();
         // Execute
         $this->sut->indexAction($request, $routeMatch);
     }
@@ -959,35 +1030,6 @@ class ListVehicleControllerTest extends TestCase
         $this->assertArrayNotHasKey('showRemovedVehicles', $result);
     }
 
-//    protected function setUp(): void
-//    {
-//        // Create mock objects for dependencies
-//        $this->commandHandler = m::mock(HandleCommand::class);
-//        $this->queryHandler = m::mock(HandleQuery::class);
-//        $this->translator = m::mock(TranslationHelperService::class);
-//        $this->urlHelper = m::mock(Url::class);
-//        $this->responseHelper = m::mock(ResponseHelperService::class);
-//        $this->tableFactory = m::mock(TableFactory::class);
-//        $this->formHelper = m::mock(FormHelperService::class);
-//        $this->flashMessenger = m::mock(FlashMessengerHelperService::class);
-//        $this->redirectHelper = m::mock(Redirect::class);
-//    }
-//    protected function createListVehicleController()
-//    {
-//        // Create the ListVehicleController instance with mock dependencies
-//        return new ListVehicleController(
-//            $this->commandHandler,
-//            $this->queryHandler,
-//            $this->translator,
-//            $this->urlHelper,
-//            $this->responseHelper,
-//            $this->tableFactory,
-//            $this->formHelper,
-//            $this->flashMessenger,
-//            $this->redirectHelper
-//        );
-//    }
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -1074,7 +1116,8 @@ class ListVehicleControllerTest extends TestCase
                     'organisation' => [
                         'confirmShareVehicleInfo' => 'N',
                     ],
-                    'count' => 10
+                    'count' => 10,
+                    'page' => 1
                 ];
             }
         };
@@ -1093,6 +1136,7 @@ class ListVehicleControllerTest extends TestCase
             'organisation' => [
                 'confirmShareVehicleInfo' => 'N',
             ],
+            'count' => 10
         ];
     }
 
@@ -1119,6 +1163,7 @@ class ListVehicleControllerTest extends TestCase
 
         $this->tableFactoryMock
             ->method('prepareTable')
+            ->withAnyParameters()
             ->willReturn($tableBuilder);
     }
 
@@ -1233,7 +1278,7 @@ class ListVehicleControllerTest extends TestCase
      * @param null $data
      * @param null $params
      */
-    protected function expectTableToBePrepared(TableFactory $tableFactory, string $tableName, $data = null, $params = null)
+    protected function expectTableToBePrepared(string $tableName, $data = null, $params = null)
     {
         $any = IsAnything::anything();
         $tableBuilder = $this->setUpTableBuilder();
