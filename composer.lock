@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ab943051e767799322880b1c5c63af56",
+    "content-hash": "ee109a47f556b23ead54adbd0e62c99e",
     "packages": [
         {
             "name": "brick/varexporter",
@@ -1812,16 +1812,16 @@
         },
         {
             "name": "laminas/laminas-form",
-            "version": "3.4.1",
+            "version": "3.4.2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/laminas/laminas-form.git",
-                "reference": "cd3f9d3e345b075d34793e46b0759a4dfd12f674"
+                "url": "https://github.com/dvsa/laminas-form.git",
+                "reference": "246a46c1a926fd4d7ce227e251118106f73ea2fe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-form/zipball/cd3f9d3e345b075d34793e46b0759a4dfd12f674",
-                "reference": "cd3f9d3e345b075d34793e46b0759a4dfd12f674",
+                "url": "https://api.github.com/repos/dvsa/laminas-form/zipball/246a46c1a926fd4d7ce227e251118106f73ea2fe",
+                "reference": "246a46c1a926fd4d7ce227e251118106f73ea2fe",
                 "shasum": ""
             },
             "require": {
@@ -1882,7 +1882,33 @@
                     "Laminas\\Form\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "LaminasTest\\Form\\": "test/"
+                }
+            },
+            "scripts": {
+                "check": [
+                    "@cs-check",
+                    "@static-analysis",
+                    "@test"
+                ],
+                "cs-check": [
+                    "phpcs"
+                ],
+                "cs-fix": [
+                    "phpcbf"
+                ],
+                "static-analysis": [
+                    "psalm --shepherd --stats"
+                ],
+                "test": [
+                    "phpunit --colors=always"
+                ],
+                "test-coverage": [
+                    "phpunit --colors=always --coverage-clover clover.xml"
+                ]
+            },
             "license": [
                 "BSD-3-Clause"
             ],
@@ -1893,20 +1919,14 @@
                 "laminas"
             ],
             "support": {
-                "chat": "https://laminas.dev/chat",
-                "docs": "https://docs.laminas.dev/laminas-form/",
-                "forum": "https://discourse.laminas.dev",
                 "issues": "https://github.com/laminas/laminas-form/issues",
-                "rss": "https://github.com/laminas/laminas-form/releases.atom",
-                "source": "https://github.com/laminas/laminas-form"
+                "forum": "https://discourse.laminas.dev",
+                "chat": "https://laminas.dev/chat",
+                "source": "https://github.com/laminas/laminas-form",
+                "docs": "https://docs.laminas.dev/laminas-form/",
+                "rss": "https://github.com/laminas/laminas-form/releases.atom"
             },
-            "funding": [
-                {
-                    "url": "https://funding.communitybridge.org/projects/laminas-project",
-                    "type": "community_bridge"
-                }
-            ],
-            "time": "2022-08-01T09:48:44+00:00"
+            "time": "2024-01-26T11:54:40+00:00"
         },
         {
             "name": "laminas/laminas-http",
@@ -3963,16 +3983,16 @@
         },
         {
             "name": "olcs/olcs-common",
-            "version": "dev-project/messaging",
+            "version": "5.0.0-beta.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dvsa/olcs-common.git",
-                "reference": "dc190d76bef2901bae616e1c47ee4bcfdd2b2778"
+                "reference": "74fcfd813e1a24e262e466b6ae8b75a331bf733d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dvsa/olcs-common/zipball/dc190d76bef2901bae616e1c47ee4bcfdd2b2778",
-                "reference": "dc190d76bef2901bae616e1c47ee4bcfdd2b2778",
+                "url": "https://api.github.com/repos/dvsa/olcs-common/zipball/74fcfd813e1a24e262e466b6ae8b75a331bf733d",
+                "reference": "74fcfd813e1a24e262e466b6ae8b75a331bf733d",
                 "shasum": ""
             },
             "require": {
@@ -3995,7 +4015,7 @@
                 "laminas/laminas-validator": "^2.11",
                 "laminas/laminas-view": "^2.11",
                 "olcs/olcs-logging": "^5.0.0",
-                "olcs/olcs-transfer": "dev-project/messaging",
+                "olcs/olcs-transfer": "^5.0.0",
                 "olcs/olcs-utils": "^5.0",
                 "php": "^7.4"
             },
@@ -4030,9 +4050,9 @@
             "notification-url": "https://packagist.org/downloads/",
             "description": "Common library for the OLCS Project",
             "support": {
-                "source": "https://github.com/dvsa/olcs-common/tree/project/messaging"
+                "source": "https://github.com/dvsa/olcs-common/tree/5.0.0-beta.4"
             },
-            "time": "2024-01-23T16:14:00+00:00"
+            "time": "2024-01-26T16:40:13+00:00"
         },
         {
             "name": "olcs/olcs-logging",
@@ -4088,16 +4108,16 @@
         },
         {
             "name": "olcs/olcs-transfer",
-            "version": "dev-project/messaging",
+            "version": "5.0.0-beta.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dvsa/olcs-transfer.git",
-                "reference": "1c57122b5bea6091d05a783255fbd38fe16f57ff"
+                "reference": "9b20f1f18e02c42775e85b87ed362765a2177ed3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dvsa/olcs-transfer/zipball/1c57122b5bea6091d05a783255fbd38fe16f57ff",
-                "reference": "1c57122b5bea6091d05a783255fbd38fe16f57ff",
+                "url": "https://api.github.com/repos/dvsa/olcs-transfer/zipball/9b20f1f18e02c42775e85b87ed362765a2177ed3",
+                "reference": "9b20f1f18e02c42775e85b87ed362765a2177ed3",
                 "shasum": ""
             },
             "require": {
@@ -4137,9 +4157,9 @@
             "notification-url": "https://packagist.org/downloads/",
             "description": "OLCS Transfer",
             "support": {
-                "source": "https://github.com/dvsa/olcs-transfer/tree/project/messaging"
+                "source": "https://github.com/dvsa/olcs-transfer/tree/5.0.0-beta.8"
             },
-            "time": "2024-01-17T14:31:05+00:00"
+            "time": "2024-01-25T22:35:27+00:00"
         },
         {
             "name": "olcs/olcs-utils",
@@ -7994,10 +8014,7 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "olcs/olcs-common": 20,
-        "olcs/olcs-transfer": 20
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
@@ -8007,5 +8024,5 @@
     "platform-overrides": {
         "ext-redis": "4.3"
     },
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.3.0"
 }
