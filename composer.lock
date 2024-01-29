@@ -3987,12 +3987,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/dvsa/olcs-common.git",
-                "reference": "dc190d76bef2901bae616e1c47ee4bcfdd2b2778"
+                "reference": "13d1f6b8cbb30e6f2d88aeb3d1208fb44aae5ca3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dvsa/olcs-common/zipball/dc190d76bef2901bae616e1c47ee4bcfdd2b2778",
-                "reference": "dc190d76bef2901bae616e1c47ee4bcfdd2b2778",
+                "url": "https://api.github.com/repos/dvsa/olcs-common/zipball/13d1f6b8cbb30e6f2d88aeb3d1208fb44aae5ca3",
+                "reference": "13d1f6b8cbb30e6f2d88aeb3d1208fb44aae5ca3",
                 "shasum": ""
             },
             "require": {
@@ -4052,7 +4052,7 @@
             "support": {
                 "source": "https://github.com/dvsa/olcs-common/tree/project/messaging"
             },
-            "time": "2024-01-23T16:14:00+00:00"
+            "time": "2024-01-29T14:40:21+00:00"
         },
         {
             "name": "olcs/olcs-logging",
@@ -4112,12 +4112,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/dvsa/olcs-transfer.git",
-                "reference": "6402a058b92762e2c4463527133ea824550d1e94"
+                "reference": "fe1dd3a6903c8db9705a8f2d200c2db5c812dbff"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dvsa/olcs-transfer/zipball/6402a058b92762e2c4463527133ea824550d1e94",
-                "reference": "6402a058b92762e2c4463527133ea824550d1e94",
+                "url": "https://api.github.com/repos/dvsa/olcs-transfer/zipball/fe1dd3a6903c8db9705a8f2d200c2db5c812dbff",
+                "reference": "fe1dd3a6903c8db9705a8f2d200c2db5c812dbff",
                 "shasum": ""
             },
             "require": {
@@ -4159,7 +4159,7 @@
             "support": {
                 "source": "https://github.com/dvsa/olcs-transfer/tree/project/messaging"
             },
-            "time": "2024-01-29T10:56:13+00:00"
+            "time": "2024-01-29T14:40:36+00:00"
         },
         {
             "name": "olcs/olcs-utils",
