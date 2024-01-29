@@ -36,6 +36,13 @@ class NavigationTest extends m\Adapter\Phpunit\MockeryTestCase
         $this->mockQuerySender = m::mock(QuerySender::class);
         $this->mockIdentity = m::mock(RbacUser::class);
         $this->sut = new NavigationListener($this->mockNavigation, $this->mockQuerySender, $this->mockIdentity);
+
+        $this->dashboardPermitsKey = 'dashboard-permits';
+        $this->dashboardPermitsPage = new Uri();
+
+        $this->dashboardMessagingKey = 'dashboard-messaging';
+        $this->dashboardMessagingPage = new Uri();
+        $this->messagingToggle = 'messaging';
     }
 
     public function testAttach()
@@ -50,16 +57,23 @@ class NavigationTest extends m\Adapter\Phpunit\MockeryTestCase
 
     public function testOnDispatchWithNoReferalAnonymousUser()
     {
-        $dashboardPermitsKey = 'dashboard-permits';
-        $dashboardPermitsPage = new Uri();
-
         $this->mockIdentity->shouldReceive('isAnonymous')->once()->withNoArgs()->andReturn(true);
+
+        $this->mockIdentity->expects('getUserData')->once();
+
+        $this->mockQuerySender->shouldReceive('featuresEnabled')->with([$this->messagingToggle])->once();
 
         $this->mockNavigation
             ->shouldReceive('findBy')
-            ->with('id', $dashboardPermitsKey)
+            ->with('id', $this->dashboardPermitsKey)
             ->twice()
-            ->andReturn($dashboardPermitsPage);
+            ->andReturn($this->dashboardPermitsPage);
+
+        $this->mockNavigation
+            ->shouldReceive('findBy')
+            ->with('id', $this->dashboardMessagingKey)
+            ->twice()
+            ->andReturn($this->dashboardMessagingPage);
 
         $request = m::mock(HttpRequest::class);
         $request->shouldReceive('getHeader')->once()->with('referer')->andReturn(false);
@@ -72,7 +86,12 @@ class NavigationTest extends m\Adapter\Phpunit\MockeryTestCase
 
         $this->assertEquals(
             false,
-            $this->mockNavigation->findBy('id', $dashboardPermitsKey)->getVisible()
+            $this->mockNavigation->findBy('id', $this->dashboardPermitsKey)->getVisible()
+        );
+
+        $this->assertEquals(
+            false,
+            $this->mockNavigation->findBy('id', $this->dashboardMessagingKey)->getVisible()
         );
     }
 
@@ -81,18 +100,24 @@ class NavigationTest extends m\Adapter\Phpunit\MockeryTestCase
      */
     public function testOnDispatchWithNoReferal($eligibleForPermits)
     {
-        $dashboardPermitsKey = 'dashboard-permits';
-        $dashboardPermitsPage = new Uri();
-
         $this->mockIdentity->shouldReceive('isAnonymous')->once()->withNoArgs()->andReturn(false);
         $this->mockIdentity->expects('getUserData')
+            ->twice()
             ->andReturn(['eligibleForPermits' => $eligibleForPermits]);
+
+        $this->mockQuerySender->shouldReceive('featuresEnabled')->with([$this->messagingToggle])->once();
 
         $this->mockNavigation
             ->shouldReceive('findBy')
-            ->with('id', $dashboardPermitsKey)
+            ->with('id', $this->dashboardPermitsKey)
             ->twice()
-            ->andReturn($dashboardPermitsPage);
+            ->andReturn($this->dashboardPermitsPage);
+
+        $this->mockNavigation
+            ->shouldReceive('findBy')
+            ->with('id', $this->dashboardMessagingKey)
+            ->once()
+            ->andReturn($this->dashboardMessagingPage);
 
         $request = m::mock(HttpRequest::class);
         $request->shouldReceive('getHeader')->once()->with('referer')->andReturn(false);
@@ -105,7 +130,7 @@ class NavigationTest extends m\Adapter\Phpunit\MockeryTestCase
 
         $this->assertEquals(
             $eligibleForPermits,
-            $this->mockNavigation->findBy('id', $dashboardPermitsKey)->getVisible()
+            $this->mockNavigation->findBy('id', $this->dashboardPermitsKey)->getVisible()
         );
     }
 
@@ -119,8 +144,6 @@ class NavigationTest extends m\Adapter\Phpunit\MockeryTestCase
 
     public function testOnDispatchWithGovUkReferalMatch()
     {
-        $dashboardPermitsKey = 'dashboard-permits';
-        $dashboardPermitsPage = new Uri();
         $uri = 'uri';
         $this->sut->setGovUkReferers([$uri]);
 
@@ -130,11 +153,23 @@ class NavigationTest extends m\Adapter\Phpunit\MockeryTestCase
         $request = m::mock(HttpRequest::class);
         $request->shouldReceive('getHeader')->once()->with('referer')->andReturn($referer);
 
+        $this->mockIdentity->expects('getUserData')
+            ->once()
+            ->andReturn([]);
+
+        $this->mockQuerySender->shouldReceive('featuresEnabled')->once()->with([$this->messagingToggle]);
+
         $this->mockNavigation
             ->shouldReceive('findBy')
             ->twice()
-            ->with('id', $dashboardPermitsKey)
-            ->andReturn($dashboardPermitsPage);
+            ->with('id', $this->dashboardPermitsKey)
+            ->andReturn($this->dashboardPermitsPage);
+
+        $this->mockNavigation
+            ->shouldReceive('findBy')
+            ->with('id', $this->dashboardMessagingKey)
+            ->once()
+            ->andReturn($this->dashboardMessagingPage);
 
         /** @var \Laminas\Mvc\MvcEvent | m\MockInterface $mockEvent */
         $mockEvent = m::mock(\Laminas\Mvc\MvcEvent::class);
@@ -143,7 +178,7 @@ class NavigationTest extends m\Adapter\Phpunit\MockeryTestCase
         $this->sut->onDispatch($mockEvent);
 
         $this->assertTrue(
-            $this->mockNavigation->findBy('id', $dashboardPermitsKey)->getVisible()
+            $this->mockNavigation->findBy('id', $this->dashboardPermitsKey)->getVisible()
         );
     }
 
@@ -152,22 +187,24 @@ class NavigationTest extends m\Adapter\Phpunit\MockeryTestCase
      */
     public function testOnDispatchWithNoGovUkReferal($eligibleForPermits)
     {
-        $dashboardPermitsKey = 'dashboard-permits';
-        $dashboardPermitsPage = new Uri();
-
         $this->mockIdentity->shouldReceive('isAnonymous')
-            ->once()
-            ->withNoArgs()
             ->andReturn(false);
 
         $this->mockIdentity->expects('getUserData')
+            ->twice()
             ->andReturn(['eligibleForPermits' => $eligibleForPermits]);
 
         $this->mockNavigation
             ->shouldReceive('findBy')
             ->twice()
-            ->with('id', $dashboardPermitsKey)
-            ->andReturn($dashboardPermitsPage);
+            ->with('id', $this->dashboardPermitsKey)
+            ->andReturn($this->dashboardPermitsPage);
+
+        $this->mockNavigation
+            ->shouldReceive('findBy')
+            ->once()
+            ->with('id', $this->dashboardMessagingKey)
+            ->andReturn($this->dashboardMessagingPage);
 
         //mock the http referer - this will be checked against our list of gov.uk referers (and won't match)
         $referer = m::mock(HttpReferer::class);
@@ -179,11 +216,13 @@ class NavigationTest extends m\Adapter\Phpunit\MockeryTestCase
         $mockEvent = m::mock(\Laminas\Mvc\MvcEvent::class);
         $mockEvent->shouldReceive('getRequest')->once()->withNoArgs()->andReturn($request);
 
+        $this->mockQuerySender->shouldReceive('featuresEnabled')->once()->with([$this->messagingToggle]);
+
         $this->sut->onDispatch($mockEvent);
 
         $this->assertEquals(
             $eligibleForPermits,
-            $this->mockNavigation->findBy('id', $dashboardPermitsKey)->getVisible()
+            $this->mockNavigation->findBy('id', $this->dashboardPermitsKey)->getVisible()
         );
     }
 
