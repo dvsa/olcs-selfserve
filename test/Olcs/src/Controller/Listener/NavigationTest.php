@@ -59,7 +59,7 @@ class NavigationTest extends m\Adapter\Phpunit\MockeryTestCase
     {
         $this->mockIdentity->shouldReceive('isAnonymous')->once()->withNoArgs()->andReturn(true);
 
-        $this->mockIdentity->expects('getUserData')->once();
+        $this->mockIdentity->expects('getUserData')->once()->andReturn(['hasOrganisationSubmittedLicenceApplication' => false]);
 
         $this->mockQuerySender->shouldReceive('featuresEnabled')->with([$this->messagingToggle])->once();
 
@@ -103,7 +103,7 @@ class NavigationTest extends m\Adapter\Phpunit\MockeryTestCase
         $this->mockIdentity->shouldReceive('isAnonymous')->once()->withNoArgs()->andReturn(false);
         $this->mockIdentity->expects('getUserData')
             ->twice()
-            ->andReturn(['eligibleForPermits' => $eligibleForPermits]);
+            ->andReturn(['eligibleForPermits' => $eligibleForPermits, 'hasOrganisationSubmittedLicenceApplication' => false]);
 
         $this->mockQuerySender->shouldReceive('featuresEnabled')->with([$this->messagingToggle])->once();
 
@@ -155,7 +155,7 @@ class NavigationTest extends m\Adapter\Phpunit\MockeryTestCase
 
         $this->mockIdentity->expects('getUserData')
             ->once()
-            ->andReturn([]);
+            ->andReturn(['hasOrganisationSubmittedLicenceApplication' => false]);
 
         $this->mockQuerySender->shouldReceive('featuresEnabled')->once()->with([$this->messagingToggle]);
 
@@ -192,7 +192,7 @@ class NavigationTest extends m\Adapter\Phpunit\MockeryTestCase
 
         $this->mockIdentity->expects('getUserData')
             ->twice()
-            ->andReturn(['eligibleForPermits' => $eligibleForPermits]);
+            ->andReturn(['eligibleForPermits' => $eligibleForPermits, 'hasOrganisationSubmittedLicenceApplication' => false]);
 
         $this->mockNavigation
             ->shouldReceive('findBy')
