@@ -261,7 +261,6 @@ class LoginControllerTest extends TestCase
 
     /**
      * @test
-     * @depends postAction_IsCallable
      */
     protected function postAction_RedirectsToDashboard_WhenUserAlreadyLoggedIn()
     {
@@ -526,7 +525,6 @@ class LoginControllerTest extends TestCase
 
     /**
      * @test
-     * @depends postAction_IsCallable
      */
     public function postAction_FailedAuthentication_FlashesInvalidUsernameOrPasswordWhenPasswordIncorrect()
     {
@@ -551,7 +549,6 @@ class LoginControllerTest extends TestCase
 
     /**
      * @test
-     * @depends postAction_IsCallable
      */
     public function postAction_FailedAuthentication_FlashesAccountDisabledWhenAuthenticationResult_IsFailureAccountDisabled()
     {
