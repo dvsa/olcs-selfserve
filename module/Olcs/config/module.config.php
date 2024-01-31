@@ -456,7 +456,16 @@ $routes = [
                         'action' => 'view',
                     ],
                 ]
-            ]
+            ],
+            'new' => [
+                'type' => 'segment',
+                'options' => [
+                    'route' => 'new[/]',
+                    'defaults' => [
+                        'action' => 'new',
+                    ],
+                ]
+            ],
         ]
     ],
     'create_variation' => [
