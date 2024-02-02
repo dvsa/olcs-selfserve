@@ -13,6 +13,7 @@ use Dvsa\Olcs\Transfer\Query\Messaging\Messages\ByConversation as ByConversation
 use Dvsa\Olcs\Transfer\Query\Messaging\Conversations\ByOrganisation as ByOrganisationQuery;
 use Dvsa\Olcs\Utils\Translation\NiTextTranslation;
 use Laminas\View\Model\ViewModel;
+use Laminas\View\View;
 use LmcRbacMvc\Service\AuthorizationService;
 
 class ConversationsController extends AbstractController implements ToggleAwareInterface
@@ -64,6 +65,14 @@ class ConversationsController extends AbstractController implements ToggleAwareI
 
         $view = new ViewModel(['table' => $table]);
         $view->setTemplate('messages');
+
+        return $view;
+    }
+
+    public function addAction(): ViewModel
+    {
+        $view = new ViewModel([]);
+        $view->setTemplate('messages-new');
 
         return $view;
     }
