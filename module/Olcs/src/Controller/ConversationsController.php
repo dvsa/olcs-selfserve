@@ -69,7 +69,7 @@ class ConversationsController extends AbstractController implements ToggleAwareI
         return $view;
     }
 
-    public function newAction(): ViewModel
+    public function addAction(): ViewModel
     {
         $view = new ViewModel([]);
         $view->setTemplate('messages-new');

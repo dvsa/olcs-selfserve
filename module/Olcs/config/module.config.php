@@ -462,7 +462,7 @@ $routes = [
                 'options' => [
                     'route' => 'new[/]',
                     'defaults' => [
-                        'action' => 'new',
+                        'action' => 'add',
                     ],
                 ]
             ],
