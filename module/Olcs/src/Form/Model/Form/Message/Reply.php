@@ -19,13 +19,13 @@ class Reply
 {
     /**
      * @Form\Attributes({"value": ""})
-     * @Form\Type("Hidden")
+     * @Form\Type(\Laminas\Form\Element\Hidden::class)
      */
     public ?Hidden $id = null;
 
     /**
      * @Form\Attributes({"value": "reply"})
-     * @Form\Type("Hidden")
+     * @Form\Type(\Laminas\Form\Element\Hidden::class)
      */
     public ?Hidden $action = null;
 
