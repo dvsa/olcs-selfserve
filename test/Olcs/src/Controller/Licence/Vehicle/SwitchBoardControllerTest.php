@@ -25,14 +25,14 @@ use Laminas\Router\Http\RouteMatch;
 use Laminas\Stdlib\Parameters;
 use Laminas\View\Model\ViewModel;
 use Mockery as m;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use Olcs\Controller\Licence\Vehicle\ListVehicleController;
 use Olcs\Controller\Licence\Vehicle\SwitchBoardController;
 use Olcs\Form\Model\Form\Vehicle\SwitchBoard;
 use Olcs\Session\LicenceVehicleManagement;
-use PHPUnit\Framework\TestCase;
 
-class SwitchBoardControllerTest extends TestCase
+class SwitchBoardControllerTest extends MockeryTestCase
 {
     /**
      * @var FlashMessenger

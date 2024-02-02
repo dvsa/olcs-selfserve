@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace OlcsTest\Controller\Auth;
@@ -22,14 +23,14 @@ use Laminas\Router\Http\RouteMatch;
 use Laminas\Stdlib\Parameters;
 use Laminas\View\Model\ViewModel;
 use Mockery as m;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use Olcs\Auth\Adapter\SelfserveCommandAdapter;
 use Olcs\Controller\Auth\LoginController;
 use Olcs\Form\Model\Form\Auth\Login;
 use Olcs\Logging\Log\Logger;
-use PHPUnit\Framework\TestCase;
 
-class LoginControllerTest extends TestCase
+class LoginControllerTest extends MockeryTestCase
 {
     /**
      * @var SelfserveCommandAdapter
@@ -493,6 +494,7 @@ class LoginControllerTest extends TestCase
 
         // Expect
         $this->flashMessengerMock->expects('addMessage')
+            ->times(2)
             ->withAnyArgs();
 
         // Execute
@@ -517,7 +519,7 @@ class LoginControllerTest extends TestCase
         $this->redirectHelperMock->allows()->toRoute(LoginController::ROUTE_AUTH_LOGIN_GET)->andReturn($this->redirect());
 
         // Expect
-        $this->flashMessengerMock->expects('addMessage')->withAnyArgs();
+        $this->flashMessengerMock->expects('addMessage')->times(2)->withAnyArgs();
 
         // Execute
         $this->sut->postAction($request, new RouteMatch([]), new Response());
@@ -541,7 +543,7 @@ class LoginControllerTest extends TestCase
         $this->redirectHelperMock->allows()->toRoute(LoginController::ROUTE_AUTH_LOGIN_GET)->andReturn($this->redirect());
 
         // Expect
-        $this->flashMessengerMock->expects('addMessage')->withAnyArgs();
+        $this->flashMessengerMock->expects('addMessage')->times(2)->withAnyArgs();
 
         // Execute
         $this->sut->postAction($request, new RouteMatch([]), new Response());
@@ -565,7 +567,7 @@ class LoginControllerTest extends TestCase
         $this->redirectHelperMock->allows()->toRoute(LoginController::ROUTE_AUTH_LOGIN_GET)->andReturn($this->redirect());
 
         // Expect
-        $this->flashMessengerMock->expects('addMessage')->withAnyArgs();
+        $this->flashMessengerMock->expects('addMessage')->times(2)->withAnyArgs();
 
         // Execute
         $this->sut->postAction($request, new RouteMatch([]), new Response());

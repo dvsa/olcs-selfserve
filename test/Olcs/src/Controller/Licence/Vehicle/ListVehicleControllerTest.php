@@ -37,16 +37,16 @@ use Laminas\Uri\Http;
 use Laminas\Validator\Translator\TranslatorInterface;
 use Laminas\View\Model\ViewModel;
 use Mockery as m;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use Olcs\Controller\Licence\Vehicle\ListVehicleController;
 use Olcs\Form\Model\Form\Vehicle\ListVehicleSearch;
 use Olcs\Table\TableEnum;
-use PHPUnit\Framework\TestCase;
 
 /**
  * @see ListVehicleController
  */
-class ListVehicleControllerTest extends TestCase
+class ListVehicleControllerTest extends MockeryTestCase
 {
     protected const ROUTE_CONFIGURATION_FOR_LICENCE_WITH_REMOVED_VEHICLES_SHOWING_AND_FOCUSED = [
         'licence/vehicle/list/GET',

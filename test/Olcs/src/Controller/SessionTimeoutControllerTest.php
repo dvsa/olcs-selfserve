@@ -17,20 +17,20 @@ use Laminas\Stdlib\Parameters;
 use Laminas\Uri\Http;
 use Laminas\View\Model\ViewModel;
 use Mockery as m;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Olcs\Controller\SessionTimeoutController;
 use LmcRbacMvc\Identity\IdentityProviderInterface;
-use PHPUnit\Framework\TestCase;
 
 /**
  * @see SessionTimeoutController
  */
-class SessionTimeoutControllerTest extends TestCase
+class SessionTimeoutControllerTest extends MockeryTestCase
 {
     protected const COOKIE_NAME = 'cookie';
     private $identityProviderClass = JWTIdentityProvider::class;
     private IdentityProviderInterface $identityProviderMock;
     protected Redirect $redirectHelperMock;
-    protected SessionTimeoutController  $sut;
+    protected SessionTimeoutController $sut;
 
     /**
      * @test
