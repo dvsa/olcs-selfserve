@@ -17,6 +17,9 @@ class Create
      *     "disable_inarray_validator": false,
      *     "service_name": "Common\Service\Data\MessagingSubject"
      * })
+     * @Form\Attributes({
+     *     "class": "govuk-select"
+     * })
      * @Form\Type("DynamicSelect")
      * @Form\Required(true)
      */
@@ -29,6 +32,9 @@ class Create
      *     "disable_inarray_validator": false,
      *     "service_name": "Olcs\Service\Data\MessagingAppOrLicNo",
      *     "use_groups": true
+     * })
+     * @Form\Attributes({
+     *     "class": "govuk-select"
      * })
      * @Form\Type("DynamicSelect")
      * @Form\Required(true)
