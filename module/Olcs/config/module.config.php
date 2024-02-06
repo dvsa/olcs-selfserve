@@ -1465,8 +1465,10 @@ return array(
             VariationPeopleAdapter::class => VariationPeopleAdapterFactory::class,
             \Olcs\Logging\Log\Processor\CorrelationId::class => \Olcs\Logging\Log\Processor\CorrelationIdFactory::class,
         ],
-        'data_service' => [
-            DataService\MessagingAppOrLicNo::class => Common\Service\Data\AbstractListDataServiceFactory::class,
+        'data_services' => [
+            'factories' => [
+                DataService\MessagingAppOrLicNo::class => Common\Service\Data\AbstractListDataServiceFactory::class,
+            ],
         ],
     ),
     'log_processors' => [
