@@ -3,6 +3,7 @@
 namespace Olcs\Service\Data;
 
 use Common\Exception\DataServiceException;
+use Common\Service\Data\AbstractListDataService;
 use Dvsa\Olcs\Transfer\Query as TransferQry;
 
 class MessagingAppOrLicNo extends AbstractListDataService

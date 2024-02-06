@@ -18,6 +18,7 @@ use Olcs\Controller\Factory\Ebsr\UploadsControllerFactory;
 use Olcs\Controller\Factory\IndexControllerFactory;
 use Olcs\Controller\Factory\MyDetailsControllerFactory;
 use Olcs\Controller\IndexController;
+use Common\Service\Data as CommonDataService;
 use Olcs\Controller\Licence\Vehicle\ListVehicleController;
 use Olcs\Controller\Lva\Adapters\ApplicationPeopleAdapter;
 use Olcs\Controller\Lva\Adapters\LicencePeopleAdapter;
@@ -1465,11 +1466,6 @@ return array(
             VariationPeopleAdapter::class => VariationPeopleAdapterFactory::class,
             \Olcs\Logging\Log\Processor\CorrelationId::class => \Olcs\Logging\Log\Processor\CorrelationIdFactory::class,
         ],
-        'data_services' => [
-            'factories' => [
-                DataService\MessagingAppOrLicNo::class => Common\Service\Data\AbstractListDataServiceFactory::class,
-            ],
-        ],
     ),
     'log_processors' => [
         'factories' => [
@@ -1511,6 +1507,11 @@ return array(
     'simple_date_format' => array(
         'default' => 'd-m-Y'
     ),
+    'data_services' => [
+        'factories' => [
+            DataService\MessagingAppOrLicNo::class => CommonDataService\AbstractListDataServiceFactory::class,
+        ],
+    ],
     'view_helpers' => array(
         'factories' => [
             \Olcs\View\Helper\SessionTimeoutWarning\SessionTimeoutWarning::class => \Olcs\View\Helper\SessionTimeoutWarning\SessionTimeoutWarningFactory::class,
