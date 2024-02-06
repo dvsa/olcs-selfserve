@@ -45,6 +45,7 @@ use Olcs\FormService\Form\Lva as LvaFormService;
 use Olcs\Logging\Log\Processor\CorrelationId;
 use Olcs\Logging\Log\Processor\CorrelationIdFactory;
 use Olcs\Service\Cookie as CookieService;
+use Olcs\Service\Data as DataService;
 use Olcs\Service\Processing as ProcessingService;
 use Olcs\Service\Qa as QaService;
 use Olcs\Session\LicenceVehicleManagement;
@@ -1463,7 +1464,10 @@ return array(
             VariationTransportManagerAdapter::class => VariationTransportManagerAdapterFactory::class,
             VariationPeopleAdapter::class => VariationPeopleAdapterFactory::class,
             \Olcs\Logging\Log\Processor\CorrelationId::class => \Olcs\Logging\Log\Processor\CorrelationIdFactory::class,
-        ]
+        ],
+        'data_service' => [
+            DataService\MessagingAppOrLicNo::class => Common\Service\Data\AbstractListDataServiceFactory::class,
+        ],
     ),
     'log_processors' => [
         'factories' => [

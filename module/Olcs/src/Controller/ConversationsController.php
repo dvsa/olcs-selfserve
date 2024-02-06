@@ -19,6 +19,7 @@ use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 use LmcRbacMvc\Service\AuthorizationService;
 use Olcs\Form\Model\Form\Message\Reply as ReplyForm;
+use Olcs\Form\Model\Form\Message\Create as CreateForm;
 
 class ConversationsController extends AbstractController implements ToggleAwareInterface
 {
@@ -77,7 +78,10 @@ class ConversationsController extends AbstractController implements ToggleAwareI
 
     public function addAction(): ViewModel
     {
-        $view = new ViewModel([]);
+        $form = $this->formHelperService->createForm(CreateForm::class, true, false);
+
+        $view = new ViewModel();
+        $view->setVariable('form', $form);
         $view->setTemplate('messages-new');
 
         return $view;

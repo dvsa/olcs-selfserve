@@ -19,6 +19,14 @@ echo $this->partial(
               ->setMaxDepth(0)
               ->setPartial('partials/tabs-nav');
     ?>
+
+    <div>
+      <?php
+        echo $this->formErrors($this->form);
+        echo $this->form($this->form);
+      ?>
+    </div>
+
   </div>
 
   <?php echo $this->partial('partials/conversations-right-column'); ?>
