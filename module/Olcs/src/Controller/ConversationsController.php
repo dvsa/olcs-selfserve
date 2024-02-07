@@ -21,6 +21,7 @@ use Laminas\View\Model\ViewModel;
 use LmcRbacMvc\Service\AuthorizationService;
 use Olcs\Form\Model\Form\Message\Reply as ReplyForm;
 use Olcs\Form\Model\Form\Message\Create as CreateForm;
+use Olcs\Service\Data\MessagingAppOrLicNo;
 
 class ConversationsController extends AbstractController implements ToggleAwareInterface
 {
@@ -77,6 +78,9 @@ class ConversationsController extends AbstractController implements ToggleAwareI
         return $view;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function addAction(): ViewModel
     {
         $form = $this->formHelperService->createForm(CreateForm::class, true, false);
@@ -94,6 +98,10 @@ class ConversationsController extends AbstractController implements ToggleAwareI
         return $view;
     }
 
+    /**
+     * @return Response|ViewModel
+     * @throws \Exception
+     */
     private function submitConversation(\Laminas\Form\Form $form)
     {
         $response = $this->handleCommand($this->mapFormDataToCommand($form));
@@ -112,6 +120,9 @@ class ConversationsController extends AbstractController implements ToggleAwareI
         return $this->redirect()->toRoute('conversations/view', ['conversationId' => $conversationId]);
     }
 
+    /**
+     * @throws \Exception
+     */
     private function mapFormDataToCommand(\Laminas\Form\Form $form): Create
     {
         $data = $form->getData();
@@ -123,10 +134,10 @@ class ConversationsController extends AbstractController implements ToggleAwareI
         $appOrLicNoPrefix = substr($data['form-actions']['appOrLicNo'], 0, 1);
         $appOrLicNoSuffix = substr($data['form-actions']['appOrLicNo'], 1);
         switch($appOrLicNoPrefix) {
-            case 'L':
+            case MessagingAppOrLicNo::PREFIX_LICENCE:
                 $processedData['licence'] = $appOrLicNoSuffix;
                 break;
-            case 'A':
+            case MessagingAppOrLicNo::PREFIX_APPLICATION:
                 $processedData['application'] = $appOrLicNoSuffix;
                 break;
             default:

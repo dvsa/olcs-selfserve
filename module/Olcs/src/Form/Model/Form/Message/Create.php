@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Olcs\Form\Model\Form\Message;
 
 use Laminas\Form\Annotation as Form;

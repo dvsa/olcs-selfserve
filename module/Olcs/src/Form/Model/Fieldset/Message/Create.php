@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Olcs\Form\Model\Fieldset\Message;
 
+use Common\Form\Element\DynamicSelect;
 use Common\Form\Elements\InputFilters\ActionButton;
+use Common\Form\Elements\Types\GuidanceTranslated;
 use Laminas\Form\Annotation as Form;
 use Laminas\Form\Element\Textarea;
 
@@ -15,31 +17,31 @@ class Create
      *     "label": "messaging.subject",
      *     "empty_option": "Please select",
      *     "disable_inarray_validator": false,
-     *     "service_name": "Common\Service\Data\MessagingSubject"
+     *     "service_name": \Common\Service\Data\MessagingSubject::class
      * })
      * @Form\Attributes({
      *     "class": "govuk-select"
      * })
-     * @Form\Type("DynamicSelect")
+     * @Form\Type(\Common\Form\Element\DynamicSelect::class)
      * @Form\Required(true)
      */
-    public $messageSubject;
+    public ?DynamicSelect $messageSubject;
 
     /**
      * @Form\Options({
      *     "label": "messaging.app-or-lic-no",
      *     "empty_option": "Please select",
      *     "disable_inarray_validator": false,
-     *     "service_name": "Olcs\Service\Data\MessagingAppOrLicNo",
+     *     "service_name": \Olcs\Service\Data\MessagingAppOrLicNo::class,
      *     "use_groups": true
      * })
      * @Form\Attributes({
      *     "class": "govuk-select"
      * })
-     * @Form\Type("DynamicSelect")
+     * @Form\Type(\Common\Form\Element\DynamicSelect::class)
      * @Form\Required(true)
      */
-    public $appOrLicNo;
+    public ?DynamicSelect $appOrLicNo;
 
     /**
      * @Form\Attributes({
@@ -62,9 +64,9 @@ class Create
 
     /**
      * @Form\Attributes({"value": "markup-messaging-new-conversation-timeframe"})
-     * @Form\Type("Common\Form\Elements\Types\GuidanceTranslated")
+     * @Form\Type(\Common\Form\Elements\Types\GuidanceTranslated::class)
      */
-    public $guidance;
+    public ?GuidanceTranslated $guidance;
 
     /**
      * @Form\Attributes({

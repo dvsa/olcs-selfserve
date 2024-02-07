@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Olcs\Service\Data;
 
 use Common\Exception\DataServiceException;
@@ -8,19 +10,17 @@ use Dvsa\Olcs\Transfer\Query as TransferQry;
 
 class MessagingAppOrLicNo extends AbstractListDataService
 {
+    public const PREFIX_APPLICATION = 'A';
+    public const PREFIX_LICENCE = 'L';
+
     /**
-     * Fetch list data
-     *
-     * @param array $context Parameters
-     *
-     * @return array
-     * @throw DataServiceException
+     * @throws DataServiceException
      */
-    public function fetchListData($context = null)
+    public function fetchListData($context = null): array
     {
         $data = (array)$this->getData('licapp');
 
-        if (0 !== count($data)) {
+        if (count($data) !== 0) {
             return $data;
         }
 
@@ -29,17 +29,17 @@ class MessagingAppOrLicNo extends AbstractListDataService
         );
 
         if (!$response->isOk()) {
-            throw new DataServiceException('unknown-error');
+            throw new DataServiceException('Unknown Error - ' . json_encode($response));
         }
 
         $result = $response->getResult();
 
-        $this->setData('licapp', (isset($result['results']) ? $result['results'] : null));
+        $this->setData('licapp', ($result['results'] ?? null));
 
         return $this->getData('licapp');
     }
 
-    public function formatDataForGroups(array $data)
+    public function formatDataForGroups(array $data): array
     {
         $optionData = [
             [
@@ -55,8 +55,8 @@ class MessagingAppOrLicNo extends AbstractListDataService
         $optionData[0]['options'] = $data['licences'];
         $optionData[1]['options'] = $data['applications'];
 
-        $this->prefixArrayKey($optionData[0]['options'], 'L');
-        $this->prefixArrayKey($optionData[1]['options'], 'A');
+        $this->prefixArrayKey($optionData[0]['options'], static::PREFIX_LICENCE);
+        $this->prefixArrayKey($optionData[1]['options'], static::PREFIX_APPLICATION);
 
         return $optionData;
     }
