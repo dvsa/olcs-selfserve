@@ -11,6 +11,7 @@ use Common\Form\Form;
 use Common\Service\Helper\FlashMessengerHelperService;
 use Common\Service\Helper\FormHelperService;
 use Common\Service\Table\TableFactory;
+use Dvsa\Olcs\Transfer\Command\Messaging\Conversation\Create;
 use Dvsa\Olcs\Transfer\Command\Messaging\Message\Create as CreateMessageCommand;
 use Dvsa\Olcs\Transfer\Query\Messaging\Messages\ByConversation as ByConversationQuery;
 use Dvsa\Olcs\Transfer\Query\Messaging\Conversations\ByOrganisation as ByOrganisationQuery;
@@ -19,6 +20,8 @@ use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 use LmcRbacMvc\Service\AuthorizationService;
 use Olcs\Form\Model\Form\Message\Reply as ReplyForm;
+use Olcs\Form\Model\Form\Message\Create as CreateForm;
+use Olcs\Service\Data\MessagingAppOrLicNo;
 
 class ConversationsController extends AbstractController implements ToggleAwareInterface
 {
@@ -75,12 +78,73 @@ class ConversationsController extends AbstractController implements ToggleAwareI
         return $view;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function addAction(): ViewModel
     {
-        $view = new ViewModel([]);
+        $form = $this->formHelperService->createForm(CreateForm::class, true, false);
+        if ($this->getRequest()->isPost()) {
+            $form->setData($this->getRequest()->getPost());
+            if ($form->isValid()) {
+                return $this->submitConversation($form);
+            }
+        }
+
+        $view = new ViewModel();
+        $view->setVariable('form', $form);
         $view->setTemplate('messages-new');
 
         return $view;
+    }
+
+    /**
+     * @return Response|ViewModel
+     * @throws \Exception
+     */
+    private function submitConversation(\Laminas\Form\Form $form)
+    {
+        $response = $this->handleCommand($this->mapFormDataToCommand($form));
+        if (!$response->isOk()) {
+            $this->flashMessengerHelper->addErrorMessage('There was an server error when submitting your conversation; please try later');
+            return $this->addAction();
+        }
+
+        $conversationId = $response->getResult()['id']['conversation'] ?? null;
+        if (empty($conversationId)) {
+            $this->flashMessengerHelper->addErrorMessage('There was an server error when submitting your conversation; please try later');
+            return $this->addAction();
+        }
+
+        $this->flashMessengerHelper->addSuccessMessage('Conversation was created successfully');
+        return $this->redirect()->toRoute('conversations/view', ['conversationId' => $conversationId]);
+    }
+
+    /**
+     * @throws \Exception
+     */
+    private function mapFormDataToCommand(\Laminas\Form\Form $form): Create
+    {
+        $data = $form->getData();
+        $processedData = [
+            'messageSubject' => $data['form-actions']['messageSubject'],
+            'messageContent' => $data['form-actions']['messageContent'],
+        ];
+
+        $appOrLicNoPrefix = substr($data['form-actions']['appOrLicNo'], 0, 1);
+        $appOrLicNoSuffix = substr($data['form-actions']['appOrLicNo'], 1);
+        switch($appOrLicNoPrefix) {
+            case MessagingAppOrLicNo::PREFIX_LICENCE:
+                $processedData['licence'] = $appOrLicNoSuffix;
+                break;
+            case MessagingAppOrLicNo::PREFIX_APPLICATION:
+                $processedData['application'] = $appOrLicNoSuffix;
+                break;
+            default:
+                throw new \Exception('Invalid prefix on appOrLicNo');
+        }
+
+        return Create::create($processedData);
     }
 
     /** @return ViewModel|Response */

@@ -18,6 +18,7 @@ use Olcs\Controller\Factory\Ebsr\UploadsControllerFactory;
 use Olcs\Controller\Factory\IndexControllerFactory;
 use Olcs\Controller\Factory\MyDetailsControllerFactory;
 use Olcs\Controller\IndexController;
+use Common\Service\Data as CommonDataService;
 use Olcs\Controller\Licence\Vehicle\ListVehicleController;
 use Olcs\Controller\Lva\Adapters\ApplicationPeopleAdapter;
 use Olcs\Controller\Lva\Adapters\LicencePeopleAdapter;
@@ -45,6 +46,7 @@ use Olcs\FormService\Form\Lva as LvaFormService;
 use Olcs\Logging\Log\Processor\CorrelationId;
 use Olcs\Logging\Log\Processor\CorrelationIdFactory;
 use Olcs\Service\Cookie as CookieService;
+use Olcs\Service\Data as DataService;
 use Olcs\Service\Processing as ProcessingService;
 use Olcs\Service\Qa as QaService;
 use Olcs\Session\LicenceVehicleManagement;
@@ -1462,7 +1464,7 @@ return array(
             VariationTransportManagerAdapter::class => VariationTransportManagerAdapterFactory::class,
             VariationPeopleAdapter::class => VariationPeopleAdapterFactory::class,
             \Olcs\Logging\Log\Processor\CorrelationId::class => \Olcs\Logging\Log\Processor\CorrelationIdFactory::class,
-        ]
+        ],
     ),
     'log_processors' => [
         'factories' => [
@@ -1504,6 +1506,11 @@ return array(
     'simple_date_format' => array(
         'default' => 'd-m-Y'
     ),
+    'data_services' => [
+        'factories' => [
+            DataService\MessagingAppOrLicNo::class => CommonDataService\AbstractListDataServiceFactory::class,
+        ],
+    ],
     'view_helpers' => array(
         'factories' => [
             \Olcs\View\Helper\SessionTimeoutWarning\SessionTimeoutWarning::class => \Olcs\View\Helper\SessionTimeoutWarning\SessionTimeoutWarningFactory::class,
