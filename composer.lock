@@ -3987,12 +3987,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/dvsa/olcs-common.git",
-                "reference": "f1403681db7501e3429540951938e43b20069e37"
+                "reference": "22d7aa1de4f3a1c9fbdd6215d2bb9c37356c79d0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dvsa/olcs-common/zipball/f1403681db7501e3429540951938e43b20069e37",
-                "reference": "f1403681db7501e3429540951938e43b20069e37",
+                "url": "https://api.github.com/repos/dvsa/olcs-common/zipball/22d7aa1de4f3a1c9fbdd6215d2bb9c37356c79d0",
+                "reference": "22d7aa1de4f3a1c9fbdd6215d2bb9c37356c79d0",
                 "shasum": ""
             },
             "require": {
@@ -4052,7 +4052,7 @@
             "support": {
                 "source": "https://github.com/dvsa/olcs-common/tree/project/messaging"
             },
-            "time": "2024-01-30T15:47:21+00:00"
+            "time": "2024-02-08T09:45:26+00:00"
         },
         {
             "name": "olcs/olcs-logging",
