@@ -37,6 +37,7 @@ class SessionTimeoutControllerTest extends MockeryTestCase
      */
     public function indexAction_IsCallable()
     {
+        $this->setUpSut();
         // Assert
         $this->assertTrue(method_exists($this->sut, 'indexAction') && is_callable([$this->sut, 'indexAction']));
     }
@@ -46,6 +47,7 @@ class SessionTimeoutControllerTest extends MockeryTestCase
      */
     public function indexAction_ReturnsViewModelIfIdentityIsAnonymous()
     {
+        $this->setUpSut();
         // Define Expectations
         $identity = m::mock(User::class);
         $identity->shouldReceive('isAnonymous')->andReturnTrue();
@@ -63,6 +65,7 @@ class SessionTimeoutControllerTest extends MockeryTestCase
      */
     public function indexAction_ReturnsViewModelIfIdentityIsNull()
     {
+        $this->setUpSut();
         // Define Expectations
         $this->identityProviderMock->shouldReceive('getIdentity')->withNoArgs()->andReturnNull()->once();
 
@@ -78,6 +81,7 @@ class SessionTimeoutControllerTest extends MockeryTestCase
      */
     public function indexAction_LogsOutUserIfLoggedIn()
     {
+        $this->setUpSut();
         //setup
         $request = $this->setUpRequest();
 
@@ -102,6 +106,7 @@ class SessionTimeoutControllerTest extends MockeryTestCase
      */
     public function indexAction_RedirectsUserIfLoggedIn(string $identityProviderClass)
     {
+        $this->setUpSut();
         // Setup
         $request = $this->setUpRequest();
 
@@ -132,11 +137,6 @@ class SessionTimeoutControllerTest extends MockeryTestCase
     {
         $this->identityProviderMock = m::mock(IdentityProviderInterface::class);
         $this->redirectHelperMock = m::mock(Redirect::class);
-
-        $this->sut = new SessionTimeoutController(
-            $this->identityProviderMock,
-            $this->redirectHelperMock
-        );
     }
 
     /**
@@ -146,20 +146,10 @@ class SessionTimeoutControllerTest extends MockeryTestCase
      */
     protected function setUpSut()
     {
-        $container = m::mock(ContainerInterface::class);
-        $controllerPluginManagerMock = m::mock(PluginManager::class);
-        // Set expectations for the container's `get` method
-        $controllerPluginManagerMock->shouldReceive('get')->withArgs([
-            'ControllerPluginManager',
-        ])->andReturn($controllerPluginManagerMock);
-
-        $container->shouldReceive('get')->withArgs([
-            IdentityProviderInterface::class,
-        ])->andReturn($this->identityProviderMock);
-
-        $controllerPluginManagerMock->shouldReceive('get')->withArgs([
-            Redirect::class,
-        ])->andReturn($controllerPluginManagerMock);
+        $this->sut = new SessionTimeoutController(
+            $this->identityProviderMock,
+            $this->redirectHelperMock
+        );
     }
 
     /**
