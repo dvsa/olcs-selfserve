@@ -137,6 +137,7 @@ class ListVehicleControllerTest extends MockeryTestCase
      */
     public function indexAction_IsCallable()
     {
+        $this->setUpSut();
         // Assert
         $this->assertIsCallable([$this->sut, 'indexAction']);
     }
@@ -146,6 +147,7 @@ class ListVehicleControllerTest extends MockeryTestCase
      */
     public function postAction_IsCallable()
     {
+        $this->setUpSut();
         // Assert
         $this->assertIsCallable([$this->sut, 'postAction']);
     }
@@ -945,6 +947,15 @@ class ListVehicleControllerTest extends MockeryTestCase
         $this->flashMessengerMock = m::mock(FlashMessengerHelperService::class);
         $this->redirectHelperMock = m::mock(Redirect::class);
         $this->serviceLocatorMock = m::mock(ServiceLocatorInterface::class);
+    }
+
+    protected function setUpSut()
+    {
+        $this->setUpTranslator();
+        $this->setUpQueryHandler();
+        $this->setUpTableFactory();
+        $this->setUpFormHelper();
+        $this->urlHelper();
 
         $this->sut = new ListVehicleController(
             $this->commandHandlerMock,
@@ -957,59 +968,6 @@ class ListVehicleControllerTest extends MockeryTestCase
             $this->flashMessengerMock,
             $this->redirectHelperMock
         );
-    }
-
-    protected function setUpSut()
-    {
-        // Create a mock container (similar to a service manager)
-        $this->container = m::mock(ContainerInterface::class);
-        $controllerPluginManagerMock = m::mock(PluginManager::class);
-        // Set expectations for the container's `get` method
-        $controllerPluginManagerMock->shouldReceive('get')->withArgs([
-            'ControllerPluginManager',
-        ])->andReturn($controllerPluginManagerMock);
-
-        $controllerPluginManagerMock->shouldReceive('get')->withArgs([
-            HandleCommand::class,
-        ])->andReturn($this->commandHandlerMock);
-
-        $controllerPluginManagerMock->shouldReceive('get')->withArgs([
-            HandleQuery::class,
-        ])->andReturn($this->queryHandlerMock);
-
-        $this->container->shouldReceive('get')->withArgs([
-            TranslationHelperService::class,
-        ])->andReturn($this->translatorMock);
-
-        $controllerPluginManagerMock->shouldReceive('get')->withArgs([
-            Url::class,
-        ])->andReturn($this->urlHelperMock);
-
-        $this->container->shouldReceive('get')->withArgs([
-            ResponseHelperService::class,
-        ])->andReturn($this->responseHelperMock);
-
-        $this->container->shouldReceive('get')->withArgs([
-            TableFactory::class,
-        ])->andReturn($this->tableFactoryMock);
-
-        $this->container->shouldReceive('get')->withArgs([
-            FormHelperService::class,
-        ])->andReturn($this->formHelperMock);
-
-        $this->container->shouldReceive('get')->withArgs([
-            FlashMessengerHelperService::class,
-        ])->andReturn($this->flashMessengerMock);
-
-        $controllerPluginManagerMock->shouldReceive('get')->withArgs([
-            Redirect::class,
-        ])->andReturn($this->redirectHelperMock);
-
-        $this->setUpTranslator();
-        $this->setUpQueryHandler();
-        $this->setUpTableFactory();
-        $this->setUpFormHelper();
-        $this->urlHelper();
     }
 
     /**
