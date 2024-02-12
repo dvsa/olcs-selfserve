@@ -480,6 +480,14 @@ class SwitchBoardControllerTest extends MockeryTestCase
         $this->sessionMock  = new LicenceVehicleManagement();
         $this->urlHelperMock  = m::mock(Url::class);
         $this->formValidatorMock  = m::mock(FormValidator::class);
+    }
+
+    protected function setUpSut()
+    {
+        // Create a mock container (similar to a service manager)
+        $this->formHelper();
+        $this->setupQueryHandler();
+        $this->formValidator();
 
         $this->sut = new SwitchBoardController(
             $this->flashMessengerMock,
@@ -492,54 +500,6 @@ class SwitchBoardControllerTest extends MockeryTestCase
             $this->formValidatorMock
         );
     }
-
-    protected function setUpSut()
-    {
-        // Create a mock container (similar to a service manager)
-        $container = m::mock(ContainerInterface::class);
-        $controllerPluginManagerMock = m::mock(PluginManager::class);
-        // Set expectations for the container's `get` method
-        $controllerPluginManagerMock->shouldReceive('get')->withArgs([
-            'ControllerPluginManager',
-        ])->andReturn($controllerPluginManagerMock);
-
-        $controllerPluginManagerMock->shouldReceive('get')->withArgs([
-            FlashMessenger::class,
-        ])->andReturn($this->flashMessengerMock);
-
-        $container->shouldReceive('get')->withArgs([
-            FormHelperService::class,
-        ])->andReturn($this->formHelperMock);
-
-        $controllerPluginManagerMock->shouldReceive('get')->withArgs([
-            HandleQuery::class,
-        ])->andReturn($this->queryHandlerMock);
-
-        $controllerPluginManagerMock->shouldReceive('get')->withArgs([
-            Redirect::class,
-        ])->andReturn($this->redirectHelperMock);
-
-        $container->shouldReceive('get')->withArgs([
-            ResponseHelperService::class,
-        ])->andReturn($this->formHelperMock);
-
-        $container->shouldReceive('get')->withArgs([
-            LicenceVehicleManagement::class,
-        ])->andReturn($this->sessionMock);
-
-        $controllerPluginManagerMock->shouldReceive('get')->withArgs([
-            Url::class,
-        ])->andReturn($this->urlHelperMock);
-
-        $container->shouldReceive('get')->withArgs([
-            FormValidator::class,
-        ])->andReturn($this->formValidatorMock);
-
-        $this->formHelper();
-        $this->setupQueryHandler();
-        $this->formValidator();
-    }
-
 
     protected function formValidator()
     {
