@@ -114,15 +114,6 @@ class LoginControllerTest extends MockeryTestCase
         $this->redirectHelperMock = m::mock(Redirect::class);
         $this->authChallengeContainerMock = m::mock(AuthChallengeContainer::class);
         self::setupLogger();
-        $this->sut = new LoginController(
-            $this->authenticationAdapterMock,
-            $this->authenticationServiceMock,
-            $this->currentUserMock,
-            $this->flashMessengerMock,
-            $this->formHelperMock,
-            $this->redirectHelperMock,
-            $this->authChallengeContainerMock
-        );
     }
 
     /**
@@ -208,7 +199,6 @@ class LoginControllerTest extends MockeryTestCase
         // Execute
         $result = $this->sut->indexAction();
         $form = $result->getVariable('form');
-        assert($form instanceof Form);
         $form->isValid();
 
         // Assert
@@ -228,7 +218,6 @@ class LoginControllerTest extends MockeryTestCase
         // Setup
         $this->setUpSut();
 
-        assert($this->flashMessengerMock instanceof MockInterface);
         $this->flashMessengerMock->allows()->hasMessages(LoginController::FLASH_MESSAGE_NAMESPACE_INPUT)->andReturn(false);
         $this->flashMessengerMock->allows()->hasMessages(LoginController::FLASH_MESSAGE_NAMESPACE_AUTH_ERROR)->andReturn(true);
         $this->flashMessengerMock
@@ -575,46 +564,23 @@ class LoginControllerTest extends MockeryTestCase
 
     protected function setUpSut()
     {
-        $container = m::mock(ContainerInterface::class);
-        $controllerPluginManagerMock = m::mock(PluginManager::class);
-        // Set expectations for the container's `get` method
-        $controllerPluginManagerMock->shouldReceive('get')->withArgs([
-            'ControllerPluginManager',
-        ])->andReturn($controllerPluginManagerMock);
-
-        $container->shouldReceive('get')->withArgs([
-            SelfserveCommandAdapter::class,
-        ])->andReturn($this->authenticationAdapterMock);
-
-        $container->shouldReceive('get')->withArgs([
-            AuthenticationServiceInterface::class,
-        ])->andReturn($this->authenticationServiceMock);
-
-        $controllerPluginManagerMock->shouldReceive('get')->withArgs([
-            CurrentUser::class,
-        ])->andReturn($this->currentUserMock);
-
-        $controllerPluginManagerMock->shouldReceive('get')->withArgs([
-            FlashMessenger::class,
-        ])->andReturn($this->flashMessengerMock);
-
-        $container->shouldReceive('get')->withArgs([
-            FormHelperService::class,
-        ])->andReturn($this->formHelperMock);
-
-        $controllerPluginManagerMock->shouldReceive('get')->withArgs([
-            Redirect::class,
-        ])->andReturn($this->redirectHelperMock);
         $this->setUpDefaultServices();
+        $this->sut = new LoginController(
+            $this->authenticationAdapterMock,
+            $this->authenticationServiceMock,
+            $this->currentUserMock,
+            $this->flashMessengerMock,
+            $this->formHelperMock,
+            $this->redirectHelperMock,
+            $this->authChallengeContainerMock
+        );
     }
 
     protected function setUpDefaultServices()
     {
         $this->currentUser();
-        $this->flashMessenger();
         $this->formHelper();
         $this->redirectHelper();
-        $this->authChallengeContainer();
     }
 
     protected function currentUser()
@@ -637,20 +603,9 @@ class LoginControllerTest extends MockeryTestCase
         })->byDefault();
     }
 
-    protected function flashMessenger()
-    {
-        assert($this->flashMessengerMock instanceof MockInterface);
-    }
-
     protected function redirectHelper()
     {
         $this->redirectHelperMock->allows('toRoute')->andReturn($this->redirect())->byDefault();
-        assert($this->redirectHelperMock instanceof MockInterface);
-    }
-
-    private function authChallengeContainer()
-    {
-        assert($this->authChallengeContainerMock instanceof MockInterface);
     }
 
     /**
