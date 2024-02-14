@@ -178,7 +178,7 @@ class Navigation implements ListenerAggregateInterface
 
         $hasOrganisationSubmittedLicenceApplication = $userData['hasOrganisationSubmittedLicenceApplication'];
 
-        $isMessagingEnabled = $this->identity->$userData['organisationUsers'][0]['organisation']['isMessagingDisabled'] === false;
+        $isMessagingEnabled = $userData['organisationUsers'][0]['organisation']['isMessagingDisabled'] === false;
 
         return (
             $messagingToggleEnabled &&
