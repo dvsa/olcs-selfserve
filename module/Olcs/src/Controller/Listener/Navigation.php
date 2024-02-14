@@ -172,12 +172,18 @@ class Navigation implements ListenerAggregateInterface
 
     private function shouldShowMessagesTab(): bool
     {
-        $messagingToggleState = $this->querySender->featuresEnabled([FeatureToggle::MESSAGING]);
+        $messagingToggleEnabled = $this->querySender->featuresEnabled([FeatureToggle::MESSAGING]);
+
+        $userData = $this->identity->getUserData();
+
+        $hasOrganisationSubmittedLicenceApplication = $userData['hasOrganisationSubmittedLicenceApplication'];
+
+        $isMessagingEnabled = $this->identity->$userData['organisationUsers'][0]['organisation']['isMessagingDisabled'] === false;
 
         return (
-            $messagingToggleState &&
-            $this->identity->getUserData()['hasOrganisationSubmittedLicenceApplication'] &&
-            $this->identity->getUserData()['organisationUsers'][0]['organisation']['isMessagingDisabled'] === false
+            $messagingToggleEnabled &&
+            $hasOrganisationSubmittedLicenceApplication &&
+            $isMessagingEnabled
         );
     }
 
