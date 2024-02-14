@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Common\Service\Table\Formatter\ExternalConversationLink;
+use Common\Service\Table\Formatter\ExternalConversationStatus;
 
 return [
     'variables'  => [
@@ -25,8 +26,14 @@ return [
     'attributes' => [],
     'columns'    => [
         [
-            'name' => 'id',
+            'title'     => 'Subject',
+            'name'      => 'id',
             'formatter' => ExternalConversationLink::class,
+        ],
+        [
+            'title'     => 'Status',
+            'name'      => 'status',
+            'formatter' => ExternalConversationStatus::class,
         ],
     ],
 ];
