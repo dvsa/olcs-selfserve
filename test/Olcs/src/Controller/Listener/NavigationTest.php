@@ -234,6 +234,7 @@ class NavigationTest extends m\Adapter\Phpunit\MockeryTestCase
                     ]
                 ]
             ]);
+
         $this->mockNavigation
             ->shouldReceive('findBy')
             ->twice()
