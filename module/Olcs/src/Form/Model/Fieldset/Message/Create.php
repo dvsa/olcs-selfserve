@@ -54,11 +54,8 @@ class Create
      * })
      * @Form\Required(true)
      * @Form\Type(\Laminas\Form\Element\Textarea::class)
-     * @Form\Filter({"name": \Laminas\Filter\StringTrim::class})
-     * @Form\Validator({
-     *     "name": \Laminas\Validator\StringLength::class,
-     *     "options": {"min": 5, "max" :1000}
-     * })
+     * @Form\Filter(\Laminas\Filter\StringTrim::class)
+     * @Form\Validator(\Laminas\Validator\StringLength::class, options={"min": 5, "max": 1000})
      */
     public ?TextArea $messageContent = null;
 
