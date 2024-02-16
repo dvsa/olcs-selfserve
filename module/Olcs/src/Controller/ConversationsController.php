@@ -174,8 +174,9 @@ class ConversationsController extends AbstractController implements ToggleAwareI
 
         $view = new ViewModel(
             [
-                'table' => $table,
-                'form'  => $form,
+                'table'    => $table,
+                'form'     => $form,
+                'canReply' => !$messages['extra']['conversation']['isClosed'],
             ],
         );
         $view->setTemplate('messages-view');
