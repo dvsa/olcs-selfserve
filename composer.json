@@ -31,9 +31,9 @@
         "laminas/laminas-view": "^2.11",
         "lm-commons/lmc-rbac-mvc": "^3.3",
         "olcs/olcs-auth": "^5.0.0",
-        "olcs/olcs-common": "dev-project/messaging",
+        "olcs/olcs-common": "^5.0.0",
         "olcs/olcs-logging": "^5.0.0",
-        "olcs/olcs-transfer": "dev-project/messaging",
+        "olcs/olcs-transfer": "^5.0.0",
         "olcs/olcs-utils": "^5.0.0"
     },
     "require-dev": {
