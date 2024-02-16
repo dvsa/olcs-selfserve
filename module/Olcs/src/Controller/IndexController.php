@@ -32,7 +32,7 @@ class IndexController extends AbstractController
             throw new \Exception('Unable to retrieve identity');
         }
 
-        // redir to the dashboard
+        // redirect to the dashboard
         if ($this->isGranted(RefData::PERMISSION_SELFSERVE_DASHBOARD)) {
             if ($identity->getUserData()['eligibleForPrompt']) {
                 return $this->redirect()->toRoute('prompt', [], ['code' => 303]);
