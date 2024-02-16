@@ -185,7 +185,10 @@ class Navigation implements ListenerAggregateInterface
 
         $hasOrganisationSubmittedLicenceApplication = $userData['hasOrganisationSubmittedLicenceApplication'];
 
-        $isMessagingEnabled = $userData['organisationUsers'][0]['organisation']['isMessagingDisabled'] === false;
+        $isMessagingEnabled = false;
+        if (isset($userData['organisationUsers'][0]['organisation']['isMessagingDisabled'])) {
+            $isMessagingEnabled = $userData['organisationUsers'][0]['organisation']['isMessagingDisabled'] === false;
+        }
 
         return (
             $messagingToggleEnabled &&
