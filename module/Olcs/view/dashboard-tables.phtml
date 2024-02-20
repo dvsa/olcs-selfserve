@@ -9,7 +9,7 @@ echo $menu->setMinDepth(0)
           ->setPartial('partials/tabs-nav')
           ->renderPartialWithParams(
              [
-               'unreadMessageCount' => $this->currentUser()->getUnreadMessageCount()
+               'unreadMessageCount' => $this->__varsCache[1]['unreadMessageCount']
              ]
           );
 

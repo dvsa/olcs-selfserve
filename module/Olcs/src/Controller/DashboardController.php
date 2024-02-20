@@ -15,6 +15,7 @@ use Common\Service\Table\DataMapper\DashboardTmApplications;
 use Common\Service\Table\TableFactory;
 use Dvsa\Olcs\Transfer\Command\DvsaReports\GetRedirect as GetReportRedirectCmd;
 use Dvsa\Olcs\Transfer\Query\FeatureToggle\IsEnabled as IsEnabledQry;
+use Dvsa\Olcs\Transfer\Query\Messaging\Messages\UnreadCountByOrganisationAndUser;
 use Dvsa\Olcs\Transfer\Query\Organisation\Dashboard as DashboardQry;
 use Dvsa\Olcs\Utils\Translation\NiTextTranslation;
 use Laminas\Authentication\Storage\Session;
@@ -106,6 +107,8 @@ class DashboardController extends AbstractController
         } else {
             $view = $this->standardDashboardView();
         }
+
+        $view->setVariable('unreadMessageCount', $this->getUnreadMessageCount());
 
         return $view;
     }
@@ -216,5 +219,31 @@ class DashboardController extends AbstractController
         $this->placeholder()->setPlaceholder('pageTitle', 'dashboard.tm.title');
 
         return $view;
+    }
+
+    public function getUnreadMessageCount()
+    {
+        $userData = $this->currentUser()->getUserData();
+        $organisationId = $this->getCurrentOrganisationId();
+
+        if (
+            $this->handleQuery(IsEnabledQry::create(['ids' => [FeatureToggle::MESSAGING]]))->getResult()['isEnabled']
+            &&
+            $userData['organisationUsers'][0]['organisation']['isMessagingDisabled'] === false
+        ) {
+            $unreadByOrganisation = $this->handleQuery(
+                UnreadCountByOrganisationAndUser::create(
+                    [
+                        'organisation' => $organisationId,
+                        'user' => $userData['id'],
+                    ]
+                )
+            );
+            $unreadCount = count($unreadByOrganisation->getResult());
+        } else {
+            return 0;
+        }
+
+        return $unreadCount;
     }
 }

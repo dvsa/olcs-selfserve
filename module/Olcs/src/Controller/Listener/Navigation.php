@@ -5,7 +5,6 @@ namespace Olcs\Controller\Listener;
 use Common\FeatureToggle;
 use Common\Rbac\User as RbacUser;
 use Common\Service\Cqrs\Query\QuerySender;
-use Dvsa\Olcs\Transfer\Query\Messaging\Messages\UnreadCountByOrganisationAndUser;
 use Laminas\EventManager\EventManagerInterface;
 use Laminas\EventManager\ListenerAggregateInterface;
 use Laminas\EventManager\ListenerAggregateTrait;
@@ -87,18 +86,6 @@ class Navigation implements ListenerAggregateInterface
 
         $shouldShowMessagesTab = $this->shouldShowMessagesTab();
         $this->toggleMessagesTab($shouldShowMessagesTab);
-
-        if ($shouldShowMessagesTab) {
-            $this->identity->setUserData(
-                array_merge(
-                    $this->identity->getUserData(),
-                    [
-                        'unreadMessagesCount' =>
-                            $this->getUnreadMessageCountByOrganisationAndUser()
-                    ]
-                )
-            );
-        }
     }
 
     /**
@@ -213,25 +200,5 @@ class Navigation implements ListenerAggregateInterface
     public function setGovUkReferers(array $govUkReferers): void
     {
         $this->govUkReferers = $govUkReferers;
-    }
-
-    public function getUnreadMessageCountByOrganisationAndUser()
-    {
-        $userOrganisationId = $this->identity->getUserData()['organisationUsers'][0]['organisation']['id'];
-
-        if(empty($this->identity->getUserData()['unreadMessagesCount'])) {
-            $unreadByOrganisation = $this->querySender->send(
-                UnreadCountByOrganisationAndUser::create(
-                    [
-                        'organisation' => $userOrganisationId,
-                        'user' => $this->identity->getId(),
-                    ]
-                )
-            );
-        } else {
-            return $this->identity->getUserData()['unreadMessagesCount'];
-        }
-
-        return(count($unreadByOrganisation->getResult()));
     }
 }
