@@ -89,9 +89,15 @@ class Navigation implements ListenerAggregateInterface
         $this->toggleMessagesTab($shouldShowMessagesTab);
 
         if ($shouldShowMessagesTab) {
-            $unreadMessageCount = $this->getUnreadMessageCountByOrganisationAndUser();
-
-            // dd($unreadMessageCount);
+            $this->identity->setUserData(
+                array_merge(
+                    $this->identity->getUserData(),
+                    [
+                        'unreadMessagesCount' =>
+                            $this->getUnreadMessageCountByOrganisationAndUser()
+                    ]
+                )
+            );
         }
     }
 
@@ -213,14 +219,18 @@ class Navigation implements ListenerAggregateInterface
     {
         $userOrganisationId = $this->identity->getUserData()['organisationUsers'][0]['organisation']['id'];
 
-        $unreadByOrganisation = $this->querySender->send(
-            UnreadCountByOrganisationAndUser::create(
-                [
-                    'organisation' => $userOrganisationId,
-                    'user' => $this->identity->getId(),
-                ]
-            )
-        );
+        if(empty($this->identity->getUserData()['unreadMessagesCount'])) {
+            $unreadByOrganisation = $this->querySender->send(
+                UnreadCountByOrganisationAndUser::create(
+                    [
+                        'organisation' => $userOrganisationId,
+                        'user' => $this->identity->getId(),
+                    ]
+                )
+            );
+        } else {
+            return $this->identity->getUserData()['unreadMessagesCount'];
+        }
 
         return(count($unreadByOrganisation->getResult()));
     }

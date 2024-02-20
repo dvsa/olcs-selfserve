@@ -5,8 +5,18 @@
       <li class="govuk-tabs__list-item<?php echo $page->isActive(true) ? ' govuk-tabs__list-item--selected' : '';?>">
         <a href="<?php echo $page->getHref(); ?>" class="govuk-tabs__tab">
         <?php echo $this->escapeHtml($this->translate($page->getLabel())); ?>
+
         <?php echo $page->get('count') ? '('.$page->get('count').')' : '';?>
         </a>
+        <?php if ($page->id == "dashboard-messaging" && $this->unreadMessageCount > 0): ?>
+          <div class="notification-count">
+            <span class="notification-count__number">
+            <?php
+              echo $this->unreadMessageCount;
+            ?>
+            </span>
+          </div>
+        <?php endif; ?>
       </li>
     <?php endif; ?>
   <?php endforeach; ?>
