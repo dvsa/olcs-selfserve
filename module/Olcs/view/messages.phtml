@@ -16,8 +16,13 @@ echo $this->partial(
     $menu = $this->navigation($this->navigation('navigation')->getContainer()->findBy('id', 'dashboard-licences-applications'))->menu();
 
     echo $menu->setMinDepth(0)
-              ->setMaxDepth(0)
-              ->setPartial('partials/tabs-nav');
+      ->setMaxDepth(0)
+      ->setPartial('partials/tabs-nav')
+      ->renderPartialWithParams(
+        [
+          'unreadMessageCount' => $this->__vars['unreadMessageCount']
+        ]
+      );
 
     echo $this->table;
     ?>

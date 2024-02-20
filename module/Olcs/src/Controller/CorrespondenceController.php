@@ -74,6 +74,8 @@ class CorrespondenceController extends AbstractController
         $view = new ViewModel(['table' => $table]);
         $view->setTemplate('correspondence');
 
+        $view->setVariable('unreadMessageCount', $this->getUnreadMessageCount());
+
         return $view;
     }
 

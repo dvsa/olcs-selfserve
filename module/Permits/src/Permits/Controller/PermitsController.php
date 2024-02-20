@@ -59,6 +59,7 @@ class PermitsController extends AbstractSelfserveController
         $eligibleForPermits = $this->isEligibleForPermits();
 
         $view = new ViewModel();
+
         if (!$eligibleForPermits) {
             if (!$this->referredFromGovUkPermits($this->getEvent())) {
                 return $this->nextStep(IrhpApplicationSection::ROUTE_NOT_ELIGIBLE);
@@ -94,6 +95,7 @@ class PermitsController extends AbstractSelfserveController
         $view->setVariable('issuedTable', $issuedTable);
         $view->setVariable('applicationsNo', count($applicationData));
         $view->setVariable('applicationsTable', $applicationsTable);
+        $view->setVariable('unreadMessageCount', $this->getUnreadMessageCount());
 
         return $view;
     }

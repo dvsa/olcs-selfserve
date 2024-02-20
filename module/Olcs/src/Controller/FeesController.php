@@ -108,6 +108,8 @@ class FeesController extends AbstractController
 
         $this->scriptFactory->loadFile('dashboard-fees');
 
+        $view->setVariable('unreadMessageCount', $this->getUnreadMessageCount());
+
         return $view;
     }
 

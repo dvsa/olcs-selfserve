@@ -8,9 +8,12 @@
 
 namespace Olcs\Controller\Lva\Traits;
 
+use Common\FeatureToggle;
 use Common\RefData;
 use Common\View\Model\Section;
+use Dvsa\Olcs\Transfer\Query\FeatureToggle\IsEnabled as IsEnabledQry;
 use Dvsa\Olcs\Transfer\Query\Licence\Licence as LicenceQry;
+use Dvsa\Olcs\Transfer\Query\Messaging\Messages\UnreadCountByOrganisationAndUser;
 use Laminas\Form\Form;
 use Laminas\View\Model\ViewModel;
 
@@ -189,5 +192,33 @@ trait ExternalControllerTrait
         }
 
         return $sectionTitle;
+    }
+
+    public function getUnreadMessageCount()
+    {
+        $userData = $this->currentUser()->getUserData();
+        $organisationId = $this->getCurrentOrganisationId();
+
+        if (
+            $this->handleQuery(IsEnabledQry::create(['ids' => [FeatureToggle::MESSAGING]]))->getResult()['isEnabled']
+            &&
+            $userData['hasOrganisationSubmittedLicenceApplication'] === true
+            &&
+            $userData['organisationUsers'][0]['organisation']['isMessagingDisabled'] === false
+        ) {
+            $unreadByOrganisation = $this->handleQuery(
+                UnreadCountByOrganisationAndUser::create(
+                    [
+                        'organisation' => $organisationId,
+                        'user' => $userData['id'],
+                    ]
+                )
+            );
+            $unreadCount = count($unreadByOrganisation->getResult());
+        } else {
+            return 0;
+        }
+
+        return $unreadCount;
     }
 }

@@ -75,6 +75,8 @@ class ConversationsController extends AbstractController implements ToggleAwareI
         $view = new ViewModel(['table' => $table]);
         $view->setTemplate('messages');
 
+        $view->setVariable('unreadMessageCount', $this->getUnreadMessageCount());
+
         return $view;
     }
 

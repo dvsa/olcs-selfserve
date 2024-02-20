@@ -8,21 +8,27 @@ echo $this->render(
 ?>
 
 <div class="row">
-    
+
   <div class="dashboard two-thirds">
 
     <?php echo $this->flashMessengerAll(); ?>
-  
+
     <?php
-  
+
       /* @var \Laminas\View\Helper\Navigation\Menu $menu */
       $menu = $this->navigation($this->navigation('navigation')->getContainer()->findBy('id', 'dashboard-licences-applications'))->menu();
-    
-      echo $menu->setMinDepth(0)->setMaxDepth(0)
-          ->setPartial('partials/tabs-nav');
-        
+
+      echo $menu->setMinDepth(0)
+        ->setMaxDepth(0)
+        ->setPartial('partials/tabs-nav')
+        ->renderPartialWithParams(
+          [
+            'unreadMessageCount' => $this->__vars['unreadMessageCount']
+          ]
+        );
+
     ?>
-  
+
     <?php
       $guidanceMessage = $this->placeholder('guidance');
       if (!empty($guidanceMessage)) {
@@ -34,13 +40,13 @@ echo $this->render(
     <?php
       endforeach;
     } ?>
-  
+
     <?php if (isset($table)): ?>
       <?php echo $table; ?>
     <?php endif; ?>
-    
+
   </div>
-  
+
   <?php echo $this->partial('partials/dashboard-right-column'); ?>
 
 </div>
