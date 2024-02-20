@@ -184,6 +184,8 @@ class ConversationsController extends AbstractController implements ToggleAwareI
         );
         $view->setTemplate('messages-view');
 
+        $view->setVariable('unreadMessageCount', $this->getUnreadMessageCount());
+
         if ($this->getRequest()->isPost() && $this->params()->fromPost('action') === 'reply') {
             return $this->parseReply($view, $form);
         }
