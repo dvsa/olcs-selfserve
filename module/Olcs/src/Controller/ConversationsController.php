@@ -97,6 +97,8 @@ class ConversationsController extends AbstractController implements ToggleAwareI
         $view->setVariable('form', $form);
         $view->setTemplate('messages-new');
 
+        $view->setVariable('unreadMessageCount', $this->getUnreadMessageCount());
+
         return $view;
     }
 
