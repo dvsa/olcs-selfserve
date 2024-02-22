@@ -74,7 +74,10 @@ class ConversationsControllerTest extends TestCase
 
     public function testViewAction(): void
     {
+        var_dump('error_reporting: ',ini_get('error_reporting'));
+
         $mockResponse = m::mock(Response::class);
+
         $mockResponse->shouldReceive('isOk')
                      ->andReturn(true);
         $mockResponse->shouldReceive('getResult')
