@@ -194,7 +194,7 @@ trait ExternalControllerTrait
         return $sectionTitle;
     }
 
-    public function getUnreadMessageCount()
+    public function getUnreadMessageCount(): int
     {
         $userData = $this->currentUser()->getUserData();
         $organisationId = $this->getCurrentOrganisationId();
@@ -214,7 +214,7 @@ trait ExternalControllerTrait
                     ]
                 )
             );
-            $unreadCount = count($unreadByOrganisation->getResult());
+            $unreadCount = $unreadByOrganisation->getResult()['count'] ?? 0;
         } else {
             return 0;
         }
