@@ -133,6 +133,11 @@ class DashboardControllerTest extends MockeryTestCase
             ->with()
             ->andReturn($organisationId);
 
+        $this->sut->shouldReceive('currentUser->getUserData')
+            ->with()
+            ->once()
+            ->andReturn(['id' => 1]);
+
         $dashboardDataResponse = m::mock(QueryResponse::class);
         $dashboardDataResponse->shouldIgnoreMissing();
         $dashboardDataResponse->shouldReceive('getResult')->andReturn($dashboardData);
@@ -166,10 +171,10 @@ class DashboardControllerTest extends MockeryTestCase
 
         $mockResult = m::mock();
 
-        $this->sut->shouldReceive('currentUser->getUserData')->with()->once()->andReturn(['id' => 77]);
-        $this->sut->shouldReceive('handleQuery')->once()->andReturn($mockResult);
+        $this->sut->shouldReceive('currentUser->getUserData')->with()->times(3)->andReturn(['id' => 77]);
+        $this->sut->shouldReceive('handleQuery')->twice()->andReturn($mockResult);
 
-        $mockResult->shouldReceive('getResult')->with()->once()->andReturn(['results' => ['service data']]);
+        $mockResult->shouldReceive('getResult')->with()->twice()->andReturn(['results' => ['service data']]);
 
         $placeholder = m::mock(Placeholder::class);
         $placeholder->shouldReceive('setPlaceholder')

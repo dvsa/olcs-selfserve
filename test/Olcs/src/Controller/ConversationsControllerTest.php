@@ -104,6 +104,11 @@ class ConversationsControllerTest extends TestCase
                          ->with('conversationId')
                          ->andReturn(1);
 
+        $this->sut->shouldReceive('currentUser->getUserData')
+                        ->with()
+                        ->twice()
+                        ->andReturn(['id' => 1]);
+
         $this->sut->shouldReceive('params')
                   ->andReturn($this->mockParams);
         $this->sut->shouldReceive('plugin')
@@ -196,6 +201,7 @@ class ConversationsControllerTest extends TestCase
                                ->once()
                                ->with('reply')
                                ->andReturn($mockFormElement);
+
         $this->mockForm->shouldReceive('get')
                        ->once()
                        ->with('form-actions')

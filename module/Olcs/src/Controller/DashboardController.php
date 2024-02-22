@@ -107,8 +107,6 @@ class DashboardController extends AbstractController
             $view = $this->standardDashboardView();
         }
 
-        $view->setVariable('unreadMessageCount', $this->getUnreadMessageCount());
-
         return $view;
     }
 
@@ -151,6 +149,7 @@ class DashboardController extends AbstractController
         $view->setVariable('numberOfLicences', count($dashboardData['licences']));
         $view->setVariable('numberOfApplications', count($dashboardData['applications']));
         $view->setVariable('niFlag', $this->isNiFlagTrue($dashboardData));
+        $view->setVariable('unreadMessageCount', $this->getUnreadMessageCount());
         if (
             $this->handleQuery(IsEnabledQry::create(['ids' => [FeatureToggle::TOP_REPORTS_LINK]]))->getResult()['isEnabled']
             && (isset($dashboardData['licences']) && !empty($dashboardData['licences']))
@@ -214,6 +213,7 @@ class DashboardController extends AbstractController
         $view = new \Laminas\View\Model\ViewModel();
         $view->setTemplate('dashboard-tm');
         $view->setVariable('applicationsTable', $table);
+        $view->setVariable('unreadMessageCount', $this->getUnreadMessageCount());
 
         $this->placeholder()->setPlaceholder('pageTitle', 'dashboard.tm.title');
 
