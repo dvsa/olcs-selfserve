@@ -13,7 +13,7 @@ echo $this->partial(
       echo $this->flashMessengerAll();
           echo $this->partial(
               'dashboard-tables',
-              compact('applications', 'licences', 'variations', 'showVariationTable', 'showApplicationTable')
+              compact('applications', 'licences', 'variations', 'showVariationTable', 'showApplicationTable', 'unreadMessageCount')
           );
     ?>
   </div>

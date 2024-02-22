@@ -23,7 +23,7 @@ echo $this->render(
         ->setPartial('partials/tabs-nav')
         ->renderPartialWithParams(
           [
-            'unreadMessageCount' => $this->__vars['unreadMessageCount']
+            'unreadMessageCount' => $this->unreadMessageCount
           ]
         );
 
