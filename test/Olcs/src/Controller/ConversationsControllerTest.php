@@ -105,9 +105,21 @@ class ConversationsControllerTest extends TestCase
                          ->andReturn(1);
 
         $this->sut->shouldReceive('currentUser->getUserData')
-                        ->with()
-                        ->twice()
-                        ->andReturn(['id' => 1]);
+            ->with()
+            ->twice()
+            ->andReturn(
+                [
+                    'id' => 1,
+                    'hasOrganisationSubmittedLicenceApplication' => true,
+                    'organisationUsers' => [
+                        0 => [
+                            'organisation' => [
+                                'isMessagingDisabled' => false
+                            ]
+                        ]
+                    ]
+                ]
+            );
 
         $this->sut->shouldReceive('params')
                   ->andReturn($this->mockParams);

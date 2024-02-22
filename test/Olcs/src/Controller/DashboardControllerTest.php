@@ -136,7 +136,19 @@ class DashboardControllerTest extends MockeryTestCase
         $this->sut->shouldReceive('currentUser->getUserData')
             ->with()
             ->once()
-            ->andReturn(['id' => 1]);
+            ->andReturn(
+                [
+                    'id' => 1,
+                    'hasOrganisationSubmittedLicenceApplication' => true,
+                    'organisationUsers' => [
+                        0 => [
+                            'organisation' => [
+                                'isMessagingDisabled' => false
+                            ]
+                        ]
+                    ]
+                ]
+            );
 
         $dashboardDataResponse = m::mock(QueryResponse::class);
         $dashboardDataResponse->shouldIgnoreMissing();
@@ -169,12 +181,36 @@ class DashboardControllerTest extends MockeryTestCase
             ->once()
             ->andReturn(false);
 
-        $mockResult = m::mock();
+        $mockResult = m::mock(['isEnabled' => 'true']);
 
-        $this->sut->shouldReceive('currentUser->getUserData')->with()->times(3)->andReturn(['id' => 77]);
-        $this->sut->shouldReceive('handleQuery')->twice()->andReturn($mockResult);
+        $this->sut->shouldReceive('currentUser->getUserData')
+            ->with()
+            ->times(3)
+            ->andReturn(
+                [
+                    'id' => 1,
+                    'hasOrganisationSubmittedLicenceApplication' => true,
+                    'organisationUsers' => [
+                        0 => [
+                            'organisation' => [
+                                'isMessagingDisabled' => false
+                            ]
+                        ]
+                    ]
+                ]
+            );
 
-        $mockResult->shouldReceive('getResult')->with()->twice()->andReturn(['results' => ['service data']]);
+        $this->sut->shouldReceive('handleQuery')->times(3)->andReturn($mockResult);
+
+        $mockResult->shouldReceive('getResult')
+            ->with()
+            ->times(3)
+            ->andReturn(
+                [
+                    'results' => ['service data'],
+                    'isEnabled' => 1
+                ]
+            );
 
         $placeholder = m::mock(Placeholder::class);
         $placeholder->shouldReceive('setPlaceholder')
