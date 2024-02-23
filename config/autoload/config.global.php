@@ -6,10 +6,8 @@ $environment = getenv('ENVIRONMENT_NAME');
 // But for now, it's not. So we have to do it here.
 $isProduction = strtoupper($environment) === 'APP';
 
-$isProductionAccount = in_array(strtoupper($environment), ['INT', 'PP', 'APP']);
-
 return [
-    'version' => $isProductionAccount ? null : [
+    'version' => $isProduction ? null : [
         'environment' => $environment,
         'release' => (file_exists(__DIR__ . '/../version') ? file_get_contents(__DIR__ . '/../version') : ''),
         'description' => '%domain%',
@@ -28,7 +26,6 @@ return [
             ]
         ]
     ],
-
     // Service addresses
     'service_api_mapping' => [
         'endpoints' => [
