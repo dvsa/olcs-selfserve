@@ -7,6 +7,7 @@
   <php>
     <ini name="date.timezone" value="UTC"/>
     <ini name="memory_limit" value="4G" />
+    <ini name="error_reporting" value="E_ALL" />
   </php>
   <testsuites>
     <testsuite name="OLCS Selfserve Application">

@@ -73,7 +73,8 @@ class NavigationTest extends m\Adapter\Phpunit\MockeryTestCase
                 'organisationUsers' => [
                     0 => [
                         'organisation' => [
-                            'isMessagingDisabled' => false
+                            'isMessagingDisabled' => false,
+                            'id' => 1,
                         ]
                     ]
                 ]
@@ -151,7 +152,8 @@ class NavigationTest extends m\Adapter\Phpunit\MockeryTestCase
                 'organisationUsers' => [
                     0 => [
                         'organisation' => [
-                            'isMessagingDisabled' => false
+                            'isMessagingDisabled' => false,
+                            'id' => 1,
                         ]
                     ]
                 ]
@@ -202,7 +204,8 @@ class NavigationTest extends m\Adapter\Phpunit\MockeryTestCase
                 'organisationUsers' => [
                     0 => [
                         'organisation' => [
-                            'isMessagingDisabled' => false
+                            'isMessagingDisabled' => false,
+                            'id' => 1,
                         ]
                     ]
                 ]
@@ -239,7 +242,8 @@ class NavigationTest extends m\Adapter\Phpunit\MockeryTestCase
                 'organisationUsers' => [
                     0 => [
                         'organisation' => [
-                            'isMessagingDisabled' => false
+                            'isMessagingDisabled' => false,
+                            'id' => 1,
                         ]
                     ]
                 ]
