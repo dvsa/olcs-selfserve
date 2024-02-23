@@ -4,7 +4,7 @@ use Dvsa\LaminasConfigCloudParameters\Cast\Boolean;
 use Dvsa\LaminasConfigCloudParameters\ParameterProvider\Aws\SecretsManager;
 use Dvsa\LaminasConfigCloudParameters\ParameterProvider\Aws\ParameterStore;
 
-$environment = getenv('ENVIRONMENT_NAME') ?: 'reg';
+$environment = getenv('ENVIRONMENT_NAME');
 
 $providers = [];
 
