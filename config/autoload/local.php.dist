@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'config_parameters' => [
+      'providers' => new \Laminas\Stdlib\ArrayUtils\MergeRemoveKey(),
+    ],
+
     // Debugging, display environment and version on interface
     'version' => [
         'environment' => 'localdev',

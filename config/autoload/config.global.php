@@ -204,7 +204,7 @@ return [
 
     'verify' => [
         'forwarder' => [
-            'valid-origin' => '%verify_forwarder_valid_origin%'
+            'valid-origin' => 'https://%verify_forwarder_valid_origin%'
         ]
     ],
 
