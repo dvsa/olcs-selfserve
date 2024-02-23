@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Olcs\Form\Model\Form\Message;
 
+use Common\Form\Model\Fieldset\MultipleFileUpload;
 use Laminas\Form\Annotation as Form;
 use Laminas\Form\Element\Hidden;
 use Olcs\Form\Model\Fieldset\Message\Reply as ReplyFieldset;
