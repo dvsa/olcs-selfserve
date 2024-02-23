@@ -205,7 +205,7 @@ class Navigation implements ListenerAggregateInterface
         $this->govUkReferers = $govUkReferers;
     }
 
-    public function getUnreadMessageCount()
+    public function getUnreadMessageCount(): int
     {
         $userOrganisationId = $this->identity->getUserData()['organisationUsers'][0]['organisation']['id'];
 
@@ -218,7 +218,7 @@ class Navigation implements ListenerAggregateInterface
             )
         );
 
-        return(count($unreadByOrganisation->getResult()));
+        return($unreadByOrganisation->getResult()['count'] ?? 0);
     }
 
     public function addUnreadMessagingCount(){
