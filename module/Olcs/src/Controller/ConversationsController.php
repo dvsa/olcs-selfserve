@@ -216,7 +216,7 @@ class ConversationsController extends AbstractController implements ToggleAwareI
             [$this, 'processFileUpload'],
             [$this, 'deleteFile'],
             [$this, 'getUploadedFiles'],
-            'form-actions->file->fileCount'
+            'form-actions->file->fileCount',
         );
 
         if ($hasProcessedFiles || $this->params()->fromPost('action') !== 'reply' || !$form->isValid()) {
@@ -245,11 +245,11 @@ class ConversationsController extends AbstractController implements ToggleAwareI
     public function processFileUpload($file)
     {
         $dtoData = [
-            'category'     => Category::CATEGORY_LICENSING,
-            'subCategory'  => Category::DOC_SUB_CATEGORY_MESSAGING,
-            'description'  => $file['name'],
-            'isExternal'   => true,
-            'conversation' => $this->params()->fromRoute('conversationId'),
+            'category'              => Category::CATEGORY_LICENSING,
+            'subCategory'           => Category::DOC_SUB_CATEGORY_MESSAGING,
+            'description'           => $file['name'],
+            'isExternal'            => true,
+            'messagingConversation' => $this->params()->fromRoute('conversationId'),
         ];
 
         $this->uploadFile($file, $dtoData);
