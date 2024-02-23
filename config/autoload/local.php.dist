@@ -2,7 +2,7 @@
 
 return [
     'config_parameters' => [
-      'providers' => new \Laminas\Stdlib\ArrayUtils\MergeRemoveKey(),
+      'providers' => new \Laminas\Stdlib\ArrayUtils\MergeReplaceKey([]),
     ],
 
     // Debugging, display environment and version on interface
