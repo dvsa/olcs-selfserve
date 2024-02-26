@@ -25,7 +25,6 @@ use LmcRbacMvc\Service\AuthorizationService;
 use Olcs\Form\Model\Form\Message\Reply as ReplyForm;
 use Olcs\Form\Model\Form\Message\Create as CreateForm;
 use Olcs\Service\Data\MessagingAppOrLicNo;
-use Olcs\Service\Data\SubCategory;
 
 class ConversationsController extends AbstractController implements ToggleAwareInterface
 {
@@ -181,6 +180,7 @@ class ConversationsController extends AbstractController implements ToggleAwareI
         }
 
         $form = $this->formHelperService->createForm(ReplyForm::class, true, false);
+        $form->get('correlationId')->setValue(sha1(microtime()));
         $this->formHelperService->setFormActionFromRequest($form, $this->getRequest());
 
         $table = $this->tableFactory->buildTable('messages-view', $messages, $params);
@@ -230,6 +230,7 @@ class ConversationsController extends AbstractController implements ToggleAwareI
             CreateMessageCommand::create(
                 [
                     'conversation'   => $this->params()->fromRoute('conversationId'),
+                    'correlationId'  => $this->getRequest()->getPost('correlationId'),
                     'messageContent' => $form->get('form-actions')->get('reply')->getValue(),
                 ],
             ),
@@ -253,6 +254,7 @@ class ConversationsController extends AbstractController implements ToggleAwareI
             'description'           => $file['name'],
             'isExternal'            => true,
             'messagingConversation' => $this->params()->fromRoute('conversationId'),
+            'correlationId'         => $this->getRequest()->getPost('correlationId'),
         ];
 
         $this->uploadFile($file, $dtoData);
@@ -261,9 +263,9 @@ class ConversationsController extends AbstractController implements ToggleAwareI
     public function getUploadedFiles()
     {
         $params = [
-            'category'     => Category::CATEGORY_LICENSING,
-            'subCategory'  => Category::DOC_SUB_CATEGORY_MESSAGING,
-            'conversation' => $this->params()->fromRoute('conversationId'),
+            'category'      => Category::CATEGORY_LICENSING,
+            'subCategory'   => Category::DOC_SUB_CATEGORY_MESSAGING,
+            'correlationId' => $this->getRequest()->getPost('correlationId'),
         ];
 
         $response = $this->handleQuery(Documents::create($params));

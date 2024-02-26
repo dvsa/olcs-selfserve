@@ -25,6 +25,12 @@ class Reply
     public ?Hidden $id = null;
 
     /**
+     * @Form\Attributes({"value": ""})
+     * @Form\Type(\Laminas\Form\Element\Hidden::class)
+     */
+    public ?Hidden $correlationId = null;
+
+    /**
      * @Form\Attributes({"value": "reply"})
      * @Form\Type(\Laminas\Form\Element\Hidden::class)
      */
