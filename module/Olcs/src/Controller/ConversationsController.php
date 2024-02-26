@@ -192,6 +192,7 @@ class ConversationsController extends AbstractController implements ToggleAwareI
                 'table'          => $table,
                 'form'           => $form,
                 'canReply'       => $canReply,
+                'openReply'      => false,
                 'canUploadFiles' => $canUploadFiles,
             ],
         );
@@ -218,6 +219,8 @@ class ConversationsController extends AbstractController implements ToggleAwareI
             [$this, 'getUploadedFiles'],
             'form-actions->file->fileCount',
         );
+
+        $view->setVariable('openReply', $hasProcessedFiles);
 
         if ($hasProcessedFiles || $this->params()->fromPost('action') !== 'reply' || !$form->isValid()) {
             return $view;
