@@ -84,7 +84,14 @@ class ConversationsControllerTest extends TestCase
                      ->andReturn([
                          'extra' => [
                              'conversation' => [
+                                 'subject' => 'Banana',
                                  'isClosed' => true,
+                             ],
+                             'application' => [
+                                 'id' => 100000,
+                             ],
+                             'licence' => [
+                                 'licNo' => 'OK1234',
                              ],
                          ],
                      ]);
