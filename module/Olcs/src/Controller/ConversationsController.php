@@ -165,10 +165,12 @@ class ConversationsController extends AbstractController implements ToggleAwareI
 
         $response = $this->handleQuery(ByConversationQuery::create($params));
         $canReply = false;
+        $subject = '';
 
         if ($response->isOk()) {
             $messages = $response->getResult();
             $canReply = !$messages['extra']['conversation']['isClosed'];
+            $subject = $this->getSubject($messages);
             unset($messages['extra']);
         } else {
             $this->flashMessengerHelper->addErrorMessage('unknown-error');
@@ -186,6 +188,7 @@ class ConversationsController extends AbstractController implements ToggleAwareI
                 'table'    => $table,
                 'form'     => $form,
                 'canReply' => $canReply,
+                'subject'  => $subject,
             ],
         );
         $view->setTemplate('messages-view');
@@ -224,5 +227,14 @@ class ConversationsController extends AbstractController implements ToggleAwareI
         $this->handleErrors($response->getResult());
 
         return parent::indexAction();
+    }
+
+    private function getSubject(array $messageData): string
+    {
+        $subject = $messageData['extra']['licence']['licNo'];
+        if (isset($messageData['extra']['application']['id'])) {
+            $subject .= ' / ' . $messageData['extra']['application']['id'];
+        }
+        return $subject . ': ' . $messageData['extra']['conversation']['subject'];
     }
 }
