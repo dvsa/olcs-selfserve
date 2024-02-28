@@ -20,6 +20,12 @@ echo $this->partial(
               ->setPartial('partials/tabs-nav');
     ?>
 
+    <div class="govuk-footer__heading">
+      <a href="<?php echo $this->backUrl; ?>" class="govuk-back-link">
+        <?php echo $this->translate('Back to conversations'); ?>
+      </a>
+    </div>
+
     <?php if ($this->canReply): ?>
       <details class="govuk-details" data-module="govuk-details">
         <summary class="govuk-details__summary" aria-controls="details-content-operating-centre">

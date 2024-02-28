@@ -97,6 +97,7 @@ class ConversationsController extends AbstractController implements ToggleAwareI
 
         $view = new ViewModel();
         $view->setVariable('form', $form);
+        $view->setVariable('backUrl', $this->url()->fromRoute('conversations'));
         $view->setTemplate('messages-new');
 
         return $view;
@@ -186,6 +187,7 @@ class ConversationsController extends AbstractController implements ToggleAwareI
                 'table'    => $table,
                 'form'     => $form,
                 'canReply' => $canReply,
+                'backUrl'  => $this->url()->fromRoute('conversations'),
             ],
         );
         $view->setTemplate('messages-view');
