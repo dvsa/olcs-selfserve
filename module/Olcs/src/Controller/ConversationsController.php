@@ -20,6 +20,7 @@ use Dvsa\Olcs\Transfer\Query\Messaging\Messages\ByConversation as ByConversation
 use Dvsa\Olcs\Transfer\Query\Messaging\Conversations\ByOrganisation as ByOrganisationQuery;
 use Dvsa\Olcs\Utils\Translation\NiTextTranslation;
 use Laminas\Http\Response;
+use Laminas\Navigation\Navigation;
 use Laminas\View\Model\ViewModel;
 use LmcRbacMvc\Service\AuthorizationService;
 use Olcs\Form\Model\Form\Message\Reply as ReplyForm;
@@ -37,6 +38,7 @@ class ConversationsController extends AbstractController implements ToggleAwareI
     protected FlashMessengerHelperService $flashMessengerHelper;
     protected TableFactory $tableFactory;
     protected FormHelperService $formHelperService;
+    protected Navigation $navigationService;
     protected FileUploadHelperService $uploadHelper;
 
     public function __construct(
@@ -45,11 +47,13 @@ class ConversationsController extends AbstractController implements ToggleAwareI
         FlashMessengerHelperService $flashMessengerHelper,
         TableFactory $tableFactory,
         FormHelperService $formHelperService,
+        Navigation $navigationService,
         FileUploadHelperService $uploadHelper
     ) {
         $this->flashMessengerHelper = $flashMessengerHelper;
         $this->tableFactory = $tableFactory;
         $this->formHelperService = $formHelperService;
+        $this->navigationService = $navigationService;
         $this->uploadHelper = $uploadHelper;
 
         parent::__construct($niTextTranslationUtil, $authService);
@@ -160,6 +164,8 @@ class ConversationsController extends AbstractController implements ToggleAwareI
     /** @return ViewModel|Response */
     public function viewAction()
     {
+        $this->navigationService->findBy('id', 'dashboard-messaging')->setActive();
+
         $params = [
             'page'         => $this->params()->fromQuery('page', 1),
             'limit'        => $this->params()->fromQuery('limit', 10),
