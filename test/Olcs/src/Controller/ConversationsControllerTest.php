@@ -93,12 +93,12 @@ class ConversationsControllerTest extends TestCase
                                      'subject'  => 'Banana',
                                      'isClosed' => true,
                                  ],
-                             ],
-                             'application' => [
-                                 'id' => 100000,
-                             ],
-                             'licence'     => [
-                                 'licNo' => 'OK1234',
+                                 'application' => [
+                                     'id' => 100000,
+                                 ],
+                                 'licence'     => [
+                                     'licNo' => 'OK1234',
+                                 ],
                              ],
                          ],
                      );
