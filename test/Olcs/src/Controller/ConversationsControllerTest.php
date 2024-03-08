@@ -6,17 +6,22 @@ use Common\Controller\Plugin\HandleCommand;
 use Common\Controller\Plugin\HandleQuery;
 use Common\Controller\Plugin\Redirect;
 use Common\Form\Form;
+use Common\Rbac\User;
 use Common\Service\Cqrs\Response;
+use Common\Service\Helper\FileUploadHelperService;
 use Common\Service\Helper\FlashMessengerHelperService;
 use Common\Service\Helper\FormHelperService;
 use Common\Service\Table\TableFactory;
 use Dvsa\Olcs\Utils\Translation\NiTextTranslation;
+use Laminas\Form\Element\Hidden;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Fieldset;
 use Laminas\Http\Request;
 use Laminas\Http\Response as HttpResponse;
 use Laminas\Mvc\Controller\Plugin\Params;
 use Dvsa\Olcs\Transfer\Command\Messaging\Message\Create as CreateMessageCommand;
+use Laminas\Mvc\Controller\Plugin\Url;
+use Laminas\Navigation\Navigation;
 use Laminas\View\Model\ViewModel;
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryTestCase as TestCase;
@@ -36,8 +41,11 @@ class ConversationsControllerTest extends TestCase
         $this->mockFlashMessengerHelper = m::mock(FlashMessengerHelperService::class)->makePartial();
         $this->mockTableFactory = m::mock(TableFactory::class)->makePartial();
         $this->mockFormHelperService = m::mock(FormHelperService::class)->makePartial();
+        $this->mockNavigation = m::mock(Navigation::class)->shouldIgnoreMissing();
         $this->mockForm = m::mock(Form::class);
         $this->mockParams = m::mock(Params::class);
+        $this->mockUploadHelper = m::mock(FileUploadHelperService::class);
+        $this->mockUser = m::mock(User::class);
 
         $this->sut = m::mock(Sut::class)
                       ->makePartial()
@@ -49,6 +57,8 @@ class ConversationsControllerTest extends TestCase
         $this->setMockedProperties($reflectionClass, 'flashMessengerHelper', $this->mockFlashMessengerHelper);
         $this->setMockedProperties($reflectionClass, 'tableFactory', $this->mockTableFactory);
         $this->setMockedProperties($reflectionClass, 'formHelperService', $this->mockFormHelperService);
+        $this->setMockedProperties($reflectionClass, 'navigationService', $this->mockNavigation);
+        $this->setMockedProperties($reflectionClass, 'uploadHelper', $this->mockUploadHelper);
 
         $this->mockFormHelperService->shouldReceive('createForm')
                                     ->once()
@@ -78,13 +88,22 @@ class ConversationsControllerTest extends TestCase
         $mockResponse->shouldReceive('isOk')
                      ->andReturn(true);
         $mockResponse->shouldReceive('getResult')
-                     ->andReturn([
-                         'extra' => [
-                             'conversation' => [
-                                 'isClosed' => true,
+                     ->andReturn(
+                         [
+                             'extra'       => [
+                                 'conversation' => [
+                                     'subject'  => 'Banana',
+                                     'isClosed' => true,
+                                 ],
+                                 'application' => [
+                                     'id' => 100000,
+                                 ],
+                                 'licence'     => [
+                                     'licNo' => 'OK1234',
+                                 ],
                              ],
                          ],
-                     ]);
+                     );
 
         $mockHandleQuery = m::mock(HandleQuery::class)
                             ->makePartial();
@@ -104,11 +123,38 @@ class ConversationsControllerTest extends TestCase
                          ->with('conversationId')
                          ->andReturn(1);
 
+        $this->mockUser->shouldReceive('getUserData')
+                 ->once()
+                 ->andReturn(
+                     [
+                         'organisationUsers' => [
+                             [
+                                 'organisation' => [
+                                     'isMessagingFileUploadEnabled' => true,
+                                 ],
+                             ],
+                         ],
+                     ],
+                 );
+
+        $mockUrl = m::mock(Url::class);
+        $mockUrl->shouldReceive('fromRoute')
+                ->once()
+                ->with('conversations');
+
         $this->sut->shouldReceive('params')
                   ->andReturn($this->mockParams);
         $this->sut->shouldReceive('plugin')
                   ->with('handleQuery')
+                  ->once()
                   ->andReturn($mockHandleQuery);
+        $this->sut->shouldReceive('plugin')
+                  ->with('currentUser')
+                  ->andReturn($this->mockUser);
+        $this->sut->shouldReceive('plugin')
+                  ->with('url')
+                  ->once()
+                  ->andReturn($mockUrl);
 
         $table = '<table/>';
 
@@ -119,6 +165,19 @@ class ConversationsControllerTest extends TestCase
                                    ['page' => 1, 'limit' => 10, 'conversation' => 1, 'query' => []],
                                )
                                ->andReturn($table);
+
+        $this->mockNavigation
+            ->shouldReceive('findBy->setActive')
+            ->once();
+
+        $mockFormElement = m::mock(Hidden::class);
+        $mockFormElement->shouldReceive('setValue')
+                        ->once();
+
+        $this->mockForm->shouldReceive('get')
+                       ->once()
+                       ->with('correlationId')
+                       ->andReturn($mockFormElement);
 
         $view = $this->sut->viewAction();
         $this->assertInstanceOf(ViewModel::class, $view);
@@ -131,15 +190,23 @@ class ConversationsControllerTest extends TestCase
         $mockRequest->shouldReceive('isPost')
                     ->once()
                     ->andReturn(true);
+        $mockRequest->shouldReceive('getPost')
+                    ->once()
+                    ->withNoArgs()
+                    ->andReturn([]);
+        $mockRequest->shouldReceive('getPost')
+                    ->with('correlationId')
+                    ->once()
+                    ->andReturn('123');
+
+        $this->mockForm->shouldReceive('setData')
+                       ->once()
+                       ->with([]);
 
         $this->mockParams->shouldReceive('fromPost')
                          ->once()
                          ->with('action')
                          ->andReturn('reply');
-        $this->mockParams->shouldReceive('fromPost')
-                         ->once()
-                         ->withNoArgs()
-                         ->andReturn(['a' => 'b']);
         $this->mockParams->shouldReceive('fromRoute')
                          ->once()
                          ->with('conversation')
@@ -150,7 +217,7 @@ class ConversationsControllerTest extends TestCase
                          ->andReturn(['a' => 'b']);
 
         $this->sut->shouldReceive('getRequest')
-                  ->twice()
+                  ->times(5)
                   ->andReturn($mockRequest);
 
         $mockCommandReturn = m::mock(Response::class);
@@ -173,10 +240,6 @@ class ConversationsControllerTest extends TestCase
         $this->sut->shouldReceive('plugin')
                   ->with('handleCommand')
                   ->andReturn($mockCommandHandler);
-
-        $this->mockForm->shouldReceive('setData')
-                       ->once()
-                       ->with(['a' => 'b']);
 
         $mockFormElement = m::mock(Text::class);
         $mockFormElement->shouldReceive('setValue')
@@ -222,10 +285,64 @@ class ConversationsControllerTest extends TestCase
                      ->with('conversations/view', ['a' => 'b'])
                      ->andReturn($mockViewModel);
 
+        $this->mockUploadHelper
+            ->shouldReceive('setForm')
+            ->once()
+            ->andReturn($this->mockUploadHelper);
+
+        $this->mockUploadHelper
+            ->shouldReceive('setSelector')
+            ->once()
+            ->andReturn($this->mockUploadHelper);
+
+        $this->mockUploadHelper
+            ->shouldReceive('setUploadCallback')
+            ->once()
+            ->andReturn($this->mockUploadHelper);
+
+        $this->mockUploadHelper
+            ->shouldReceive('setDeleteCallback')
+            ->once()
+            ->andReturn($this->mockUploadHelper);
+
+        $this->mockUploadHelper
+            ->shouldReceive('setLoadCallback')
+            ->once()
+            ->andReturn($this->mockUploadHelper);
+
+        $this->mockUploadHelper
+            ->shouldReceive('setRequest')
+            ->once()
+            ->andReturn($this->mockUploadHelper);
+
+        $this->mockUploadHelper
+            ->shouldReceive('setCountSelector')
+            ->once()
+            ->andReturn($this->mockUploadHelper);
+
+        $this->mockUploadHelper
+            ->shouldReceive('process')
+            ->once()
+            ->andReturn(false);
+
         $this->sut->shouldReceive('plugin')
                   ->once()
                   ->with('redirect')
                   ->andReturn($mockRedirect);
+
+        $this->mockUser->shouldReceive('getUserData')
+                       ->once()
+                       ->andReturn(
+                           [
+                               'organisationUsers' => [
+                                   [
+                                       'organisation' => [
+                                           'isMessagingFileUploadEnabled' => true,
+                                       ],
+                                   ],
+                               ],
+                           ],
+                       );
 
         $this->testViewAction();
     }
