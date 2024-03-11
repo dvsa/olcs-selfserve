@@ -306,13 +306,11 @@ class ConversationsControllerTest extends TestCase
         $mockCommandHandler = m::mock(HandleCommand::class);
         $mockCommandHandler->shouldReceive('__invoke')
                            ->once()
-                           ->withArgs(
-                               function ($command) {
-                                   $this->assertInstanceOf(CreateMessageCommand::class, $command);
+                           ->withArgs(function ($command) {
+                               $this->assertInstanceOf(CreateMessageCommand::class, $command);
 
-                                   return true;
-                               },
-                           )
+                               return true;
+                           })
                            ->andReturn($mockCommandReturn);
 
         $this->sut->shouldReceive('plugin')
