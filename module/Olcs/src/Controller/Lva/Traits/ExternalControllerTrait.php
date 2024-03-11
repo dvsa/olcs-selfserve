@@ -67,7 +67,7 @@ trait ExternalControllerTrait
     {
         $organisation = $this->getCurrentOrganisation();
 
-        return (isset($organisation['id'])) ? $organisation['id'] : null;
+        return $organisation['id'] ?? null;
     }
 
     /**
@@ -172,8 +172,7 @@ trait ExternalControllerTrait
         switch ($sectionName) {
             case 'people':
                 // change the section name based on org type
-                $orgType = isset($data['licence']['organisation']['type']['id']) ?
-                    $data['licence']['organisation']['type']['id'] : $data['organisation']['type']['id'];
+                $orgType = $data['licence']['organisation']['type']['id'] ?? $data['organisation']['type']['id'];
 
                 $sectionTitle .= '.' . $orgType;
                 break;

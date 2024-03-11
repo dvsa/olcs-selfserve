@@ -30,7 +30,7 @@ class ApplicationOverview extends LvaOverview
     public function __construct($data, array $sections = [], $submissionForm = null)
     {
         $this->setVariable('applicationId', $data['id']);
-        $this->setVariable('licNo', isset($data['licence']['licNo']) ? $data['licence']['licNo'] : '');
+        $this->setVariable('licNo', $data['licence']['licNo'] ?? '');
         $this->setVariable('createdOn', date('d F Y', strtotime($data['createdOn'])));
         $this->setVariable('status', $data['status']['id']);
         $this->setVariable('submissionForm', $submissionForm);
@@ -40,9 +40,7 @@ class ApplicationOverview extends LvaOverview
 
         $completedSections = array_filter(
             $sections,
-            function ($section) {
-                return isset($section['complete']) && $section['complete'] == true;
-            }
+            fn($section) => isset($section['complete']) && $section['complete'] == true
         );
         $this->setVariable('progressX', count($completedSections));
         $this->setVariable('progressY', count($sections));

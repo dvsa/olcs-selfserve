@@ -174,9 +174,7 @@ trait VariationWizardPageControllerTrait
         }
         $sections = array_filter(
             $sectionsCompleted,
-            function ($v, $k) use ($requiredSections) {
-                return in_array($k, $requiredSections) && $v === 2;
-            },
+            fn($v, $k) => in_array($k, $requiredSections) && $v === 2,
             ARRAY_FILTER_USE_BOTH
         );
 

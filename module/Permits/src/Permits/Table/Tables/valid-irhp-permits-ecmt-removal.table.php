@@ -22,9 +22,7 @@ return [
             'title' => 'permits.irhp.valid.permits.table.permit-no',
             'isNumeric' => true,
             'name' => 'permitNumber',
-            'formatter' => function ($row) {
-                return '<b>' . Escape::html($row['permitNumber']) . '</b>';
-            },
+            'formatter' => fn($row) => '<b>' . Escape::html($row['permitNumber']) . '</b>',
         ],
         [
             'title' => 'permits.irhp.valid.permits.table.application-no',
@@ -36,9 +34,7 @@ return [
         [
             'title' => 'permits.ecmt.page.valid.tableheader.countries',
             'name' => 'countries',
-            'formatter' => function ($row) {
-                return 'Cyprus';
-            }
+            'formatter' => fn($row) => 'Cyprus'
         ],
         [
             'title' => 'permits.irhp.valid.permits.table.start-date',
@@ -53,20 +49,18 @@ return [
         [
             'title' => 'status',
             'name' => 'status',
-            'formatter' => function ($row) {
-                return $this->callFormatter(
-                    [
-                        'name' => 'status',
-                        'formatter' => RefDataStatus::class,
+            'formatter' => fn($row) => $this->callFormatter(
+                [
+                    'name' => 'status',
+                    'formatter' => RefDataStatus::class,
+                ],
+                [
+                    'status' => [
+                        'id' => RefData::PERMIT_VALID,
+                        'description' => RefData::PERMIT_VALID
                     ],
-                    [
-                        'status' => [
-                            'id' => RefData::PERMIT_VALID,
-                            'description' => RefData::PERMIT_VALID
-                        ],
-                    ]
-                );
-            }
+                ]
+            )
         ],
     ]
 ];

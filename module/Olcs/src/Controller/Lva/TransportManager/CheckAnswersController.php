@@ -55,10 +55,8 @@ class CheckAnswersController extends AbstractController
 
         $translator = $this->translationHelper;
 
-        list($title, $defaultParams, $form) = $this->getPageLayout(
-            $translator,
-            $this->tma,
-            $this->tma['id']
+        [$title, $defaultParams, $form] = $this->getPageLayout(
+            $translator
         );
 
         $this->changeTmaStatusToDetailsSubmittedIfDetailsChecked();

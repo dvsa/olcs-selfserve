@@ -23,19 +23,15 @@ return [
         [
             'title' => 'entity-view-table-header-vehicles-authorised',
             'isNumeric' => true,
-            'formatter' => function ($data) {
-                return !empty($data['noOfVehiclesRequired']) ?
-                    $data['noOfVehiclesRequired'] : '0';
-            },
+            'formatter' => fn($data) => !empty($data['noOfVehiclesRequired']) ?
+                $data['noOfVehiclesRequired'] : '0',
             'name' => 'noOfVehiclesRequired'
         ],
         [
             'title' => 'entity-view-table-header-trailers-authorised',
             'isNumeric' => true,
-            'formatter' => function ($data) {
-                return !empty($data['noOfTrailersRequired']) ?
-                    $data['noOfTrailersRequired'] : '0';
-            }
+            'formatter' => fn($data) => !empty($data['noOfTrailersRequired']) ?
+                $data['noOfTrailersRequired'] : '0'
         ],
         [
             'title' => 'entity-view-table-header-date-added',

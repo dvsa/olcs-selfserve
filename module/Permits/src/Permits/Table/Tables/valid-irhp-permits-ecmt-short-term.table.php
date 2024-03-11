@@ -23,9 +23,7 @@ return [
             'title' => 'permits.irhp.valid.permits.table.permit-no',
             'isNumeric' => true,
             'name' => 'permitNumber',
-            'formatter' => function ($row) {
-                return '<b>' . Escape::html($row['permitNumber']) . '</b>';
-            },
+            'formatter' => fn($row) => '<b>' . Escape::html($row['permitNumber']) . '</b>',
         ],
         [
             'title' => 'permits.irhp.valid.permits.table.application-no',
@@ -53,35 +51,31 @@ return [
         [
             'title' => 'permits.irhp.valid.permits.table.use-by-date',
             'name' => 'useByDate',
-            'formatter' => function ($row) {
-                return $this->callFormatter(
-                    [
-                        'name' => 'useByDate',
-                        'formatter' => Date::class,
-                    ],
-                    [
-                        'useByDate' => $row['ceasedDate'],
-                    ]
-                );
-            }
+            'formatter' => fn($row) => $this->callFormatter(
+                [
+                    'name' => 'useByDate',
+                    'formatter' => Date::class,
+                ],
+                [
+                    'useByDate' => $row['ceasedDate'],
+                ]
+            )
         ],
         [
             'title' => 'status',
             'name' => 'status',
-            'formatter' => function ($row) {
-                return $this->callFormatter(
-                    [
-                        'name' => 'status',
-                        'formatter' => RefDataStatus::class,
+            'formatter' => fn($row) => $this->callFormatter(
+                [
+                    'name' => 'status',
+                    'formatter' => RefDataStatus::class,
+                ],
+                [
+                    'status' => [
+                        'id' => RefData::PERMIT_VALID,
+                        'description' => RefData::PERMIT_VALID
                     ],
-                    [
-                        'status' => [
-                            'id' => RefData::PERMIT_VALID,
-                            'description' => RefData::PERMIT_VALID
-                        ],
-                    ]
-                );
-            }
+                ]
+            )
         ],
     ]
 ];

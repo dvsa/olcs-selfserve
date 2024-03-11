@@ -36,31 +36,24 @@ return [
         ],
         [
             'title' => 'email-address',
-            'formatter' => function ($row) {
-                return $row['contactDetails']['emailAddress'];
-            }
+            'formatter' => fn($row) => $row['contactDetails']['emailAddress']
         ],
         [
             'title' => 'manage-users.table.column.permission.title',
-            'formatter' => function ($row, $column) {
-                return implode(
-                    ',',
-                    array_map(
-                        function ($role) {
-                            return $this->translator->translate('role.' . $role['role']);
-                        },
-                        $row['roles']
-                    )
-                );
-            }
+            'formatter' => fn($row, $column) => implode(
+                ',',
+                array_map(
+                    fn($role) => $this->translator->translate('role.' . $role['role']),
+                    $row['roles']
+                )
+            )
         ],
         [
             'title' => 'markup-table-th-remove', //this is a view partial from olcs-common
             'type' => 'ActionLinks',
-            'isRemoveVisible' => function ($row) {
+            'isRemoveVisible' => fn($row) =>
                 /** $var TableBuilder $this */
-                return $this->permissionService->isSelf($row['id']);
-            },
+                $this->permissionService->isSelf($row['id']),
             'ariaDescription' => function ($row, $column) {
                 $column['formatter'] = Name::class;
                 return $this->callFormatter($column, $row['contactDetails']['person']);

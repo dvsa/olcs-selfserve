@@ -32,12 +32,10 @@ return [
         ],
         [
             'title' => $translationPrefix . '.status',
-            'formatter' => function ($data, $col) {
-                return $this->translator->translate(
-                    'common.table.status.' .
-                    ($data['isDraft'] === 'Y' ? 'draft' : 'approved')
-                );
-            }
+            'formatter' => fn($data, $col) => $this->translator->translate(
+                'common.table.status.' .
+                ($data['isDraft'] === 'Y' ? 'draft' : 'approved')
+            )
         ]
     ]
 ];

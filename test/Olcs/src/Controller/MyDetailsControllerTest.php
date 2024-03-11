@@ -298,7 +298,7 @@ class MyDetailsControllerTest extends TestCase
         $mockElementFamilyName = m::mock(Element::class);
         $mockFieldSet->shouldReceive('get')->with('familyName')->once()->andReturn($mockElementFamilyName);
 
-        $mockForm = m::mock('Common\Form\Form');
+        $mockForm = m::mock(\Common\Form\Form::class);
         $mockForm->shouldReceive('setData')->twice()->with($postData);
         $mockForm->shouldReceive('isValid')->once()->andReturn(true);
         $mockForm->shouldReceive('getData')->once()->andReturn($postData);

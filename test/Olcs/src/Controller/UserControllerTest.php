@@ -93,9 +93,7 @@ class UserControllerTest extends MockeryTestCase
         $this->mockForm->shouldReceive('get')->with('permission')->andReturnSelf();
 
         $this->mockTranslationHelper->shouldReceive('translate')->andReturnUsing(
-            function ($arg) {
-                return $arg . "_translated";
-            }
+            fn($arg) => $arg . "_translated"
         );
 
         $this->mockGuidanceHelper->shouldReceive('append');

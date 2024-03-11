@@ -43,35 +43,31 @@ return [
         [
             'title' => 'permits.irhp.valid.permits.table.expiry-date',
             'name' => 'expiryDate',
-            'formatter' => function ($row) {
-                return $this->callFormatter(
-                    [
-                        'name' => 'useByDate',
-                        'formatter' => Date::class,
-                    ],
-                    [
-                        'useByDate' => $row['irhpPermitRange']['irhpPermitStock']['validTo'] ?? null,
-                    ]
-                );
-            }
+            'formatter' => fn($row) => $this->callFormatter(
+                [
+                    'name' => 'useByDate',
+                    'formatter' => Date::class,
+                ],
+                [
+                    'useByDate' => $row['irhpPermitRange']['irhpPermitStock']['validTo'] ?? null,
+                ]
+            )
         ],
         [
             'title' => 'status',
             'name' => 'status',
-            'formatter' => function ($row) {
-                return $this->callFormatter(
-                    [
-                        'name' => 'status',
-                        'formatter' => RefDataStatus::class,
+            'formatter' => fn($row) => $this->callFormatter(
+                [
+                    'name' => 'status',
+                    'formatter' => RefDataStatus::class,
+                ],
+                [
+                    'status' => [
+                        'id' => RefData::PERMIT_VALID,
+                        'description' => RefData::PERMIT_VALID
                     ],
-                    [
-                        'status' => [
-                            'id' => RefData::PERMIT_VALID,
-                            'description' => RefData::PERMIT_VALID
-                        ],
-                    ]
-                );
-            }
+                ]
+            )
         ],
     ]
 ];

@@ -17,9 +17,7 @@ return [
             'title' => 'permits.irhp.unpaid.permits.table.permit',
             'isNumeric' => true,
             'name' => 'permitNumber',
-            'formatter' => function ($row) {
-                return '<b>' . Escape::html($row['permitNumber']) . '</b>';
-            },
+            'formatter' => fn($row) => '<b>' . Escape::html($row['permitNumber']) . '</b>',
         ],
         [
             'title' => 'permits.irhp.unpaid.permits.table.min-emission',
@@ -35,9 +33,7 @@ return [
         [
             'title' => 'permits.irhp.unpaid.permits.deselect-unwanted',
             'name' => 'deselectUnwanted',
-            'formatter' => function ($row) {
-                return '{checkboxPlaceholder}';
-            }
+            'formatter' => fn($row) => '{checkboxPlaceholder}'
         ],
     ]
 ];

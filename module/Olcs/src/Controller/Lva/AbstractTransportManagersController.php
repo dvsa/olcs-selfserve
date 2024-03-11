@@ -189,7 +189,7 @@ abstract class AbstractTransportManagersController extends CommonAbstractTmContr
             case RefData::TMA_STATUS_OPERATOR_SIGNED:
                 return $this->page3($tma, $isUserTm);
             case RefData::TMA_STATUS_RECEIVED:
-                return $this->page4($tma, $isUserTm);
+                return $this->page4($tma);
         }
     }
 
@@ -876,7 +876,7 @@ abstract class AbstractTransportManagersController extends CommonAbstractTmContr
     public function processResponsibilityFileUpload($file)
     {
         $data = $this->transportManagerHelper
-            ->getResponsibilityFileData($this->tma['transportManager']['id'], $file);
+            ->getResponsibilityFileData($this->tma['transportManager']['id']);
 
         $data['application'] = $this->getIdentifier();
         $data['licence'] = $this->getLicenceId();

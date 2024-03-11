@@ -36,24 +36,20 @@ return [
         [
             'title' => 'permits.irhp.valid.permits.table.country',
             'name' => 'country',
-            'formatter' => function ($row, $column) {
-                return Escape::html(
-                    $this->translator->translate($row['irhpPermitRange']['irhpPermitStock']['country']['countryDesc'])
-                );
-            },
+            'formatter' => fn($row, $column) => Escape::html(
+                $this->translator->translate($row['irhpPermitRange']['irhpPermitStock']['country']['countryDesc'])
+            ),
         ],
         [
             'title' => 'permits.irhp.valid.permits.table.type',
             'name' => 'type',
-            'formatter' => function ($row) {
-                return $this->callFormatter(
-                    [
-                        'name' => 'irhpPermitRangeType',
-                        'formatter' => IrhpPermitRangeType::class,
-                    ],
-                    $row['irhpPermitRange']
-                );
-            }
+            'formatter' => fn($row) => $this->callFormatter(
+                [
+                    'name' => 'irhpPermitRangeType',
+                    'formatter' => IrhpPermitRangeType::class,
+                ],
+                $row['irhpPermitRange']
+            )
         ],
         [
             'title' => 'permits.irhp.valid.permits.table.issued-date',
@@ -73,20 +69,18 @@ return [
         [
             'title' => 'status',
             'name' => 'status',
-            'formatter' => function ($row) {
-                return $this->callFormatter(
-                    [
-                        'name' => 'status',
-                        'formatter' => RefDataStatus::class,
+            'formatter' => fn($row) => $this->callFormatter(
+                [
+                    'name' => 'status',
+                    'formatter' => RefDataStatus::class,
+                ],
+                [
+                    'status' => [
+                        'id' => RefData::PERMIT_VALID,
+                        'description' => RefData::PERMIT_VALID
                     ],
-                    [
-                        'status' => [
-                            'id' => RefData::PERMIT_VALID,
-                            'description' => RefData::PERMIT_VALID
-                        ],
-                    ]
-                );
-            }
+                ]
+            )
         ],
     ]
 ];

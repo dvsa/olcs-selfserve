@@ -20,20 +20,18 @@ return [
         ],
         [
             'title' => 'dashboard-table-applications-status',
-            'formatter' => function ($row) {
-                return $this->callFormatter(
-                    [
-                        'name' => 'status',
-                        'formatter' => RefDataStatus::class,
+            'formatter' => fn($row) => $this->callFormatter(
+                [
+                    'name' => 'status',
+                    'formatter' => RefDataStatus::class,
+                ],
+                [
+                    'status' => [
+                        'id' => $row['status']['id'],
+                        'description' => $row['status']['description'],
                     ],
-                    [
-                        'status' => [
-                            'id' => $row['status']['id'],
-                            'description' => $row['status']['description'],
-                        ],
-                    ]
-                );
-            }
+                ]
+            )
         ],
     ]
 ];

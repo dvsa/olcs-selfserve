@@ -16,11 +16,9 @@ return [
         [
             'title' => 'permits.irhp.fee-breakdown.type',
             'name' => 'type',
-            'formatter' => function ($row, $column) {
-                return Escape::html(
-                    $this->translator->translate($row['type'])
-                );
-            },
+            'formatter' => fn($row, $column) => Escape::html(
+                $this->translator->translate($row['type'])
+            ),
         ],
         [
             'title' => 'permits.irhp.fee-breakdown.number-of-permits',
@@ -31,9 +29,7 @@ return [
             'title' => 'permits.irhp.fee-breakdown.total-fee',
             'isNumeric' => true,
             'name' => 'total',
-            'formatter' => function ($row, $column) {
-                return (new CurrencyFormatter())($row['total']);
-            }
+            'formatter' => fn($row, $column) => (new CurrencyFormatter())($row['total'])
         ],
     ],
     'footer' => [

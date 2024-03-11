@@ -43,9 +43,7 @@ return [
         [
             'title' => 'Service No.',
             'isNumeric' => true,
-            'formatter' => function ($row) {
-                return str_replace('(', ' (', $row['serviceNo']);
-            }
+            'formatter' => fn($row) => str_replace('(', ' (', $row['serviceNo'])
         ],
         [
             'title' => '1st-registered-cancelled',

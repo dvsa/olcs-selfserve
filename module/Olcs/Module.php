@@ -34,7 +34,7 @@ class Module
     public function getAutoloaderConfig()
     {
         return [
-            'Laminas\Loader\StandardAutoloader' => [
+            \Laminas\Loader\StandardAutoloader::class => [
                 'namespaces' => [
                     __NAMESPACE__ => __DIR__ . '/src/',
                 ],

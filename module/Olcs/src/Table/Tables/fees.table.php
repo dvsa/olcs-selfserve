@@ -32,9 +32,7 @@ return [
         ],
         [
             'title' => 'selfserve-fees-table-fee-reference',
-            'formatter' => function ($row, $col) {
-                return $row['licence']['licNo'];
-            },
+            'formatter' => fn($row, $col) => $row['licence']['licNo'],
         ],
         [
             'title' => 'selfserve-fees-table-fee-licence-outstanding',
@@ -47,9 +45,7 @@ return [
             'type' => 'Checkbox',
             'width' => 'checkbox',
             'name' => 'checkbox',
-            'disabled-callback' => function ($row) {
-                return $row['isExpiredForLicence'];
-            }
+            'disabled-callback' => fn($row) => $row['isExpiredForLicence']
         ]
     ],
     'footer' => [
