@@ -218,17 +218,17 @@ abstract class AbstractTransportManagersController extends CommonAbstractTmContr
         $hasProcessedCertificateFiles = $this->processFiles(
             $form,
             'details->certificate',
-            array($this, 'processCertificateUpload'),
-            array($this, 'deleteFile'),
-            array($this, 'getCertificates')
+            [$this, 'processCertificateUpload'],
+            [$this, 'deleteFile'],
+            [$this, 'getCertificates']
         );
 
         $hasProcessedResponsibilitiesFiles = $this->processFiles(
             $form,
             'responsibilities->file',
-            array($this, 'processResponsibilityFileUpload'),
-            array($this, 'deleteFile'),
-            array($this, 'getResponsibilityFiles')
+            [$this, 'processResponsibilityFileUpload'],
+            [$this, 'deleteFile'],
+            [$this, 'getResponsibilityFiles']
         );
 
         $hasProcessedFiles = ($hasProcessedCertificateFiles || $hasProcessedResponsibilitiesFiles);

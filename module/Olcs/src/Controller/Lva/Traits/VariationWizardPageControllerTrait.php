@@ -183,7 +183,7 @@ trait VariationWizardPageControllerTrait
         return count($sections) === count($requiredSections);
     }
 
-    protected function render($content, Form $form = null, $variables = array())
+    protected function render($content, Form $form = null, $variables = [])
     {
         $backUrl = $this->getBackUrl();
 

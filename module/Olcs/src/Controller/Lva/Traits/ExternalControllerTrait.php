@@ -109,7 +109,7 @@ trait ExternalControllerTrait
      *
      * @return ViewModel
      */
-    protected function render($titleSuffix, Form $form = null, $variables = array())
+    protected function render($titleSuffix, Form $form = null, $variables = [])
     {
         $this->attachCurrentMessages();
 
@@ -118,7 +118,7 @@ trait ExternalControllerTrait
         }
 
         $params = array_merge(
-            array('title' => 'lva.section.title.' . $titleSuffix, 'form' => $form),
+            ['title' => 'lva.section.title.' . $titleSuffix, 'form' => $form],
             $variables
         );
         if ($this->lva === 'licence') {

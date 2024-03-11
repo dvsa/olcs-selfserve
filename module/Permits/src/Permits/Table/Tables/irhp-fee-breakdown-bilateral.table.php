@@ -3,17 +3,17 @@
 use Common\Util\Escape;
 use Common\View\Helper\CurrencyFormatter;
 
-return array(
-    'variables' => array(),
-    'settings' => array(
-    ),
-    'attributes' => array(),
-    'columns' => array(
-        array(
+return [
+    'variables' => [],
+    'settings' => [
+    ],
+    'attributes' => [],
+    'columns' => [
+        [
             'title' => 'permits.irhp.fee-breakdown.country',
             'name' => 'countryName',
-        ),
-        array(
+        ],
+        [
             'title' => 'permits.irhp.fee-breakdown.type',
             'name' => 'type',
             'formatter' => function ($row, $column) {
@@ -21,28 +21,28 @@ return array(
                     $this->translator->translate($row['type'])
                 );
             },
-        ),
-        array(
+        ],
+        [
             'title' => 'permits.irhp.fee-breakdown.number-of-permits',
             'isNumeric' => true,
             'name' => 'quantity',
-        ),
-        array(
+        ],
+        [
             'title' => 'permits.irhp.fee-breakdown.total-fee',
             'isNumeric' => true,
             'name' => 'total',
             'formatter' => function ($row, $column) {
                 return (new CurrencyFormatter())($row['total']);
             }
-        ),
-    ),
-    'footer' => array(
-        array(
+        ],
+    ],
+    'footer' => [
+        [
             'content' => 'Total',
             'colspan' => 2,
             'align' => 'govuk-!-text-align-left',
-        ),
-        array(
+        ],
+        [
             'align' => 'govuk-!-text-align-left',
             'formatter' => function ($rows, $column) {
                 $total = 0;
@@ -51,8 +51,8 @@ return array(
                 }
                 return $total;
             }
-        ),
-        array(
+        ],
+        [
             'content' => 'Total',
             'isNumeric' => true,
             'formatter' => function ($rows, $column) {
@@ -63,6 +63,6 @@ return array(
 
                 return (new CurrencyFormatter())($total);
             }
-        ),
-    )
-);
+        ],
+    ]
+];

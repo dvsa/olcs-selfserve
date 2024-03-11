@@ -7,9 +7,9 @@ use Laminas\View\Model\ViewModel;
 
 abstract class LvaOverviewSection extends ViewModel
 {
-    protected $variables = array(
+    protected $variables = [
         'enabled' => true
-    );
+    ];
 
     /**
      * Holds the section reference

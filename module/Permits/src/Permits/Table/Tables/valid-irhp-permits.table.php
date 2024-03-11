@@ -6,41 +6,41 @@ use Common\Service\Table\Formatter\NullableNumber;
 use Common\Service\Table\Formatter\RefDataStatus;
 use Common\Service\Table\Formatter\StackValue;
 
-return array(
-    'variables' => array(),
-    'settings' => array(
-        'paginate' => array(
-            'limit' => array(
+return [
+    'variables' => [],
+    'settings' => [
+        'paginate' => [
+            'limit' => [
                 'default' => 10,
-                'options' => array(10, 25, 50)
-            ),
-        ),
-    ),
-    'attributes' => array(),
-    'columns' => array(
-        array(
+                'options' => [10, 25, 50]
+            ],
+        ],
+    ],
+    'attributes' => [],
+    'columns' => [
+        [
             'title' => 'permits.irhp.valid.permits.table.permit-no',
             'isNumeric' => true,
             'name' => 'permitNumber',
             'formatter' => NullableNumber::class,
-        ),
-        array(
+        ],
+        [
             'title' => 'permits.irhp.valid.permits.table.application-no',
             'name' => 'irhpApplication',
             'stack' => 'irhpPermitApplication->relatedApplication->id',
             'formatter' => StackValue::class,
-        ),
-        array(
+        ],
+        [
             'title' => 'permits.irhp.valid.permits.table.issue-date',
             'name' => 'issueDate',
             'formatter' => Date::class,
-        ),
-        array(
+        ],
+        [
             'title' => 'permits.irhp.valid.permits.table.start-date',
             'name' => 'startDate',
             'formatter' => Date::class,
-        ),
-        array(
+        ],
+        [
             'title' => 'permits.irhp.valid.permits.table.expiry-date',
             'name' => 'expiryDate',
             'formatter' => function ($row) {
@@ -54,8 +54,8 @@ return array(
                     ]
                 );
             }
-        ),
-        array(
+        ],
+        [
             'title' => 'status',
             'name' => 'status',
             'formatter' => function ($row) {
@@ -72,6 +72,6 @@ return array(
                     ]
                 );
             }
-        ),
-    )
-);
+        ],
+    ]
+];

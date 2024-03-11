@@ -155,7 +155,7 @@ class CheckAnswersController extends AbstractController
         ];
 
         $form = $this->getConfirmationForm();
-        return array($title, $defaultParams, $form);
+        return [$title, $defaultParams, $form];
     }
 
     private function redirectToTmDeclarationPage(): \Laminas\Http\Response

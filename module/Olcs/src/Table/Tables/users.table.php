@@ -2,27 +2,27 @@
 
 use Common\Service\Table\Formatter\Name;
 
-return array(
+return [
     'variables' => [
         'title' => 'manage-users.table.title.count'
     ],
-    'settings' => array(
-        'crud' => array(
-            'actions' => array(
+    'settings' => [
+        'crud' => [
+            'actions' => [
                 'add' => [
                     'label' => 'add-a-user',
                     'class' => 'govuk-button',
                     'id' => 'addUser'
                 ],
-            )
-        ),
-        'paginate' => array(
-            'limit' => array(
+            ]
+        ],
+        'paginate' => [
+            'limit' => [
                 'default' => 10,
-                'options' => array(10, 25, 50)
-            )
-        )
-    ),
+                'options' => [10, 25, 50]
+            ]
+        ]
+    ],
     'attributes' => [],
     'columns' => [
         [
@@ -70,4 +70,4 @@ return array(
             'actionClasses' => 'left-aligned govuk-button govuk-button--secondary'
         ],
     ]
-);
+];

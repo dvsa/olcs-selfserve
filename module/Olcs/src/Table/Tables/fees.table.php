@@ -5,44 +5,44 @@ use Common\Service\Table\Formatter\FeeAmountSum;
 use Common\Service\Table\Formatter\FeeUrlExternal;
 use Common\Service\Table\Formatter\Translate;
 
-return array(
-    'variables' => array(
+return [
+    'variables' => [
         'title' => 'dashboard-fees.table.title',
         'empty_message' => 'dashboard-fees-empty-message',
-    ),
-    'settings' => array(
-        'crud' => array(
+    ],
+    'settings' => [
+        'crud' => [
             'formName' => 'fees',
-            'actions' => array(
-                'pay' => array(
+            'actions' => [
+                'pay' => [
                     'class' => 'govuk-button govuk-button--secondary js-require--multiple',
                     'value' => 'Pay',
                     'requireRows' => true
-                ),
-            )
-        ),
-    ),
-    'attributes' => array(
-    ),
-    'columns' => array(
-        array(
+                ],
+            ]
+        ],
+    ],
+    'attributes' => [
+    ],
+    'columns' => [
+        [
             'title' => 'selfserve-fees-table-fee-description',
             'name' => 'description',
             'formatter' => FeeUrlExternal::class,
-        ),
-        array(
+        ],
+        [
             'title' => 'selfserve-fees-table-fee-reference',
             'formatter' => function ($row, $col) {
                 return $row['licence']['licNo'];
             },
-        ),
-        array(
+        ],
+        [
             'title' => 'selfserve-fees-table-fee-licence-outstanding',
             'name' => 'outstanding',
             'formatter' => FeeAmount::class,
             'isNumeric' => true,
-        ),
-        array(
+        ],
+        [
             'title' => 'action',
             'type' => 'Checkbox',
             'width' => 'checkbox',
@@ -50,24 +50,24 @@ return array(
             'disabled-callback' => function ($row) {
                 return $row['isExpiredForLicence'];
             }
-        )
-    ),
-    'footer' => array(
-        'total' => array(
+        ]
+    ],
+    'footer' => [
+        'total' => [
             'type' => 'th',
             'content' => 'dashboard-fees-total',
             'formatter' => Translate::class,
             'colspan' => 2
-        ),
-        array(
+        ],
+        [
             'type' => 'th',
             'formatter' => FeeAmountSum::class,
             'name' => 'amount',
             'align' => 'govuk-!-text-align-right',
-        ),
-        'remainingColspan' => array(
+        ],
+        'remainingColspan' => [
             'type' => 'th',
             'colspan' => 1
-        ),
-    ),
-);
+        ],
+    ],
+];
