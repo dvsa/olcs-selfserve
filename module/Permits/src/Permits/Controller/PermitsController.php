@@ -32,6 +32,8 @@ class PermitsController extends AbstractSelfserveController
 
     protected $currentMessages = [];
 
+    protected $lva;
+
     /**
      * @todo This is just a placeholder, this will be implemented properly using system parameters in OLCS-20848
      *
