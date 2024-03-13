@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "936886d26b36257c1f6c11299365d459",
+    "content-hash": "3550d14df0904da885344c8c9c8d26c1",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -4464,16 +4464,16 @@
         },
         {
             "name": "olcs/olcs-auth",
-            "version": "v6.0.0",
+            "version": "dev-remove-open-am-vol-2661",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dvsa/olcs-auth.git",
-                "reference": "0f6697ca81e8c169af0aca385781a52ac0b9dc55"
+                "reference": "921a5080a043786dcc3f072de9da5e7973466a2e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dvsa/olcs-auth/zipball/0f6697ca81e8c169af0aca385781a52ac0b9dc55",
-                "reference": "0f6697ca81e8c169af0aca385781a52ac0b9dc55",
+                "url": "https://api.github.com/repos/dvsa/olcs-auth/zipball/921a5080a043786dcc3f072de9da5e7973466a2e",
+                "reference": "921a5080a043786dcc3f072de9da5e7973466a2e",
                 "shasum": ""
             },
             "require": {
@@ -4516,9 +4516,9 @@
             ],
             "description": "OLCS Authentication",
             "support": {
-                "source": "https://github.com/dvsa/olcs-auth/tree/v6.0.0"
+                "source": "https://github.com/dvsa/olcs-auth/tree/remove-open-am-vol-2661"
             },
-            "time": "2024-02-20T12:13:06+00:00"
+            "time": "2024-03-15T10:32:02+00:00"
         },
         {
             "name": "olcs/olcs-common",
@@ -8757,11 +8757,14 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "olcs/olcs-auth": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^7.4"
+        "php": "^7.4",
+        "ext-redis": "*"
     },
     "platform-dev": [],
     "platform-overrides": {

@@ -50,13 +50,9 @@ return [
 
     // Asset path, URI to olcs-static (CSS, JS, etc] *Environment specific*
     'asset_path' => '/static/public',
-
-    'openam' => [
-        'url' => 'http://ssauth.%domain%:8080/secure/',
-        'realm' => 'selfserve',//@deprecated
-        'cookie' => [
-            'domain' => '%olcs_ss_cookie%',
-        ]
+    'cookie' => [
+        'domain' => 'app.olcs.dvsacloud.uk',
+        'name' => 'cookName',
     ],
     'cookie-manager' => [
         'delete-undefined-cookies' => true,
