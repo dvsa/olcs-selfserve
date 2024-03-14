@@ -33,7 +33,7 @@ class Create
      *     "empty_option": "Please select",
      *     "disable_inarray_validator": false,
      *     "service_name": \Olcs\Service\Data\MessagingAppOrLicNo::class,
-     *     "use_groups": true
+     *     "use_groups": true,
      * })
      * @Form\Attributes({
      *     "class": "govuk-select"
@@ -50,7 +50,10 @@ class Create
      * })
      * @Form\Options({
      *     "label": "",
-     *     "hint": "You can enter up to 1000 characters"
+     *     "hint": "You can enter up to 1000 characters",
+     *     "minLength_validation_error_message": "messaging.form.message.content.too_short.error_message",
+     *     "maxLength_validation_error_message": "messaging.form.message.content.too_long.error_message",
+     *     "notEmpty_validation_error_message": "messaging.form.message.content.empty.error_message"
      * })
      * @Form\Required(true)
      * @Form\Type(\Laminas\Form\Element\Textarea::class)

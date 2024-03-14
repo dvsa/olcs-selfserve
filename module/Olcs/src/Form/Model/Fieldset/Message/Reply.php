@@ -20,7 +20,10 @@ class Reply
      * })
      * @Form\Options({
      *     "label": "",
-     *     "hint": "You can enter up to 1000 characters"
+     *     "hint": "You can enter up to 1000 characters",
+     *     "minLength_validation_error_message": "messaging.form.message.content.too_short.error_message",
+     *     "maxLength_validation_error_message": "messaging.form.message.content.too_long.error_message",
+     *     "notEmpty_validation_error_message": "messaging.form.message.content.empty.error_message"
      * })
      * @Form\Required(true)
      * @Form\Type(Textarea::class)
