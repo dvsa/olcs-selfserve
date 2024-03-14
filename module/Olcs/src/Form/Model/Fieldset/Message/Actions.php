@@ -11,7 +11,10 @@ use Laminas\Form\Annotation as Form;
 class Actions
 {
     /**
-     * @Form\Attributes({"value": "markup-messaging-new-conversation-timeframe"})
+     * @Form\Attributes({
+     *     "value": "markup-messaging-new-conversation-timeframe",
+     *     "id": "guidance"
+     * })
      * @Form\Type(GuidanceTranslated::class)
      */
     public ?GuidanceTranslated $guidance = null;

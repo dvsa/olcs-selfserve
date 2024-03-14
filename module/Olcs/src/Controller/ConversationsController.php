@@ -219,8 +219,7 @@ class ConversationsController extends AbstractController implements ToggleAwareI
 
         $table = $this->tableFactory->buildTable('messages-view', $messages, $params);
 
-        $fileFieldset = $form->get('form-actions')->get('file');
-        $fileFieldset->setAttribute('class', $fileFieldset->getAttribute('class') . ' last');
+        $form->get('form-actions')->get('actions')->remove('guidance');
 
         $canUploadFiles = $this->getCurrentOrganisation()['isMessagingFileUploadEnabled'];
         if (!$canUploadFiles) {
