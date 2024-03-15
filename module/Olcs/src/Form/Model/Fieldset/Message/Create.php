@@ -17,14 +17,21 @@ class Create
      * @Form\Options({
      *     "label": "messaging.subject",
      *     "empty_option": "Please select",
-     *     "disable_inarray_validator": false,
      *     "service_name": \Common\Service\Data\MessagingSubject::class
      * })
      * @Form\Attributes({
      *     "class": "govuk-select"
      * })
      * @Form\Type(\Common\Form\Element\DynamicSelect::class)
-     * @Form\Required(true)
+     * @Form\Validator("Laminas\Validator\NotEmpty",
+     *         options={
+     *             "messages": {
+     *                 Laminas\Validator\NotEmpty::IS_EMPTY: "messaging.form.message.subject.empty.error_message"
+     *             },
+     *         },
+     *         breakChainOnFailure=true,
+     *         priority=100
+     *    )
      */
     public ?DynamicSelect $messageSubject = null;
 
@@ -32,15 +39,22 @@ class Create
      * @Form\Options({
      *     "label": "messaging.app-or-lic-no",
      *     "empty_option": "Please select",
-     *     "disable_inarray_validator": false,
      *     "service_name": \Olcs\Service\Data\MessagingAppOrLicNo::class,
-     *     "use_groups": true,
+     *     "use_groups": true
      * })
      * @Form\Attributes({
      *     "class": "govuk-select"
      * })
      * @Form\Type(\Common\Form\Element\DynamicSelect::class)
-     * @Form\Required(true)
+     * @Form\Validator("Laminas\Validator\NotEmpty",
+     *          options={
+     *              "messages": {
+     *                  Laminas\Validator\NotEmpty::IS_EMPTY: "messaging.form.message.app_or_lic_no.empty.error_message"
+     *              },
+     *          },
+     *          breakChainOnFailure=true,
+     *          priority=100
+     *     )
      */
     public ?DynamicSelect $appOrLicNo = null;
 
@@ -52,14 +66,28 @@ class Create
      * @Form\Options({
      *     "label": "",
      *     "hint": "You can enter up to 1000 characters",
-     *     "minLength_validation_error_message": "messaging.form.message.content.too_short.error_message",
-     *     "maxLength_validation_error_message": "messaging.form.message.content.too_long.error_message",
-     *     "notEmpty_validation_error_message": "messaging.form.message.content.empty.error_message"
      * })
-     * @Form\Required(true)
      * @Form\Type(\Laminas\Form\Element\Textarea::class)
      * @Form\Filter(\Laminas\Filter\StringTrim::class)
-     * @Form\Validator(\Laminas\Validator\StringLength::class, options={"min": 5, "max": 1000})
+     * @Form\Required(true)
+     * @Form\Validator("Laminas\Validator\NotEmpty",
+     *       options={
+     *           "messages": {
+     *               Laminas\Validator\NotEmpty::IS_EMPTY: "messaging.form.message.content.empty.error_message"
+     *           },
+     *       },
+     *       breakChainOnFailure=true
+     *  )
+     * @Form\Validator(\Laminas\Validator\StringLength::class,
+     *     options={
+     *         "min": 5,
+     *         "max": 1000,
+     *         "messages": {
+     *              Laminas\Validator\StringLength::TOO_SHORT: "messaging.form.message.content.too_short.error_message",
+     *              Laminas\Validator\StringLength::TOO_LONG: "messaging.form.message.content.too_long.error_message",
+     *          }
+     *     }
+     * )
      */
     public ?TextArea $messageContent = null;
 
