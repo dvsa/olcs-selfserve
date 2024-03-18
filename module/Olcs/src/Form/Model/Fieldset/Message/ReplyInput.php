@@ -24,7 +24,7 @@ class ReplyInput
      * @Form\Required(true)
      * @Form\Type(Textarea::class)
      * @Form\Filter(StringTrim::class)
-     * @Form\Validator("NotEmpty",
+     * @Form\Validator(NotEmpty::class,
      *     options={
      *         "messages":{NotEmpty::IS_EMPTY: "messaging.form.message.content.empty.error_message"},
      *     },
@@ -35,8 +35,8 @@ class ReplyInput
      *         "min": 5,
      *         "max": 1000,
      *         "messages": {
-     *              Laminas\Validator\StringLength::TOO_SHORT: "messaging.form.message.content.too_short.error_message",
-     *              Laminas\Validator\StringLength::TOO_LONG: "messaging.form.message.content.too_long.error_message",
+     *              StringLength::TOO_SHORT: "messaging.form.message.content.too_short.error_message",
+     *              StringLength::TOO_LONG: "messaging.form.message.content.too_long.error_message",
      *          }
      *     }
      * )
