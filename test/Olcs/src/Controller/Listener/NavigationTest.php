@@ -5,8 +5,10 @@ namespace OlcsTest\Listener;
 use Common\Rbac\User as RbacUser;
 use Common\Service\Cqrs\Query\QuerySender;
 use Laminas\Navigation\Page\AbstractPage;
+use LmcRbacMvc\Service\AuthorizationService;
 use Olcs\Controller\Listener\Navigation as NavigationListener;
 use Mockery as m;
+use Common\RefData;
 use Laminas\Http\Header\Referer as HttpReferer;
 use Laminas\Http\PhpEnvironment\Request as HttpRequest;
 use Laminas\Navigation\Navigation;
@@ -37,8 +39,10 @@ class NavigationTest extends m\Adapter\Phpunit\MockeryTestCase
         $this->mockNavigation = m::mock(Navigation::class);
         $this->mockQuerySender = m::mock(QuerySender::class);
         $this->mockResponse = m::mock(CqrsResponse::class);
-        $this->mockIdentity = m::mock(RbacUser::class);
-        $this->sut = new NavigationListener($this->mockNavigation, $this->mockQuerySender, $this->mockIdentity);
+
+        $this->mockAuthService = m::mock(AuthorizationService::class);
+
+        $this->sut = new NavigationListener($this->mockNavigation, $this->mockQuerySender, $this->mockAuthService);
 
         $this->dashboardPermitsKey = 'dashboard-permits';
         $this->dashboardPermitsPage = new Uri();
@@ -64,10 +68,10 @@ class NavigationTest extends m\Adapter\Phpunit\MockeryTestCase
 
     public function testOnDispatchWithNoReferalAnonymousUser()
     {
-        $this->mockIdentity->shouldReceive('isAnonymous')->once()->withNoArgs()->andReturn(true);
+        $this->mockAuthService->shouldReceive('getIdentity->isAnonymous')->once()->withNoArgs()->andReturn(true);
 
-        $this->mockIdentity->expects('getUserData')
-            ->twice()
+        $this->mockAuthService->expects('getIdentity->getUserData')
+            ->once()
             ->andReturn([
                 'hasOrganisationSubmittedLicenceApplication' => false,
                 'organisationUsers' => [
@@ -90,32 +94,14 @@ class NavigationTest extends m\Adapter\Phpunit\MockeryTestCase
 
         $this->mockNavigation
             ->shouldReceive('findBy')
-            ->twice()
+            ->once()
             ->with('id', $this->dashboardMessagingKey)
             ->andReturn($this->dashboardMessagingPage);
 
-        $this->mockNavigation
-            ->shouldReceive('findBy')
-            ->with('id', $this->dashboardMenuKey)
-            ->once()
-            ->andReturn($this->mockDashboardMenu);
-
-        $this->mockDashboardMenu
-            ->shouldReceive('findBy')
-            ->with('id', $this->dashboardMessagingKey)
-            ->once()
-            ->andReturn($this->dashboardMessagingPage);
-
-        $this->mockIdentity->shouldReceive('getId')
+        $this->mockAuthService->shouldReceive('isGranted')
+            ->with(RefData::PERMISSION_CAN_LIST_CONVERSATIONS)
             ->once()
             ->andReturn(1);
-
-        $this->mockQuerySender->shouldReceive('send')
-            ->once()
-            ->andReturn($this->mockResponse);
-
-        $this->mockResponse->shouldReceive('getResult')
-            ->once();
 
         $request = m::mock(HttpRequest::class);
         $request->shouldReceive('getHeader')->once()->with('referer')->andReturn(false);
@@ -130,11 +116,6 @@ class NavigationTest extends m\Adapter\Phpunit\MockeryTestCase
             false,
             $this->mockNavigation->findBy('id', $this->dashboardPermitsKey)->getVisible()
         );
-
-        $this->assertEquals(
-            false,
-            $this->mockNavigation->findBy('id', $this->dashboardMessagingKey)->getVisible()
-        );
     }
 
     /**
@@ -142,10 +123,10 @@ class NavigationTest extends m\Adapter\Phpunit\MockeryTestCase
      */
     public function testOnDispatchWithNoReferal($eligibleForPermits)
     {
-        $this->mockIdentity->shouldReceive('isAnonymous')->once()->withNoArgs()->andReturn(false);
+        $this->mockAuthService->shouldReceive('getIdentity->isAnonymous')->once()->withNoArgs()->andReturn(false);
 
-        $this->mockIdentity->expects('getUserData')
-            ->times(3)
+        $this->mockAuthService->expects('getIdentity->getUserData')
+            ->times(2)
             ->andReturn([
                 'eligibleForPermits' => $eligibleForPermits,
                 'hasOrganisationSubmittedLicenceApplication' => false,
@@ -197,8 +178,8 @@ class NavigationTest extends m\Adapter\Phpunit\MockeryTestCase
         $request = m::mock(HttpRequest::class);
         $request->shouldReceive('getHeader')->once()->with('referer')->andReturn($referer);
 
-        $this->mockIdentity->expects('getUserData')
-            ->twice()
+        $this->mockAuthService->expects('getIdentity->getUserData')
+            ->once()
             ->andReturn([
                 'hasOrganisationSubmittedLicenceApplication' => false,
                 'organisationUsers' => [
@@ -231,11 +212,11 @@ class NavigationTest extends m\Adapter\Phpunit\MockeryTestCase
      */
     public function testOnDispatchWithNoGovUkReferal($eligibleForPermits)
     {
-        $this->mockIdentity->shouldReceive('isAnonymous')
+        $this->mockAuthService->shouldReceive('getIdentity->isAnonymous')
             ->andReturn(false);
 
-        $this->mockIdentity->expects('getUserData')
-            ->times(3)
+        $this->mockAuthService->expects('getIdentity->getUserData')
+            ->times(2)
             ->andReturn([
                 'eligibleForPermits' => $eligibleForPermits,
                 'hasOrganisationSubmittedLicenceApplication' => false,
@@ -280,6 +261,11 @@ class NavigationTest extends m\Adapter\Phpunit\MockeryTestCase
     }
 
     public function navigationExpectations(){
+        $this->mockAuthService->shouldReceive('isGranted')
+            ->with(RefData::PERMISSION_CAN_LIST_CONVERSATIONS)
+            ->once()
+            ->andReturn(1);
+
         $this->mockNavigation
             ->shouldReceive('findBy')
             ->twice()
@@ -291,29 +277,6 @@ class NavigationTest extends m\Adapter\Phpunit\MockeryTestCase
             ->once()
             ->with('id', $this->dashboardMessagingKey)
             ->andReturn($this->dashboardMessagingPage);
-
-        $this->mockNavigation
-            ->shouldReceive('findBy')
-            ->with('id', $this->dashboardMenuKey)
-            ->once()
-            ->andReturn($this->mockDashboardMenu);
-
-        $this->mockDashboardMenu
-            ->shouldReceive('findBy')
-            ->with('id', $this->dashboardMessagingKey)
-            ->once()
-            ->andReturn($this->dashboardMessagingPage);
-
-        $this->mockIdentity->shouldReceive('getId')
-            ->once()
-            ->andReturn(1);
-
-        $this->mockQuerySender->shouldReceive('send')
-            ->once()
-            ->andReturn($this->mockResponse);
-
-        $this->mockResponse->shouldReceive('getResult')
-            ->once();
     }
 
 }
