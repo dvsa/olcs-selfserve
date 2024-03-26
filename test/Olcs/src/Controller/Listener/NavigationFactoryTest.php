@@ -13,7 +13,7 @@ use LmcRbacMvc\Service\AuthorizationService;
 
 class NavigationFactoryTest extends m\Adapter\Phpunit\MockeryTestCase
 {
-    public function testInvoke()
+    public function testInvoke(): void
     {
         $navigation = m::mock(LaminasNavigation::class);
         $querySender = m::mock(QuerySender::class);
