@@ -170,14 +170,14 @@ class Navigation implements ListenerAggregateInterface
         $this->navigation->findBy('id', 'dashboard-messaging')
             ->setVisible($shouldShowMessagesTab);
 
-        if ($shouldShowMessagesTab){
+        if ($shouldShowMessagesTab) {
             $this->addUnreadMessagingCount();
         }
     }
 
     private function shouldShowMessagesTab(): bool
     {
-        if (!$this->authService->isGranted(RefData::PERMISSION_CAN_LIST_CONVERSATIONS)){
+        if (!$this->authService->isGranted(RefData::PERMISSION_CAN_LIST_CONVERSATIONS)) {
             return false;
         };
 
