@@ -135,14 +135,6 @@ class StartController extends AbstractSelfserveController implements ToggleAware
         ];
     }
 
-    /**
-     * getView
-     *
-     * @param array                    $licence
-     * @param TranslationHelperService $translateService
-     *
-     * @return ViewModel
-     */
     private function getView(array $licence, TranslationHelperService $translateService): ViewModel
     {
         $view = $this->genericView();
