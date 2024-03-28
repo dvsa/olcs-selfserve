@@ -13,6 +13,7 @@ use Dvsa\Olcs\Transfer\Command\Surrender\Create;
 use Laminas\Http\Response;
 use Laminas\I18n\Translator\Translator;
 use Laminas\Mvc\MvcEvent;
+use Laminas\View\Model\ViewModel;
 use Olcs\Controller\AbstractSelfserveController;
 use Olcs\Controller\Config\DataSource\DataSourceConfig;
 use Permits\Controller\Config\FeatureToggle\FeatureToggleConfig;
@@ -68,7 +69,7 @@ class StartController extends AbstractSelfserveController implements ToggleAware
     /**
      * IndexAction
      *
-     * @return array|\Laminas\View\Model\ViewModel
+     * @return array|ViewModel
      */
     public function indexAction()
     {
@@ -126,7 +127,7 @@ class StartController extends AbstractSelfserveController implements ToggleAware
      *
      * @psalm-return array{pageTitle: 'licence.surrender.start.title.psv', cancelBus: list{mixed}}
      */
-    private function getPsvData(Translator $translateService): array
+    private function getPsvData(TranslationHelperService $translateService): array
     {
         return [
             'pageTitle' => 'licence.surrender.start.title.psv',
@@ -137,12 +138,12 @@ class StartController extends AbstractSelfserveController implements ToggleAware
     /**
      * getView
      *
-     * @param array    $licence
-     * @param Translator $translateService
+     * @param array                    $licence
+     * @param TranslationHelperService $translateService
      *
-     * @return \Laminas\View\Model\ViewModel
+     * @return ViewModel
      */
-    private function getView($licence, $translateService): \Laminas\View\Model\ViewModel
+    private function getView(array $licence, TranslationHelperService $translateService): ViewModel
     {
         $view = $this->genericView();
 
