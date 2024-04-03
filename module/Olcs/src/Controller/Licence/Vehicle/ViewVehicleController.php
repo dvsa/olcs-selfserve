@@ -16,7 +16,7 @@ use Laminas\Form\Element\Select;
 use Laminas\Form\Form;
 use Laminas\Http\Request;
 use Laminas\Http\Response;
-use Laminas\Mvc\Controller\Plugin\FlashMessenger;
+use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Laminas\Router\RouteMatch;
 use Laminas\View\Model\ViewModel;
 use Olcs\DTO\Licence\OtherActiveLicenceListDTO;
@@ -133,7 +133,7 @@ class ViewVehicleController extends AbstractVehicleController
      * @param Request $request
      * @param RouteMatch $routeMatch
      */
-    protected function prepareForm(Form $form, Request $request, RouteMatch $routeMatch)
+    protected function prepareForm(Form $form, Request $request, RouteMatch $routeMatch): void
     {
         $input = $request->isPost() ? $request->getPost()->toArray() : [];
         $licenceId = (int) $routeMatch->getParam('licence');
@@ -162,7 +162,7 @@ class ViewVehicleController extends AbstractVehicleController
      * @param Select $select
      * @param array $licences
      */
-    protected function setLicenceSelectValueOptions(Select $select, array $licences)
+    protected function setLicenceSelectValueOptions(Select $select, array $licences): void
     {
         $select->setValueOptions($this->prepareLicenceSelectValueOptions($licences));
         $select->setEmptyOption("licence.vehicle.view.switchboard.option.transfer.select.empty-option");

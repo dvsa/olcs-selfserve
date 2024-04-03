@@ -3,6 +3,7 @@
 namespace Olcs\Controller\Lva\TransportManager;
 
 use Common\Controller\Lva\AbstractController;
+use Common\Data\Mapper\Lva\TransportManagerApplication;
 use Common\FeatureToggle;
 use Common\Form\Form;
 use Common\RefData;
@@ -31,11 +32,6 @@ abstract class AbstractDeclarationController extends AbstractController
     protected ScriptFactory $scriptFactory;
     protected AnnotationBuilder $transferAnnotationBuilder;
     protected CommandService $commandService;
-
-    /**
-     * @var TransportManagerApplication
-     */
-    protected $tma;
 
     /**
      * @param NiTextTranslation $niTextTranslationUtil
@@ -140,7 +136,7 @@ abstract class AbstractDeclarationController extends AbstractController
         return [];
     }
 
-    protected function digitalSignatureAction()
+    protected function digitalSignatureAction(): \Laminas\Http\Response
     {
         $role = $this->getSignAsRole();
         // this will be either RefData::TMA_SIGN_AS_TM || RefData::TMA_SIGN_AS_TM_OP
@@ -199,6 +195,7 @@ abstract class AbstractDeclarationController extends AbstractController
             );
         } else {
             $this->flashMessenger()->addErrorMessage('unknown-error');
+            return $this->redirect()->refresh();
         }
     }
 

@@ -39,7 +39,7 @@ class LicencePeopleAdapter extends AbstractPeopleAdapter
      *
      * @return void
      */
-    public function alterFormForOrganisation(Form $form, $table)
+    public function alterFormForOrganisation(Form $form, $table): void
     {
         if ($this->canModify()) {
             parent::alterFormForOrganisation($form, $table);
@@ -54,7 +54,7 @@ class LicencePeopleAdapter extends AbstractPeopleAdapter
      *
      * @param \Laminas\Form\Form $form form
      *
-     * @return mixed
+     * @return void
      */
     public function alterAddOrEditFormForOrganisation(Form $form)
     {

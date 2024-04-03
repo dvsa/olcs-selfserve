@@ -13,13 +13,11 @@ use LmcRbacMvc\Service\AuthorizationService;
 
 class NavigationFactoryTest extends m\Adapter\Phpunit\MockeryTestCase
 {
-    public function testInvoke()
+    public function testInvoke(): void
     {
-        $identity = m::mock(RbacUser::class);
         $navigation = m::mock(LaminasNavigation::class);
         $querySender = m::mock(QuerySender::class);
         $authService = m::mock(AuthorizationService::class);
-        $authService->shouldReceive('getIdentity')->once()->withNoArgs()->andReturn($identity);
 
         $mockSl = m::mock(ContainerInterface::class);
         $mockSl->shouldReceive('get')

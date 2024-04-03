@@ -23,6 +23,8 @@ abstract class AbstractUploadEvidenceController extends AbstractController
 
     protected string $location = 'external';
 
+    protected $operatingCentreId;
+
     /**
      * Data from API
      * @var array
@@ -61,7 +63,8 @@ abstract class AbstractUploadEvidenceController extends AbstractController
     /**
      * Index action
      *
-     * @return \Common\View\Model\Section
+     * @return \Common\View\Model\Section|\Laminas\Http\Response
+     * @psalm-suppress UndefinedDocblockClass
      */
     public function indexAction()
     {

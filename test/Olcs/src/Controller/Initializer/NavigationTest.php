@@ -3,7 +3,7 @@
 namespace OlcsTest\Controller\Initializer;
 
 use Common\Controller\AbstractOlcsController;
-use Dvsa\Olcs\Auth\Controller\LoginController;
+use Olcs\Controller\Auth\LoginController;
 use Psr\Container\ContainerInterface;
 use Laminas\Mvc\MvcEvent;
 use Olcs\Controller\Initializer\Navigation as NavigationInitializer;
@@ -36,7 +36,7 @@ class NavigationTest extends m\Adapter\Phpunit\MockeryTestCase
     /**
      * Check the initializer doesn't try to attach the nav listener on the login page
      */
-    public function testInvokeFromLoginPage()
+    public function testInvokeFromLoginPage(): void
     {
         $instance = m::mock(LoginController::class);
         $instance->shouldNotReceive('getEventManager->attach');

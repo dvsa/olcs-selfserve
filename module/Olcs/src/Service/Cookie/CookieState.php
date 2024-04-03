@@ -7,13 +7,16 @@ use RuntimeException;
 
 class CookieState
 {
+    protected bool $isValid;
+    protected ?Preferences $preferences;
+
     /**
      * Create instance
      *
      * @param bool $isValid
      * @param Preferences|null $preferences
      *
-     * @return CookieState
+     * @return void
      */
     public function __construct($isValid, ?Preferences $preferences = null)
     {
@@ -34,11 +37,11 @@ class CookieState
     /**
      * Get the Preferences object if the cookie is valid
      *
-     * @return Preferences
+     * @return Preferences|null
      *
      * @throw RuntimeException if the cookie is not valid
      */
-    public function getPreferences()
+    public function getPreferences(): ?Preferences
     {
         if (!$this->isValid()) {
             throw new RuntimeException('Preferences are unavailable when cookie state is invalid');

@@ -32,9 +32,9 @@ class PermitsController extends AbstractSelfserveController
 
     protected $currentMessages = [];
 
+    protected $lva;
+
     /**
-     * @todo This is just a placeholder, this will be implemented properly using system parameters in OLCS-20848
-     *
      * @var array
      */
     protected $govUkReferrers = [];
@@ -54,6 +54,9 @@ class PermitsController extends AbstractSelfserveController
         parent::__construct($translationHelper, $formHelper, $tableBuilder, $mapperManager);
     }
 
+    /**
+     * @return ViewModel|\Laminas\Http\Response
+     */
     public function indexAction()
     {
         $eligibleForPermits = $this->isEligibleForPermits();
@@ -119,9 +122,6 @@ class PermitsController extends AbstractSelfserveController
                     ]
                 )
             ) {
-                // TODO - OLCS-25382
-                // Certificate of Roadworthiness doesn't have valid permit count
-                // set the value here for now
                 $data[$key]['validPermitCount'] = $item['validPermitCount'] = 1;
             }
 
@@ -188,5 +188,10 @@ class PermitsController extends AbstractSelfserveController
         }
 
         return in_array($referer->getUri(), $this->govUkReferrers);
+    }
+
+    protected function checkForRedirect($lvaId)
+    {
+        return null;
     }
 }

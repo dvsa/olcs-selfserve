@@ -34,6 +34,8 @@ class IrhpApplicationFeeController extends AbstractSelfserveController
     use GenericReceipt;
     use FlashMessengerTrait;
 
+    protected $lva;
+
     private const FEE_BREAKDOWN_TABLES = [
         RefData::IRHP_BILATERAL_PERMIT_TYPE_ID => 'irhp-fee-breakdown-bilateral',
         RefData::IRHP_MULTILATERAL_PERMIT_TYPE_ID => 'irhp-fee-breakdown-multilateral',
@@ -230,14 +232,14 @@ class IrhpApplicationFeeController extends AbstractSelfserveController
     /**
      * @param CqrsResponse $response payment response
      */
-    protected function handlePaymentError(CqrsResponse $response)
+    protected function handlePaymentError(CqrsResponse $response): void
     {
         if (!$response->isOk()) {
             $this->addErrorMessage('payment-failed');
         }
     }
 
-    protected function redirectOnError()
+    protected function redirectOnError(): HttpResponse
     {
         $irhpAppData = $this->data[IrhpAppDataSource::DATA_KEY];
 
@@ -249,6 +251,8 @@ class IrhpApplicationFeeController extends AbstractSelfserveController
 
     /**
      * {@inheritdoc}
+     *
+     * @return void
      */
     public function retrieveTables()
     {
@@ -266,6 +270,8 @@ class IrhpApplicationFeeController extends AbstractSelfserveController
 
     /**
      * {@inheritdoc}
+     *
+     * @return void
      */
     public function retrieveData()
     {
@@ -274,5 +280,10 @@ class IrhpApplicationFeeController extends AbstractSelfserveController
         $this->data = $this->mapperManager
             ->get(IrhpApplicationFeeSummary::class)
             ->mapForDisplay($this->data);
+    }
+
+    protected function checkForRedirect($lvaId)
+    {
+        return null;
     }
 }

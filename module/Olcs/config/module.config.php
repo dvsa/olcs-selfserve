@@ -1528,7 +1528,6 @@ return [
         ],
         'invokables' => [
             'generatePeopleList' => \Olcs\View\Helper\GeneratePeopleList::class,
-            'tmCheckAnswersChangeLink' => \Olcs\View\Helper\TmCheckAnswersChangeLink::class,
         ]
     ],
     'view_manager' => [
@@ -1613,7 +1612,7 @@ return [
             ],
             [
                 'id' => 'signin',
-                'route' => 'auth/login/GET', //@todo is this used?
+                'route' => 'auth/login/GET',
                 'pages' => [
                     [
                         'id' => 'forgot-password',
