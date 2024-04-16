@@ -8,7 +8,6 @@ use Common\Form\Form;
 use Common\RefData;
 use Common\Service\Helper\FileUploadHelperService;
 use Common\Service\Helper\FormHelperService;
-use DateTimeImmutable;
 use Dvsa\Olcs\Transfer\Query\Application\UploadEvidence;
 use Dvsa\Olcs\Utils\Translation\NiTextTranslation;
 use Olcs\Controller\Lva\Traits\ApplicationControllerTrait;
