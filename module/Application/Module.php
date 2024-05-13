@@ -6,7 +6,7 @@ namespace Application;
 
 class Module
 {
-    protected const MODULE_ROUTES = ['create_application', 'lva-application'];
+    protected const MODULE_ROUTES = ['create_application', 'lva-application', 'govuk-one-login'];
 
     /**
      * @return array

@@ -2,6 +2,7 @@
 
 use Dvsa\Olcs\Application\Controller as ApplicationControllers;
 use Dvsa\Olcs\Application\Controller\Factory as ApplicationControllerFactories;
+use Laminas\ServiceManager\Factory\InvokableFactory;
 
 return [
     'plugins' => [
@@ -51,6 +52,7 @@ return [
             ApplicationControllers\VehiclesDeclarationsController::class => ApplicationControllerFactories\VehiclesDeclarationsControllerFactory::class,
             ApplicationControllers\TransportManagersController::class => ApplicationControllerFactories\TransportManagersControllerFactory::class,
             ApplicationControllers\VehiclesPsvController::class => ApplicationControllerFactories\VehiclesPsvControllerFactory::class,
+            ApplicationControllers\GovUkOneLoginRedirectController::class => InvokableFactory::class
         ],
     ],
 ];

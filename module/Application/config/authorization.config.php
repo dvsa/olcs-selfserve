@@ -7,6 +7,7 @@ return [
             'lva-application' => ['selfserve-lva'],
             'lva-application/*' => ['selfserve-lva'],
             'create_application' => ['selfserve-user'],
+            'govuk-one-login*' => ['*']
         ],
     ],
 ];

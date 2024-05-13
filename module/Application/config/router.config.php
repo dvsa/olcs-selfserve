@@ -1,7 +1,34 @@
 <?php
 
+use Dvsa\Olcs\Application\Controller\GovUkOneLoginRedirectController;
+
 return [
     'routes' => [
+        'govuk-one-login' => [
+            'type' => \Laminas\Router\Http\Literal::class,
+            'options' => [
+                'route' => '/govuk-id',
+                'defaults' => [
+                    'controller' => GovUkOneLoginRedirectController::class,
+                    'action' => 'index',
+                ],
+            ],
+            'may_terminate' => false,
+            'child_routes' => [
+                'loggedin' => [
+                    'type' => \Laminas\Router\Http\Literal::class,
+                    'options' => [
+                        'route' => '/loggedin',
+                    ],
+                ],
+                'loggedout' => [
+                    'type' => \Laminas\Router\Http\Literal::class,
+                    'options' => [
+                        'route' => '/loggedout',
+                    ],
+                ],
+            ],
+        ],
         'create_application' => [
             'type' => \Laminas\Router\Http\Segment::class,
             'options' => [
