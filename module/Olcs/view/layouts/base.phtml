@@ -46,7 +46,6 @@ $isLoggedIn = $currentUser->isLoggedIn();
   <?php if ($isLoggedIn) {
     echo $this->sessionTimeoutWarning()->generateHeadMetaTags();
   } ?>
-  <script src="https://code.jquery.com/jquery-migrate-3.3.2.min.js"></script>
 </head>
 
 <body class="govuk-template__body app-body-class selfserve" id="<?php echo $this->pageId(); ?>">
@@ -326,5 +325,6 @@ $isLoggedIn = $currentUser->isLoggedIn();
   <script>
       var cookieConfig = <?php echo $this->cookieManager();?>;
   </script>
+  <script src="https://code.jquery.com/jquery-migrate-3.3.2.min.js"></script>
 </body>
 </html>
