@@ -35,7 +35,7 @@ class ApplicationOverviewSection extends LvaOverviewSection
                 break;
             default:
                 $mode = 'add';
-                $statusText = 'Not Started';
+                $statusText = 'Not started';
                 $statusColour = 'grey';
                 break;
         }
