@@ -54,43 +54,43 @@
             "Common\\": "vendor/olcs/olcs-common/Common/src/Common"
         }
     },
-  "autoload-dev": {
-    "psr-4": {
-      "OlcsTest\\": "test/Olcs/src",
-      "PermitsTest\\": "test/Permits/src"
-    }
-  },
-  "minimum-stability": "dev",
-  "prefer-stable": true,
-  "config": {
-    "allow-plugins": {
-      "laminas/laminas-dependency-plugin": true,
-      "bamarni/composer-bin-plugin": true
+    "autoload-dev": {
+        "psr-4": {
+            "OlcsTest\\": "test/Olcs/src",
+            "PermitsTest\\": "test/Permits/src"
+        }
     },
-    "platform": {
-      "ext-redis": "4.3"
-    }
-  },
-  "scripts": {
-    "bin": "echo 'bin not installed'",
-    "post-install-cmd": [
-      "@composer bin all install"
-    ],
-    "test": "phpunit",
-    "phpcs": "phpcs",
-    "psalm": "psalm",
-    "phpstan": "phpstan",
-    "all": [
-      "@test",
-      "@phpcs",
-      "@psalm",
-      "@phpstan"
-    ]
-  },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "config": {
+        "allow-plugins": {
+            "laminas/laminas-dependency-plugin": true,
+            "bamarni/composer-bin-plugin": true
+        },
+        "platform": {
+            "ext-redis": "4.3"
+        }
+    },
+    "scripts": {
+        "bin": "echo 'bin not installed'",
+        "post-install-cmd": [
+            "@composer bin all install"
+        ],
+        "test": "phpunit",
+        "phpcs": "phpcs",
+        "psalm": "psalm",
+        "phpstan": "phpstan",
+        "all": [
+            "@test",
+            "@phpcs",
+            "@psalm",
+            "@phpstan"
+        ]
+    },
     "extra": {
-      "bamarni-bin": {
-        "bin-links": true,
-        "forward-command": true
-      }
+        "bamarni-bin": {
+            "bin-links": true,
+            "forward-command": true
+        }
     }
 }
